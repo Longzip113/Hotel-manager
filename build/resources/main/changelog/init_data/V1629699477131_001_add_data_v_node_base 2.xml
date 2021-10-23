@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd
+http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+    <changeSet id="1" author="tung">
+        <sql dbms="mysql">
+            INSERT INTO v_node_base (node_id, display_name, is_deleted, path, type)
+            VALUES ('e7ab229d-f000-49a6-83f9-7b81f5831f95', 'root', false, '/', 0),
+            ('a45b4b89-d2e6-426e-9c76-b63074021f74', 'Dự án', false, '/e7ab229d-f000-49a6-83f9-7b81f5831f95', 0),
+            ('6e4155b7-edda-4c50-8c8b-89442688b3c7', 'Phòng ban', false, '/e7ab229d-f000-49a6-83f9-7b81f5831f95', 0),
+            ('612a1b87-7ca6-4144-862c-c894b2c0673d', 'Tài liệu của tôi', false, '/e7ab229d-f000-49a6-83f9-7b81f5831f95', 0);
+        </sql>
+    </changeSet>
+</databaseChangeLog>

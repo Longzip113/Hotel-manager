@@ -1,0 +1,4 @@
+ALTER TABLE v_node_tag
+DROP COLUMN id,
+DROP PRIMARY KEY,
+ADD PRIMARY KEY (node_id);

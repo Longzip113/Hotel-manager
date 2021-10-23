@@ -1,0 +1,5 @@
+ALTER TABLE v_node_log
+ADD COLUMN user_name VARCHAR(255) NOT NULL AFTER note,
+ADD COLUMN first_name VARCHAR(255) NOT NULL AFTER user_name,
+ADD COLUMN last_name VARCHAR(255) NOT NULL AFTER first_name,
+ADD COLUMN email VARCHAR(255) NOT NULL AFTER last_name;

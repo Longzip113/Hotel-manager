@@ -1,0 +1,19 @@
+databaseChangeLog:
+  - include:
+      file: db/changelog/migrate/V1630293559359_001_modify_v_node_base.sql
+  - include:
+      file: db/changelog/migrate/V1630293559359_002_create_insert_trigger_v_node_base.sql
+  - include:
+      file: db/changelog/migrate/V1630920334181_001_modify_v_node_tag.sql
+  - include:
+      file: db/changelog/migrate/V1630920334181_002_modify_v_node_log.sql
+  - include:
+      file: db/changelog/migrate/V1630920334181_003_modify_v_node_log.sql
+  - include:
+      file: db/changelog/migrate/V1631241192679_001_modify_v_node_tag.sql
+#   - include:
+#       file: db/changelog/migrate/V1630293559359_003_create_update_trigger_v_node_base.sql
+#  - include:
+#      file: db/changelog/migrate/V1630293559359_004_create_insert_trigger_v_node_document.sql
+#  - include:
+#      file: db/changelog/migrate/V1630293559359_005_create_update_trigger_v_node_document.sql
