@@ -1,2 +1,0 @@
-ALTER TABLE v_node_log
-ADD COLUMN user_name VARCHAR(255) NOT NULL AFTER note;

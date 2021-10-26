@@ -29,13 +29,13 @@ public class QLKSRoomEntity {
     private String idTypeRoom;
 
     @Column(name = "STATUS", nullable = false)
-    private String status;
+    private Integer status;
 
     @Column(name = "HOUSEKEEPING_ORDER", nullable = false)
-    private String housekeepingOrder;
+    private Integer housekeepingOrder;
 
     @Column(name = "ID_HOUSEKEEPING_STAFF", nullable = false)
-    private Integer idHousekeepingStaff;
+    private String idHousekeepingStaff;
 
     @Column(name = "ID_REGISTRATION_FORM", nullable = false)
     private String idRegistrationForm;

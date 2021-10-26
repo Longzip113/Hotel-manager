@@ -6,7 +6,7 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public abstract class BaseApiResponse {
+public class BaseApiResponse {
 
     protected int code;
     protected String message;

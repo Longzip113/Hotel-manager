@@ -1,1 +1,0 @@
-DROP TABLE IF EXISTS v_node_download

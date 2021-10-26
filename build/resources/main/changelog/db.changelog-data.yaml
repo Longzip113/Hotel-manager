@@ -1,5 +1,0 @@
-databaseChangeLog:
-  - include:
-      file: db/changelog/init_data/V1629699477131_001_add_data_v_node_base.xml
-  - include:
-      file: db/changelog/init_data/V1629699477131_002_add_data_v_node_folder.sql

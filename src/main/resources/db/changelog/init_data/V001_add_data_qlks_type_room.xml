@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd
+http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+    <changeSet id="1" author="long">
+        <sql dbms="mysql">
+            INSERT INTO qlks_type_room(id_type_room, name_type_room, price)
+            VALUES ('8b516e60-1f3d-11ec-9c1f-53f0b1cd671f', 'VIP', '1200000');
+            INSERT INTO qlks_type_room(id_type_room, name_type_room, price)
+            VALUES ('ca2417aa-1f3d-11ec-b155-2b7bc87d8134', 'NORMAL', '1000000');
+        </sql>
+    </changeSet>
+</databaseChangeLog>
