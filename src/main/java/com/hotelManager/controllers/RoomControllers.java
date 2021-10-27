@@ -1,17 +1,18 @@
 package com.hotelManager.controllers;
 
-import com.hotelManager.constants.ResponseCodes;
+import com.hotelManager.constants.Constants;
 import com.hotelManager.dtos.request.AddRoomRequest;
+import com.hotelManager.dtos.request.AddTypeRoomRequest;
+import com.hotelManager.dtos.request.UpdateRoomRequest;
 import com.hotelManager.dtos.responses.BaseApiResponse;
 import com.hotelManager.entities.QLKSTypeRoomEntity;
 import com.hotelManager.exceptions.HotelManagerException;
-import com.hotelManager.exceptions.ValidateException;
+import com.hotelManager.model.QLKSRoomModel;
 import com.hotelManager.services.QLKSRoomService;
 import com.hotelManager.services.QLKSTypeRoomService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -26,14 +27,18 @@ public class RoomControllers {
     @Autowired
     QLKSRoomService qlksRoomService;
 
-    @Autowired
-    QLKSTypeRoomService qlksTypeRoomService;
-
-
     @GetMapping(value = "/room")
-    public ResponseEntity<String> getListRoom() throws Exception {
+    public ResponseEntity<List<QLKSRoomModel>> getListRoom(
+            @RequestParam(defaultValue = "1") String sortBy,
+            @RequestParam(defaultValue = Constants.SORT_OR_DER_ASC) String sortOrder) throws Exception {
 
-        return ResponseEntity.ok("Success !!");
+        return ResponseEntity.ok(qlksRoomService.getAll(sortBy, sortOrder));
+    }
+
+    @GetMapping(value = "/room/{id}")
+    public ResponseEntity<QLKSRoomModel> getRoomDetail(@PathVariable("id") String id) throws Exception {
+
+        return ResponseEntity.ok(qlksRoomService.getDetailRoom(id));
     }
 
     @GetMapping(value = "/room/search")
@@ -42,30 +47,24 @@ public class RoomControllers {
         return ResponseEntity.ok("Success !!");
     }
 
-    @DeleteMapping(value = "/room")
-    public ResponseEntity<String> deleteRoom() throws Exception {
-
-        return ResponseEntity.ok("Success !!");
+    @DeleteMapping(value = "/room/{id}")
+    public ResponseEntity<BaseApiResponse> deleteRoom(@PathVariable("id") String id) {
+        qlksRoomService.deleteRoom(id);
+        return ResponseEntity.ok(new BaseApiResponse());
     }
 
-    @PostMapping(value = "/add-room")
-    public ResponseEntity<BaseApiResponse> addRoom(@RequestBody @Valid AddRoomRequest addRoomRequest, Errors errors) throws HotelManagerException {
-        if (errors.hasErrors()) {
-            throw new ValidateException(ResponseCodes.PARAMETER_INVALID, errors.getFieldError().getDefaultMessage());
-        }
+    @PostMapping(value = "/room")
+    public ResponseEntity<BaseApiResponse> addRoom(@RequestBody AddRoomRequest addRoomRequest) throws HotelManagerException {
+
 
         qlksRoomService.save(addRoomRequest);
         return ResponseEntity.ok(new BaseApiResponse());
     }
 
-    @PutMapping(value = "/room")
-    public ResponseEntity<String> updateRoom() throws Exception {
+    @PutMapping(value = "/room/{idRoom}")
+    public ResponseEntity<BaseApiResponse> updateRoom(@PathVariable("id") String idRoom, @RequestBody UpdateRoomRequest roomRequest) throws HotelManagerException {
 
-        return ResponseEntity.ok("Success !!");
-    }
-
-    @GetMapping(value = "/list-type-room")
-    public ResponseEntity<List<QLKSTypeRoomEntity>> getListTypeRoom() throws HotelManagerException {
-        return ResponseEntity.ok(qlksTypeRoomService.getAll());
+        qlksRoomService.update(roomRequest, idRoom);
+        return ResponseEntity.ok(new BaseApiResponse());
     }
 }

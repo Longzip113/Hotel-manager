@@ -25,4 +25,7 @@ public class QLKSTypeRoomEntity {
 
     @Column(name = "NAME_TYPE_ROOM", nullable = false)
     private String nameTypeRoom;
+
+    @Column(name = "IS_DELETE", nullable = false)
+    private Boolean isDelete;
 }
