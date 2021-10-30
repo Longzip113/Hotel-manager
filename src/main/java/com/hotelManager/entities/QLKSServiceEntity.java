@@ -1,5 +1,6 @@
 package com.hotelManager.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -23,8 +24,9 @@ public class QLKSServiceEntity {
     private String nameService;
 
     @Column(name = "PRICE", nullable = false)
-    private String price;
+    private Integer price;
 
     @Column(name = "IS_DELETE", nullable = false)
-    private Long isDelete;
+    @JsonIgnore
+    private Boolean isDelete;
 }

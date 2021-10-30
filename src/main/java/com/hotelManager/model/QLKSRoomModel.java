@@ -24,7 +24,8 @@ import javax.persistence.*;
                         @ColumnResult(name = "status", type = Integer.class),
                         @ColumnResult(name = "name_type_room", type = String.class),
                         @ColumnResult(name = "name_employee", type = String.class),
-                        @ColumnResult(name = "housekeeping_order", type = String.class)
+                        @ColumnResult(name = "housekeeping_order", type = String.class),
+                        @ColumnResult(name = "id_type_room", type = String.class)
                 }))
 public class QLKSRoomModel {
 
@@ -56,4 +57,8 @@ public class QLKSRoomModel {
     @Column(name = "housekeeping_order", nullable = false)
     @JsonProperty("housekeepingOrder")
     private String housekeepingOrder;
+
+    @Column(name = "id_type_room", nullable = false)
+    @JsonProperty("idTypeRoom")
+    private String idTypeRoom;
 }

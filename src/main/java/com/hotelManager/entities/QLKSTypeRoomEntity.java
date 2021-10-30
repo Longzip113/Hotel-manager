@@ -1,5 +1,6 @@
 package com.hotelManager.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -27,5 +28,6 @@ public class QLKSTypeRoomEntity {
     private String nameTypeRoom;
 
     @Column(name = "IS_DELETE", nullable = false)
+    @JsonIgnore
     private Boolean isDelete;
 }

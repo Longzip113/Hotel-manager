@@ -15,6 +15,8 @@ public interface QLKSRoomRepository {
 
     void update(UpdateRoomRequest roomRequest, String idRoom) throws HotelManagerException;
 
+    Optional<QLKSRoomEntity> getByNameRoom(String nameRoom) throws HotelManagerException;
+
     List<QLKSRoomModel> getAll(String sortBy, String sortOrder);
 
     Optional<QLKSRoomModel> getByIdRoom(String idRoom);

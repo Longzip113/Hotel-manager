@@ -60,7 +60,7 @@ public class QLKSEmployeeServiceImpl implements QLKSEmployeeService {
                     .email(addUserRequest.getEmail())
                     .passWord(PASSWORD_DEFAULT)
                     .id(idEmployee)
-                    .isDeleted(Boolean.FALSE)
+                    .isDelete(Boolean.FALSE)
                     .idRole(ID_ROLE_USER).build();
 
             qlksUserRepository.save(qlksUserEntity, session);

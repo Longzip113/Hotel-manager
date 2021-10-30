@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -41,6 +42,7 @@ public class RoomControllers {
         return ResponseEntity.ok(qlksRoomService.getDetailRoom(id));
     }
 
+    @ApiIgnore
     @GetMapping(value = "/room/search")
     public ResponseEntity<String> getRoom() throws Exception {
 
@@ -48,13 +50,13 @@ public class RoomControllers {
     }
 
     @DeleteMapping(value = "/room/{id}")
-    public ResponseEntity<BaseApiResponse> deleteRoom(@PathVariable("id") String id) {
+    public ResponseEntity<BaseApiResponse> deleteRoom(@PathVariable("id") String id) throws HotelManagerException {
         qlksRoomService.deleteRoom(id);
         return ResponseEntity.ok(new BaseApiResponse());
     }
 
     @PostMapping(value = "/room")
-    public ResponseEntity<BaseApiResponse> addRoom(@RequestBody AddRoomRequest addRoomRequest) throws HotelManagerException {
+    public ResponseEntity<BaseApiResponse> addRoom(@RequestBody @Valid AddRoomRequest addRoomRequest) throws HotelManagerException {
 
 
         qlksRoomService.save(addRoomRequest);
@@ -62,7 +64,7 @@ public class RoomControllers {
     }
 
     @PutMapping(value = "/room/{idRoom}")
-    public ResponseEntity<BaseApiResponse> updateRoom(@PathVariable("id") String idRoom, @RequestBody UpdateRoomRequest roomRequest) throws HotelManagerException {
+    public ResponseEntity<BaseApiResponse> updateRoom(@PathVariable("idRoom") String idRoom, @RequestBody @Valid UpdateRoomRequest roomRequest) throws HotelManagerException {
 
         qlksRoomService.update(roomRequest, idRoom);
         return ResponseEntity.ok(new BaseApiResponse());

@@ -27,6 +27,6 @@ public class QLKSUserEntity {
     @Column(name = "ID_ROLE", nullable = false)
     private String idRole;
 
-    @Column(name = "IS_DELETED", nullable = false)
-    private boolean isDeleted;
+    @Column(name = "IS_DELETE", nullable = false)
+    private boolean isDelete;
 }

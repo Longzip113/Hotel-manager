@@ -1,7 +1,6 @@
 package com.hotelManager.repositories.impl;
 
 import com.hotelManager.constants.Constants;
-import com.hotelManager.dtos.request.AddRoomRequest;
 import com.hotelManager.dtos.request.UpdateRoomRequest;
 import com.hotelManager.entities.QLKSRoomEntity;
 import com.hotelManager.exceptions.DatabaseException;
@@ -11,7 +10,6 @@ import com.hotelManager.repositories.QLKSRoomRepository;
 import com.hotelManager.utils.GsonHelper;
 import com.hotelManager.utils.HibernateUtils;
 import com.hotelManager.utils.HotelManagerUtils;
-import liquibase.util.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Session;
@@ -117,11 +115,35 @@ public class QLKSRoomRepositoryImpl implements QLKSRoomRepository {
     }
 
     @Override
+    public Optional<QLKSRoomEntity> getByNameRoom(String nameRoom) throws HotelManagerException {
+        Session session = sessionFactory.openSession();
+        try {
+            StringBuilder hql = new StringBuilder()
+                    .append("FROM QLKSRoomEntity r ")
+                    .append("WHERE r.nameRoom = :nameRoom AND r.isDelete = :isDeleted ");
+            log.info("SQL [{}]", hql);
+
+            Query query = session.createQuery(hql.toString())
+                    .setParameter("isDeleted", Boolean.FALSE)
+                    .setParameter("nameRoom", nameRoom);
+
+            return query.uniqueResultOptional();
+        } catch (Exception e) {
+
+            log.error("getByNameRoom QLKSRoomEntity fail !", e);
+            HotelManagerUtils.throwException(DatabaseException.class, ERROR_SERVER);
+            return Optional.empty();
+        }  finally {
+            HibernateUtils.closeSession(session);
+        }
+    }
+
+    @Override
     public List<QLKSRoomModel> getAll(String sortBy, String sortOrder) {
         Session session = sessionFactory.openSession();
         try {
             StringBuilder hql = new StringBuilder()
-                    .append("SELECT r.id_room, r.name_room, r.description, r.status, tr.name_type_room, e.name_employee, r.housekeeping_order ")
+                    .append("SELECT r.id_room, r.name_room, r.description, r.status, tr.name_type_room, e.name_employee, r.housekeeping_order, r.id_type_room ")
                     .append("FROM qlks_room r ")
                     .append("LEFT JOIN qlks_type_room tr ON tr.id_type_room = r.id_type_room ")
                     .append("LEFT JOIN qlks_employee e ON e.id_employee = r.id_housekeeping_staff ")
@@ -145,7 +167,7 @@ public class QLKSRoomRepositoryImpl implements QLKSRoomRepository {
         Session session = sessionFactory.openSession();
         try {
             StringBuilder hql = new StringBuilder()
-                    .append("SELECT r.id_room, r.name_room, r.description, r.status, tr.name_type_room, e.name_employee, r.housekeeping_order ")
+                    .append("SELECT r.id_room, r.name_room, r.description, r.status, tr.name_type_room, e.name_employee, r.housekeeping_order, r.id_type_room ")
                     .append("FROM qlks_room r ")
                     .append("LEFT JOIN qlks_type_room tr ON tr.id_type_room = r.id_type_room ")
                     .append("LEFT JOIN qlks_employee e ON e.id_employee = r.id_housekeeping_staff ")

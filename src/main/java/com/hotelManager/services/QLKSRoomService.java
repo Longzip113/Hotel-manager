@@ -11,7 +11,7 @@ public interface QLKSRoomService {
 
     void save(AddRoomRequest addRoomRequest) throws HotelManagerException;
 
-    void deleteRoom(String idRoom);
+    void deleteRoom(String idRoom) throws HotelManagerException;
 
     void update(UpdateRoomRequest roomRequest, String idRoom) throws HotelManagerException;
 

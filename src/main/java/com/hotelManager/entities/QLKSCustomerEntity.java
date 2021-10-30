@@ -1,12 +1,13 @@
 package com.hotelManager.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 
 @Entity
-@Table(name = "qlks_employee")
+@Table(name = "qlks_customer")
 @Builder
 @Getter
 @Setter
@@ -35,5 +36,6 @@ public class QLKSCustomerEntity {
     private String email;
 
     @Column(name = "IS_DELETE", nullable = false)
-    private boolean isDeleted;
+    @JsonIgnore
+    private boolean isDelete;
 }
