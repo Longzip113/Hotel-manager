@@ -6,4 +6,10 @@ databaseChangeLog:
   - include:
       file: db/changelog/init_data/V003_add_data_qlks_employee.sql
   - include:
-      file: db/changelog/init_data/V004_add_data_qlks_user.sql
+      file: db/changelog/init_data/V004_add_data_qlks_service.sql
+  - include:
+      file: db/changelog/init_data/V005_add_data_qlks_hotel_device.sql
+  - include:
+      file: db/changelog/init_data/V006_add_data_qlks_room.sql
+  - include:
+      file: db/changelog/init_data/V007_add_data_qlks_detail_type_room.sql

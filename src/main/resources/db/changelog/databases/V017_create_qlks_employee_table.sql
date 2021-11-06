@@ -5,6 +5,10 @@ CREATE TABLE qlks_employee (
   identity_card varchar(255) DEFAULT NULL,
   address varchar(255) DEFAULT NULL,
   phone_number varchar(255) DEFAULT NULL,
+  id_role varchar(255) DEFAULT NULL,
+  email varchar(255) DEFAULT NULL,
+  pass_word varchar(255) DEFAULT NULL,
+  verification varchar(255) DEFAULT NULL,
   is_delete BIT(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (id_employee)
 )

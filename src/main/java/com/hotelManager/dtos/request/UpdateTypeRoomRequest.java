@@ -11,6 +11,8 @@ public class UpdateTypeRoomRequest {
 
     private String nameTypeRoom;
 
+    private String description;
+
     private Integer price;
 
 }

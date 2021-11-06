@@ -1,14 +1,13 @@
 package com.hotelManager.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 
 @Entity
-@Table(name = "qlks_user", uniqueConstraints={
-        @UniqueConstraint(columnNames = {"EMAIL", "ID_USER"})
-})
+@Table(name = "qlks_role")
 @Builder
 @Getter
 @Setter
@@ -27,4 +26,8 @@ public class QLKSRoleEntity {
 
     @Column(name = "NAME_ROLE", nullable = false)
     private String nameRole;
+
+    @Column(name = "IS_DELETE", nullable = false)
+    @JsonIgnore
+    private boolean isDelete;
 }

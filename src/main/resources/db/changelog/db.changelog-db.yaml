@@ -28,8 +28,6 @@ databaseChangeLog:
   - include:
       file: db/changelog/databases/V014_create_qlks_hotel_device_table.sql
   - include:
-      file: db/changelog/databases/V015_create_qlks_user_table.sql
-  - include:
       file: db/changelog/databases/V016_create_qlks_role_table.sql
   - include:
       file: db/changelog/databases/V017_create_qlks_employee_table.sql

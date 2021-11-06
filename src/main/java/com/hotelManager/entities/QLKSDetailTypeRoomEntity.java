@@ -19,11 +19,14 @@ public class QLKSDetailTypeRoomEntity {
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     private String id;
 
+    @Column(name = "ID_TYPE")
+    private String idType;
+
     @Column(name = "ID_DETAIL")
     private String idDetail;
 
     @Column(name = "TYPE_DETAIL", nullable = false)
-    private String typeDetail;
+    private Integer typeDetail;
 
     @Column(name = "QUANTITY", nullable = false)
     private String quantity;

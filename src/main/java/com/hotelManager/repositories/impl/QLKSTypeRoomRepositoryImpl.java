@@ -107,7 +107,8 @@ public class QLKSTypeRoomRepositoryImpl implements QLKSTypeRoomRepository {
                     .append("UPDATE QLKSTypeRoomEntity ")
                     .append("SET ")
                     .append("nameTypeRoom = :nameTypeRoom, ")
-                    .append("price = :price ")
+                    .append("price = :price, ")
+                    .append("description = :description ")
                     .append("WHERE id = :id");
 
             log.info("SQL [{}]", hql);
@@ -115,6 +116,7 @@ public class QLKSTypeRoomRepositoryImpl implements QLKSTypeRoomRepository {
             Query query = session.createQuery(hql.toString())
                     .setParameter("id", id)
                     .setParameter("nameTypeRoom", updateTypeRoomRequest.getNameTypeRoom())
+                    .setParameter("description", updateTypeRoomRequest.getDescription())
                     .setParameter("price", updateTypeRoomRequest.getPrice());
 
             query.executeUpdate();
@@ -177,17 +179,18 @@ public class QLKSTypeRoomRepositoryImpl implements QLKSTypeRoomRepository {
     }
 
     @Override
-    public Optional<QLKSTypeRoomEntity> getByNameTypeAndPrice(String nameType, Integer price) throws HotelManagerException {
+    public Optional<QLKSTypeRoomEntity> getByNameTypeAndPrice(String nameType, Integer price, String description) throws HotelManagerException {
         Session session = sessionFactory.openSession();
         try {
             StringBuilder hql = new StringBuilder()
                     .append("FROM QLKSTypeRoomEntity r ")
-                    .append("WHERE r.price = :price AND r.nameTypeRoom = :nameTypeRoom AND r.isDelete = :isDeleted ");
+                    .append("WHERE r.price = :price AND r.nameTypeRoom = :nameTypeRoom AND r.description = :description AND r.isDelete = :isDeleted ");
             log.info("SQL [{}]", hql);
 
             Query query = session.createQuery(hql.toString())
                     .setParameter("isDeleted", Boolean.FALSE)
                     .setParameter("price", price)
+                    .setParameter("description", description)
                     .setParameter("nameTypeRoom", nameType);
 
             return query.uniqueResultOptional();

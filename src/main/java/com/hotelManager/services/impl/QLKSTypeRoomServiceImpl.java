@@ -41,6 +41,7 @@ public class QLKSTypeRoomServiceImpl implements QLKSTypeRoomService {
         QLKSTypeRoomEntity qlksTypeRoomEntity = QLKSTypeRoomEntity.builder()
                 .nameTypeRoom(addTypeRoomRequest.getNameTypeRoom())
                 .price(addTypeRoomRequest.getPrice())
+                .description(addTypeRoomRequest.getDescription())
                 .isDelete(Boolean.FALSE)
                 .build();
 
@@ -70,7 +71,7 @@ public class QLKSTypeRoomServiceImpl implements QLKSTypeRoomService {
             HotelManagerUtils.throwException(DatabaseException.class, ERROR_TYPE_ROOM_NOT_EXISTED);
         }
         if(StringUtils.isNotBlank(updateTypeRoomRequest.getNameTypeRoom())) {
-            if (qlksTypeRoomRepository.getByNameTypeAndPrice(updateTypeRoomRequest.getNameTypeRoom(), updateTypeRoomRequest.getPrice()).isPresent()) {
+            if (qlksTypeRoomRepository.getByNameTypeAndPrice(updateTypeRoomRequest.getNameTypeRoom(), updateTypeRoomRequest.getPrice(), updateTypeRoomRequest.getDescription()).isPresent()) {
                 log.error("Name type existed !");
                 HotelManagerUtils.throwException(DatabaseException.class, ERROR_TYPE_ROOM_ALREADY_EXISTED);
             }

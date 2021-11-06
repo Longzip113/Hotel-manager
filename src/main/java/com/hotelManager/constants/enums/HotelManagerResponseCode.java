@@ -19,7 +19,12 @@ public enum HotelManagerResponseCode {
     ERROR_EMAIL_ALREADY_EXISTED         (-9,    "Email đã tồn tại !"),
     ERROR_PHONE_ALREADY_EXISTED         (-10,    "Phone đã tồn tại !"),
     ERROR_ID_CARD_ALREADY_EXISTED       (-11,    "IdCard đã tồn tại !"),
-    ERROR_ID_NOT_EXISTED                (-12,    "Id không tồn tại !");
+    ERROR_ID_NOT_EXISTED                (-12,    "Id không tồn tại !"),
+    ERROR_DEVICE_ALREADY_EXISTED        (-13,    "Thiết bị đã tồn tại !"),
+    ERROR_DELETE_DEVICE                 (-14,    "Có phòng đang chứa thiết bị xin kiểm tra lại !"),
+    ERROR_ROLE_ALREADY_EXISTED          (-15,    "Code hoặc tên role đã tồn tại !"),
+    ERROR_EMAIL_NOT_EXISTED             (-16,    "Email không tồn tại !"),
+    ERROR_VERIFICATION                  (-17,    "Mã xác nhận không tồn tại !");
 
     private final int responseCode;
 

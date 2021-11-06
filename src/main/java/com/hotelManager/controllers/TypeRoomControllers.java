@@ -49,7 +49,7 @@ public class TypeRoomControllers {
     @PutMapping(value = "/type-room/{id}")
     public ResponseEntity<BaseApiResponse> updateTypeRoom(@PathVariable("id") String id, @RequestBody UpdateTypeRoomRequest updateTypeRoomRequest) throws HotelManagerException {
 
-        if (StringUtils.isNotBlank(updateTypeRoomRequest.getNameTypeRoom()) || updateTypeRoomRequest.getPrice() != null) {
+        if (StringUtils.isNotBlank(updateTypeRoomRequest.getNameTypeRoom()) || updateTypeRoomRequest.getPrice() != null|| updateTypeRoomRequest.getDescription() != null) {
             qlksTypeRoomService.updateTypeRoom(id, updateTypeRoomRequest);
         }
 

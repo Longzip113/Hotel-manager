@@ -23,14 +23,14 @@ public class QLKSHotelDeviceEntity {
     private String nameHotelDevice;
 
     @Column(name = "PRICE", nullable = false)
-    private String price;
+    private Integer price;
 
     @Column(name = "QUANTITY", nullable = false)
-    private String quantity;
+    private Integer quantity;
 
-    @Column(name = "STATUS", nullable = false)
-    private String status;
+    @Column(name = "STATUS")
+    private boolean status;
 
     @Column(name = "IS_DELETE", nullable = false)
-    private boolean isDeleted;
+    private boolean isDelete;
 }

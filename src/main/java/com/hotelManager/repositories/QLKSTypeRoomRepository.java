@@ -20,7 +20,7 @@ public interface QLKSTypeRoomRepository {
 
     Optional<QLKSTypeRoomEntity> getByNameType(String nameType) throws HotelManagerException;
 
-    Optional<QLKSTypeRoomEntity> getByNameTypeAndPrice(String nameType, Integer price) throws HotelManagerException;
+    Optional<QLKSTypeRoomEntity> getByNameTypeAndPrice(String nameType, Integer price, String description) throws HotelManagerException;
 
     long countRoomByTypeRoom(String idTypeRoom);
 }

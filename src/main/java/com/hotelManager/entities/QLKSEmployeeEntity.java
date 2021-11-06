@@ -34,6 +34,18 @@ public class QLKSEmployeeEntity {
     @Column(name = "phone_number", nullable = false)
     private String phoneNumber;
 
+    @Column(name = "email")
+    private String email;
+
+    @Column(name = "pass_word")
+    private String passWord;
+
+    @Column(name = "verification")
+    private String verification;
+
+    @Column(name = "id_role")
+    private String idRole;
+
     @Column(name = "is_delete", nullable = false)
-    private boolean isDeleted;
+    private boolean isDelete;
 }
