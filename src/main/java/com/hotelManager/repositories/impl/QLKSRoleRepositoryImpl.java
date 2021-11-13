@@ -1,6 +1,6 @@
 package com.hotelManager.repositories.impl;
 
-import com.hotelManager.dtos.request.UpdateRoleRequest;
+import com.hotelManager.dtos.request.RoleRequest;
 import com.hotelManager.entities.QLKSRoleEntity;
 import com.hotelManager.exceptions.DatabaseException;
 import com.hotelManager.exceptions.HotelManagerException;
@@ -97,7 +97,7 @@ public class QLKSRoleRepositoryImpl implements QLKSRoleRepository {
     }
 
     @Override
-    public void update(String id, UpdateRoleRequest updateRoleRequest) throws HotelManagerException {
+    public void update(String id, RoleRequest roleRequest) throws HotelManagerException {
         Session session = sessionFactory.openSession();
         HibernateUtils.beginTransaction(session);
 
@@ -113,8 +113,8 @@ public class QLKSRoleRepositoryImpl implements QLKSRoleRepository {
 
             Query query = session.createQuery(hql.toString())
                     .setParameter("id", id)
-                    .setParameter("nameRole", updateRoleRequest.getNameRole())
-                    .setParameter("code", updateRoleRequest.getCode());
+                    .setParameter("nameRole", roleRequest.getNameRole())
+                    .setParameter("code", roleRequest.getCode());
 
             query.executeUpdate();
             session.getTransaction().commit();
@@ -207,7 +207,7 @@ public class QLKSRoleRepositoryImpl implements QLKSRoleRepository {
         try {
             StringBuilder hql = new StringBuilder()
                     .append("SELECT count(*) FROM qlks_employee e ")
-                    .append("LEFT JOIN SELECT * FROM qlks_role r ON r.id_role = e.id_role ")
+                    .append("LEFT JOIN qlks_role r ON r.id_role = e.id_role ")
                     .append("WHERE e.id_role = :id AND r.is_delete = 0 AND e.is_delete = 0 ");
 
             log.info("SQL [{}]", hql);

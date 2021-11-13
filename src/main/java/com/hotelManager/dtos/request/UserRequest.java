@@ -10,11 +10,24 @@ import javax.validation.constraints.NotBlank;
 @Getter
 @Data
 public class UserRequest {
-
-    @NotBlank(message = "Email is not empty or null")
+    @NotBlank(message = "email is not empty or null")
     private String email;
 
-    @NotBlank(message = "passWord is not empty or null")
-    private String passWord;
+    @NotBlank(message = "nameEmployee is not empty or null")
+    private String nameEmployee;
 
+    @NotBlank(message = "gender is not empty or null")
+    private String gender;
+
+    @NotBlank(message = "identityCard is not empty or null")
+    private String identityCard;
+
+    @NotBlank(message = "address is not empty or null")
+    private String address;
+
+    @NotBlank(message = "phoneNumber is not empty or null")
+    private String phoneNumber;
+
+    @NotBlank(message = "idRole is not empty or null")
+    private String idRole;
 }

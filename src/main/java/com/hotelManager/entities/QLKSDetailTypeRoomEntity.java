@@ -29,6 +29,9 @@ public class QLKSDetailTypeRoomEntity {
     private Integer typeDetail;
 
     @Column(name = "QUANTITY", nullable = false)
-    private String quantity;
+    private Integer quantity;
+
+    @Column(name = "IS_DELETE", nullable = false)
+    private boolean isDelete;
 
 }

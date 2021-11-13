@@ -11,10 +11,13 @@ import javax.validation.constraints.NotBlank;
 @Data
 public class ChangePasswordRequest {
 
-    @NotBlank(message = "Verification is not empty or null")
-    private String verification;
+    @NotBlank(message = "Email is not empty or null")
+    private String email;
 
-    @NotBlank(message = "password is not empty or null")
-    private String password;
+    @NotBlank(message = "passwordOld is not empty or null")
+    private String passwordOld;
+
+    @NotBlank(message = "passwordNew is not empty or null")
+    private String passwordNew;
 
 }

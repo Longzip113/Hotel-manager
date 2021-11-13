@@ -9,7 +9,7 @@ import javax.validation.constraints.NotBlank;
 @Setter
 @Getter
 @Data
-public class UpdateCustomerRequest {
+public class CustomerRequest {
 
     @NotBlank(message = "email is not empty or null")
     private String email;

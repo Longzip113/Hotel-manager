@@ -9,14 +9,15 @@ import javax.validation.constraints.NotBlank;
 @Setter
 @Getter
 @Data
-public class AddRoomRequest {
-
-    @NotBlank(message = "nameRoom is not empty or null")
-    private String nameRoom;
-
-    @NotBlank(message = "description is not empty or null")
-    private String description;
+public class DetailTypeRoomRequest {
 
     @NotBlank(message = "idTypeRoom is not empty or null")
     private String idTypeRoom;
+
+    @NotBlank(message = "idDetailType is not empty or null")
+    private String idDetailType;
+
+    private Integer typeDetail;
+
+    private Integer quantity;
 }

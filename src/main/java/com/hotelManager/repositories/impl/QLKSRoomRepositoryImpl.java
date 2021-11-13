@@ -1,7 +1,7 @@
 package com.hotelManager.repositories.impl;
 
 import com.hotelManager.constants.Constants;
-import com.hotelManager.dtos.request.UpdateRoomRequest;
+import com.hotelManager.dtos.request.RoomRequest;
 import com.hotelManager.entities.QLKSRoomEntity;
 import com.hotelManager.exceptions.DatabaseException;
 import com.hotelManager.exceptions.HotelManagerException;
@@ -75,7 +75,7 @@ public class QLKSRoomRepositoryImpl implements QLKSRoomRepository {
     }
 
     @Override
-    public void update(UpdateRoomRequest roomRequest, String idRoom) throws HotelManagerException {
+    public void update(RoomRequest roomRequest, String idRoom) throws HotelManagerException {
         Session session = sessionFactory.openSession();
         HibernateUtils.beginTransaction(session);
 

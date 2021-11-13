@@ -9,7 +9,7 @@ import javax.validation.constraints.NotBlank;
 @Setter
 @Getter
 @Data
-public class AddRoleRequest {
+public class RoleRequest {
 
     @NotBlank(message = "description is not empty or null")
     private String nameRole;

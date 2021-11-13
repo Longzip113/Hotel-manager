@@ -1,9 +1,8 @@
 package com.hotelManager.controllers;
 
-import com.hotelManager.dtos.request.AddTypeRoomRequest;
-import com.hotelManager.dtos.request.UpdateTypeRoomRequest;
+import com.hotelManager.dtos.request.TypeRoomRequest;
 import com.hotelManager.dtos.responses.BaseApiResponse;
-import com.hotelManager.entities.QLKSTypeRoomEntity;
+import com.hotelManager.dtos.responses.QLKSTypeRoomReponse;
 import com.hotelManager.exceptions.HotelManagerException;
 import com.hotelManager.services.QLKSTypeRoomService;
 import lombok.extern.slf4j.Slf4j;
@@ -25,18 +24,18 @@ public class TypeRoomControllers {
     QLKSTypeRoomService qlksTypeRoomService;
 
     @GetMapping(value = "/type-room")
-    public ResponseEntity<List<QLKSTypeRoomEntity>> getListTypeRoom() throws HotelManagerException {
+    public ResponseEntity<List<QLKSTypeRoomReponse>> getListTypeRoom() throws HotelManagerException {
         return ResponseEntity.ok(qlksTypeRoomService.getAll());
     }
 
     @PostMapping(value = "/type-room")
-    public ResponseEntity<BaseApiResponse> addTypeRoom(@RequestBody @Valid AddTypeRoomRequest addTypeRoomRequest) throws HotelManagerException {
-        qlksTypeRoomService.addTypeRoom(addTypeRoomRequest);
+    public ResponseEntity<BaseApiResponse> addTypeRoom(@RequestBody @Valid TypeRoomRequest typeRoomRequest) throws HotelManagerException {
+        qlksTypeRoomService.addTypeRoom(typeRoomRequest);
         return ResponseEntity.ok(new BaseApiResponse());
     }
 
     @GetMapping(value = "/type-room/{id}")
-    public ResponseEntity<QLKSTypeRoomEntity> getDetailTypeRoom(@PathVariable("id") String id) throws HotelManagerException {
+    public ResponseEntity<QLKSTypeRoomReponse> getDetailTypeRoom(@PathVariable("id") String id) throws HotelManagerException {
         return ResponseEntity.ok(qlksTypeRoomService.getDetailTypeRoom(id));
     }
 
@@ -47,10 +46,10 @@ public class TypeRoomControllers {
     }
 
     @PutMapping(value = "/type-room/{id}")
-    public ResponseEntity<BaseApiResponse> updateTypeRoom(@PathVariable("id") String id, @RequestBody UpdateTypeRoomRequest updateTypeRoomRequest) throws HotelManagerException {
+    public ResponseEntity<BaseApiResponse> updateTypeRoom(@PathVariable("id") String id, @RequestBody TypeRoomRequest typeRoomRequest) throws HotelManagerException {
 
-        if (StringUtils.isNotBlank(updateTypeRoomRequest.getNameTypeRoom()) || updateTypeRoomRequest.getPrice() != null|| updateTypeRoomRequest.getDescription() != null) {
-            qlksTypeRoomService.updateTypeRoom(id, updateTypeRoomRequest);
+        if (StringUtils.isNotBlank(typeRoomRequest.getNameTypeRoom()) || typeRoomRequest.getPrice() != null|| typeRoomRequest.getDescription() != null) {
+            qlksTypeRoomService.updateTypeRoom(id, typeRoomRequest);
         }
 
         return ResponseEntity.ok(new BaseApiResponse());

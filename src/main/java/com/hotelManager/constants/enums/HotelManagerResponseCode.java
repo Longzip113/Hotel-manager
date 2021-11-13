@@ -24,7 +24,9 @@ public enum HotelManagerResponseCode {
     ERROR_DELETE_DEVICE                 (-14,    "Có phòng đang chứa thiết bị xin kiểm tra lại !"),
     ERROR_ROLE_ALREADY_EXISTED          (-15,    "Code hoặc tên role đã tồn tại !"),
     ERROR_EMAIL_NOT_EXISTED             (-16,    "Email không tồn tại !"),
-    ERROR_VERIFICATION                  (-17,    "Mã xác nhận không tồn tại !");
+    ERROR_VERIFICATION                  (-17,    "Mã xác nhận không tồn tại !"),
+    ERROR_DELEGATION_ALREADY_EXISTED    (-18,    "Tên đoàn đã tồn tại !"),
+    ERROR_ROLE_ALREADY                  (-19,    "Hiện tại role đang được sử dụng !");
 
     private final int responseCode;
 

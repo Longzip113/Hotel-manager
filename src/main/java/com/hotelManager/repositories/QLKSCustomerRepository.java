@@ -1,6 +1,6 @@
 package com.hotelManager.repositories;
 
-import com.hotelManager.dtos.request.UpdateCustomerRequest;
+import com.hotelManager.dtos.request.CustomerRequest;
 import com.hotelManager.entities.QLKSCustomerEntity;
 import com.hotelManager.exceptions.HotelManagerException;
 
@@ -12,7 +12,7 @@ public interface QLKSCustomerRepository {
 
     void delete(String idCustom);
 
-    void update(UpdateCustomerRequest customerRequest, String idCustom) throws HotelManagerException;
+    void update(CustomerRequest customerRequest, String idCustom) throws HotelManagerException;
 
     Optional<QLKSCustomerEntity> getByPhoneNumber(String phone, String id) throws HotelManagerException;
 
@@ -21,6 +21,8 @@ public interface QLKSCustomerRepository {
     Optional<QLKSCustomerEntity> getByCard(String card, String id) throws HotelManagerException;
 
     List<QLKSCustomerEntity> getAll(String sortBy, String sortOrder);
+
+    List<QLKSCustomerEntity> getByIds(List<String> ids);
 
     Optional<QLKSCustomerEntity> getById(String idCustom) throws HotelManagerException;
 }

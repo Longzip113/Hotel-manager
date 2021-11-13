@@ -1,7 +1,6 @@
 package com.hotelManager.services.impl;
 
-import com.hotelManager.dtos.request.AddCustomerRequest;
-import com.hotelManager.dtos.request.UpdateCustomerRequest;
+import com.hotelManager.dtos.request.CustomerRequest;
 import com.hotelManager.entities.QLKSCustomerEntity;
 import com.hotelManager.exceptions.DatabaseException;
 import com.hotelManager.exceptions.HotelManagerException;
@@ -26,28 +25,28 @@ public class QLKSCustomerServiceImpl implements QLKSCustomerService {
 
 
     @Override
-    public void save(AddCustomerRequest addCustomerRequest) throws HotelManagerException {
-        if (qlksCustomerRepository.getByEmail(addCustomerRequest.getNameCustomer(), "").isPresent()) {
+    public void save(CustomerRequest customerRequest) throws HotelManagerException {
+        if (qlksCustomerRepository.getByEmail(customerRequest.getNameCustomer(), "").isPresent()) {
             log.error("Email room existed !");
             HotelManagerUtils.throwException(DatabaseException.class, ERROR_EMAIL_ALREADY_EXISTED);
         }
 
-        if (qlksCustomerRepository.getByPhoneNumber(addCustomerRequest.getPhoneNumber(), "").isPresent()) {
+        if (qlksCustomerRepository.getByPhoneNumber(customerRequest.getPhoneNumber(), "").isPresent()) {
             log.error("Phone existed !");
             HotelManagerUtils.throwException(DatabaseException.class, ERROR_PHONE_ALREADY_EXISTED);
         }
 
-        if (qlksCustomerRepository.getByCard(addCustomerRequest.getIdentityCard(), "").isPresent()) {
+        if (qlksCustomerRepository.getByCard(customerRequest.getIdentityCard(), "").isPresent()) {
             log.error("IdentityCard existed !");
             HotelManagerUtils.throwException(DatabaseException.class, ERROR_ID_CARD_ALREADY_EXISTED);
         }
 
         QLKSCustomerEntity qlksCustomerEntity = QLKSCustomerEntity.builder()
-                .card(addCustomerRequest.getIdentityCard())
-                .email(addCustomerRequest.getEmail())
-                .name(addCustomerRequest.getNameCustomer())
-                .nationality(addCustomerRequest.getNationality())
-                .phone(addCustomerRequest.getPhoneNumber())
+                .card(customerRequest.getIdentityCard())
+                .email(customerRequest.getEmail())
+                .name(customerRequest.getNameCustomer())
+                .nationality(customerRequest.getNationality())
+                .phone(customerRequest.getPhoneNumber())
                 .isDelete(Boolean.FALSE).build();
 
         qlksCustomerRepository.save(qlksCustomerEntity);
@@ -64,7 +63,7 @@ public class QLKSCustomerServiceImpl implements QLKSCustomerService {
     }
 
     @Override
-    public void update(UpdateCustomerRequest customerRequest, String id) throws HotelManagerException {
+    public void update(CustomerRequest customerRequest, String id) throws HotelManagerException {
 
         if (qlksCustomerRepository.getById(id).isEmpty()) {
             log.error("id not existed !");

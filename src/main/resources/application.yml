@@ -30,7 +30,7 @@ server:
 mailServer:
   host: smtp.gmail.com
   port: 587
-  email: longzip113@gmail.com
-  password: long01645344108
+  email: hotelmanagerhufi@gmail.com
+  password: long250599
   protocol: smtp
   isSSL: false

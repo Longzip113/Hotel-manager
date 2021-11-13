@@ -1,6 +1,6 @@
 package com.hotelManager.repositories;
 
-import com.hotelManager.dtos.request.UpdateRoomRequest;
+import com.hotelManager.dtos.request.RoomRequest;
 import com.hotelManager.entities.QLKSRoomEntity;
 import com.hotelManager.exceptions.HotelManagerException;
 import com.hotelManager.model.QLKSRoomModel;
@@ -13,7 +13,7 @@ public interface QLKSRoomRepository {
 
     void delete(String idRoom);
 
-    void update(UpdateRoomRequest roomRequest, String idRoom) throws HotelManagerException;
+    void update(RoomRequest roomRequest, String idRoom) throws HotelManagerException;
 
     Optional<QLKSRoomEntity> getByNameRoom(String nameRoom) throws HotelManagerException;
 

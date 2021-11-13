@@ -1,7 +1,6 @@
 package com.hotelManager.services.impl;
 
-import com.hotelManager.dtos.request.AddRoleRequest;
-import com.hotelManager.dtos.request.UpdateRoleRequest;
+import com.hotelManager.dtos.request.RoleRequest;
 import com.hotelManager.entities.QLKSRoleEntity;
 import com.hotelManager.exceptions.DatabaseException;
 import com.hotelManager.exceptions.HotelManagerException;
@@ -27,14 +26,17 @@ public class QLKSRoleServiceImpl implements QLKSRoleService {
 
     @Override
     public List<QLKSRoleEntity> getAll() throws HotelManagerException {
+
+
+
         return qlksRoleRepository.getAll();
     }
 
     @Override
-    public void add(AddRoleRequest addRoleRequest) throws HotelManagerException {
+    public void add(RoleRequest roleRequest) throws HotelManagerException {
 
-        Optional<QLKSRoleEntity> qlksRoleEntity = qlksRoleRepository.getByNameOrCode(addRoleRequest.getNameRole(),
-                addRoleRequest.getCode(), "");
+        Optional<QLKSRoleEntity> qlksRoleEntity = qlksRoleRepository.getByNameOrCode(roleRequest.getNameRole(),
+                roleRequest.getCode(), "");
 
         if (qlksRoleEntity.isPresent()) {
 
@@ -42,8 +44,8 @@ public class QLKSRoleServiceImpl implements QLKSRoleService {
             HotelManagerUtils.throwException(DatabaseException.class, ERROR_ROLE_ALREADY_EXISTED);
         }
         QLKSRoleEntity entity = QLKSRoleEntity.builder()
-                .codeRole(addRoleRequest.getCode())
-                .nameRole(addRoleRequest.getNameRole())
+                .codeRole(roleRequest.getCode())
+                .nameRole(roleRequest.getNameRole())
                 .isDelete(Boolean.FALSE)
                 .build();
 
@@ -58,25 +60,30 @@ public class QLKSRoleServiceImpl implements QLKSRoleService {
             HotelManagerUtils.throwException(DatabaseException.class, ERROR_ID_NOT_EXISTED);
         }
 
+        if (qlksRoleRepository.countRoleByEmployee(id) > 0) {
+            log.error("Delete Role failed Id: [{}]", id);
+            HotelManagerUtils.throwException(DatabaseException.class, ERROR_ROLE_ALREADY);
+        }
+
         qlksRoleRepository.delete(id);
     }
 
     @Override
-    public void update(String id, UpdateRoleRequest updateRoleRequest) throws HotelManagerException {
+    public void update(String id, RoleRequest roleRequest) throws HotelManagerException {
         Optional<QLKSRoleEntity> qlksRoleEntity = qlksRoleRepository.getById(id);
         if (qlksRoleEntity.isEmpty()) {
             log.error("id not existed !");
             HotelManagerUtils.throwException(DatabaseException.class, ERROR_ID_NOT_EXISTED);
         }
 
-        if (qlksRoleRepository.getByNameOrCode(updateRoleRequest.getNameRole(),
-                updateRoleRequest.getCode(), id).isPresent()) {
+        if (qlksRoleRepository.getByNameOrCode(roleRequest.getNameRole(),
+                roleRequest.getCode(), id).isPresent()) {
 
             log.error("Code or Name existed !");
             HotelManagerUtils.throwException(DatabaseException.class, ERROR_ROLE_ALREADY_EXISTED);
         }
 
-        qlksRoleRepository.update(id, updateRoleRequest);
+        qlksRoleRepository.update(id, roleRequest);
     }
 
     @Override

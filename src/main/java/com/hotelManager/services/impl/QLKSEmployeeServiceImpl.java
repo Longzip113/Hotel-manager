@@ -40,7 +40,7 @@ public class QLKSEmployeeServiceImpl implements QLKSEmployeeService {
     ClientService clientService;
 
     @Override
-    public void save(AddUserRequest addUserRequest) throws HotelManagerException {
+    public void save(UserRequest addUserRequest) throws HotelManagerException {
         Session session = sessionFactory.openSession();
         try {
             // Create transaction
@@ -53,7 +53,7 @@ public class QLKSEmployeeServiceImpl implements QLKSEmployeeService {
                     .identityCard(addUserRequest.getIdentityCard())
                     .phoneNumber(addUserRequest.getPhoneNumber())
                     .email(addUserRequest.getEmail())
-                    .idRole(ID_ROLE_USER)
+                    .idRole(addUserRequest.getIdRole())
                     .passWord(PASSWORD_DEFAULT)
                     .build();
 
@@ -71,7 +71,7 @@ public class QLKSEmployeeServiceImpl implements QLKSEmployeeService {
     }
 
     @Override
-    public QLKSEmployeeModel login(UserRequest userRequest) throws HotelManagerException {
+    public QLKSEmployeeModel login(LoginRequest userRequest) throws HotelManagerException {
         Optional<QLKSEmployeeModel> qlksEmployeeModel = qlksEmployeeRepository.getEmployeeByEmailAndPassWord(userRequest.getPassWord(), userRequest.getEmail());
 
         if (qlksEmployeeModel.isEmpty()) {
@@ -109,7 +109,7 @@ public class QLKSEmployeeServiceImpl implements QLKSEmployeeService {
     }
 
     @Override
-    public void update(UpdateUserRequest userRequest, String id) throws HotelManagerException {
+    public void update(UserRequest userRequest, String id) throws HotelManagerException {
         if (qlksEmployeeRepository.getById(id).isEmpty()) {
             log.error("id not existed !");
             HotelManagerUtils.throwException(DatabaseException.class, ERROR_ID_NOT_EXISTED);
@@ -150,7 +150,12 @@ public class QLKSEmployeeServiceImpl implements QLKSEmployeeService {
     }
 
     @Override
-    public void changDefaultPassword(ChangePasswordRequest changePasswordRequest) throws HotelManagerException {
+    public void getPassword(GetPasswordRequest changePasswordRequest) throws HotelManagerException {
         qlksEmployeeRepository.resetPasswordByVerification(changePasswordRequest);
+    }
+
+    @Override
+    public void changePassword(ChangePasswordRequest changePasswordRequest) throws HotelManagerException {
+        qlksEmployeeRepository.changePasswordByEmail(changePasswordRequest);
     }
 }

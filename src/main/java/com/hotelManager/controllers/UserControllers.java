@@ -23,12 +23,12 @@ public class UserControllers {
     QLKSEmployeeService qlksEmployeeService;
 
     @PostMapping(value = "/login")
-    public ResponseEntity<QLKSEmployeeModel> login(@RequestBody UserRequest userRequest) throws HotelManagerException {
+    public ResponseEntity<QLKSEmployeeModel> login(@RequestBody LoginRequest userRequest) throws HotelManagerException {
         return ResponseEntity.ok(qlksEmployeeService.login(userRequest));
     }
 
     @PostMapping(value = "/")
-    public ResponseEntity<BaseApiResponse> add(@RequestBody AddUserRequest request) throws HotelManagerException {
+    public ResponseEntity<BaseApiResponse> add(@RequestBody UserRequest request) throws HotelManagerException {
         qlksEmployeeService.save(request);
         return ResponseEntity.ok(new BaseApiResponse());
     }
@@ -50,7 +50,7 @@ public class UserControllers {
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<BaseApiResponse> update(@PathVariable("id") String id, @RequestBody UpdateUserRequest updateUserRequest) throws HotelManagerException {
+    public ResponseEntity<BaseApiResponse> update(@PathVariable("id") String id, @RequestBody UserRequest updateUserRequest) throws HotelManagerException {
 
         qlksEmployeeService.update(updateUserRequest, id);
 
@@ -63,9 +63,15 @@ public class UserControllers {
         return ResponseEntity.ok(new BaseApiResponse());
     }
 
+    @PostMapping(value = "/get-pass")
+    public ResponseEntity<BaseApiResponse> getPassword(@RequestBody GetPasswordRequest changePasswordRequest) throws HotelManagerException {
+        qlksEmployeeService.getPassword(changePasswordRequest);
+        return ResponseEntity.ok(new BaseApiResponse());
+    }
+
     @PostMapping(value = "/change-pass")
     public ResponseEntity<BaseApiResponse> changePassword(@RequestBody ChangePasswordRequest changePasswordRequest) throws HotelManagerException {
-        qlksEmployeeService.changDefaultPassword(changePasswordRequest);
+        qlksEmployeeService.changePassword(changePasswordRequest);
         return ResponseEntity.ok(new BaseApiResponse());
     }
 

@@ -1,10 +1,11 @@
 package com.hotelManager.services.impl;
 
-import com.hotelManager.dtos.request.AddTypeRoomRequest;
-import com.hotelManager.dtos.request.UpdateTypeRoomRequest;
+import com.hotelManager.dtos.request.TypeRoomRequest;
+import com.hotelManager.dtos.responses.QLKSTypeRoomReponse;
 import com.hotelManager.entities.QLKSTypeRoomEntity;
 import com.hotelManager.exceptions.DatabaseException;
 import com.hotelManager.exceptions.HotelManagerException;
+import com.hotelManager.repositories.QLKSDetailTypeRoomRepository;
 import com.hotelManager.repositories.QLKSTypeRoomRepository;
 import com.hotelManager.services.QLKSTypeRoomService;
 import com.hotelManager.utils.HotelManagerUtils;
@@ -13,6 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,23 +27,41 @@ public class QLKSTypeRoomServiceImpl implements QLKSTypeRoomService {
     @Autowired
     QLKSTypeRoomRepository qlksTypeRoomRepository;
 
+    @Autowired
+    QLKSDetailTypeRoomRepository qlksDetailTypeRoomRepository;
+
     @Override
-    public List<QLKSTypeRoomEntity> getAll() throws HotelManagerException {
-        return qlksTypeRoomRepository.getAll();
+    public List<QLKSTypeRoomReponse> getAll() throws HotelManagerException {
+
+        List<QLKSTypeRoomEntity> qlksTypeRoomEntities = qlksTypeRoomRepository.getAll();
+        List<QLKSTypeRoomReponse> results = new ArrayList<>();
+        qlksTypeRoomEntities.stream().forEach(item -> {
+            QLKSTypeRoomReponse result = QLKSTypeRoomReponse.builder()
+                    .description(item.getDescription())
+                    .nameTypeRoom(item.getNameTypeRoom())
+                    .price(item.getPrice())
+                    .details(qlksDetailTypeRoomRepository.getByIdTypeRoom(item.getId()))
+                    .id(item.getId()).build();
+
+            results.add(result);
+
+        });
+
+        return results;
     }
 
     @Override
-    public void addTypeRoom(AddTypeRoomRequest addTypeRoomRequest) throws HotelManagerException {
+    public void addTypeRoom(TypeRoomRequest typeRoomRequest) throws HotelManagerException {
 
-        if (qlksTypeRoomRepository.getByNameType(addTypeRoomRequest.getNameTypeRoom()).isPresent()) {
+        if (qlksTypeRoomRepository.getByNameType(typeRoomRequest.getNameTypeRoom()).isPresent()) {
             log.error("Name type existed !");
             HotelManagerUtils.throwException(DatabaseException.class, ERROR_TYPE_ROOM_ALREADY_EXISTED);
         }
 
         QLKSTypeRoomEntity qlksTypeRoomEntity = QLKSTypeRoomEntity.builder()
-                .nameTypeRoom(addTypeRoomRequest.getNameTypeRoom())
-                .price(addTypeRoomRequest.getPrice())
-                .description(addTypeRoomRequest.getDescription())
+                .nameTypeRoom(typeRoomRequest.getNameTypeRoom())
+                .price(typeRoomRequest.getPrice())
+                .description(typeRoomRequest.getDescription())
                 .isDelete(Boolean.FALSE)
                 .build();
 
@@ -65,29 +85,34 @@ public class QLKSTypeRoomServiceImpl implements QLKSTypeRoomService {
     }
 
     @Override
-    public void updateTypeRoom(String id, UpdateTypeRoomRequest updateTypeRoomRequest) throws HotelManagerException {
+    public void updateTypeRoom(String id, TypeRoomRequest typeRoomRequest) throws HotelManagerException {
         if (qlksTypeRoomRepository.getById(id).isEmpty()) {
             log.error("idTypeRoom not existed !");
             HotelManagerUtils.throwException(DatabaseException.class, ERROR_TYPE_ROOM_NOT_EXISTED);
         }
-        if(StringUtils.isNotBlank(updateTypeRoomRequest.getNameTypeRoom())) {
-            if (qlksTypeRoomRepository.getByNameTypeAndPrice(updateTypeRoomRequest.getNameTypeRoom(), updateTypeRoomRequest.getPrice(), updateTypeRoomRequest.getDescription()).isPresent()) {
+        if(StringUtils.isNotBlank(typeRoomRequest.getNameTypeRoom())) {
+            if (qlksTypeRoomRepository.getByNameTypeAndPrice(typeRoomRequest.getNameTypeRoom(), typeRoomRequest.getPrice(), typeRoomRequest.getDescription()).isPresent()) {
                 log.error("Name type existed !");
                 HotelManagerUtils.throwException(DatabaseException.class, ERROR_TYPE_ROOM_ALREADY_EXISTED);
             }
         }
 
-        qlksTypeRoomRepository.update(id, updateTypeRoomRequest);
+        qlksTypeRoomRepository.update(id, typeRoomRequest);
     }
 
     @Override
-    public QLKSTypeRoomEntity getDetailTypeRoom(String id) throws HotelManagerException {
+    public QLKSTypeRoomReponse getDetailTypeRoom(String id) throws HotelManagerException {
         Optional<QLKSTypeRoomEntity> qlksTypeRoomEntity = qlksTypeRoomRepository.getById(id);
         if (qlksTypeRoomEntity.isEmpty()) {
             log.error("idTypeRoom not existed !");
             HotelManagerUtils.throwException(DatabaseException.class, ERROR_TYPE_ROOM_NOT_EXISTED);
         }
 
-        return qlksTypeRoomEntity.get();
+        return QLKSTypeRoomReponse.builder()
+                .description(qlksTypeRoomEntity.get().getDescription())
+                .nameTypeRoom(qlksTypeRoomEntity.get().getNameTypeRoom())
+                .price(qlksTypeRoomEntity.get().getPrice())
+                .details(qlksDetailTypeRoomRepository.getByIdTypeRoom(qlksTypeRoomEntity.get().getId()))
+                .id(qlksTypeRoomEntity.get().getId()).build();
     }
 }

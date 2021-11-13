@@ -1,7 +1,6 @@
 package com.hotelManager.controllers;
 
-import com.hotelManager.dtos.request.AddServiceRequest;
-import com.hotelManager.dtos.request.UpdateServiceRequest;
+import com.hotelManager.dtos.request.ServiceRequest;
 import com.hotelManager.dtos.responses.BaseApiResponse;
 import com.hotelManager.entities.QLKSServiceEntity;
 import com.hotelManager.exceptions.HotelManagerException;
@@ -30,7 +29,7 @@ public class ServiceControllers {
     }
 
     @PostMapping(value = "/service")
-    public ResponseEntity<BaseApiResponse> addService(@RequestBody @Valid AddServiceRequest addServiceRequest) throws HotelManagerException {
+    public ResponseEntity<BaseApiResponse> addService(@RequestBody @Valid ServiceRequest addServiceRequest) throws HotelManagerException {
         qlksServiceService.addService(addServiceRequest);
         return ResponseEntity.ok(new BaseApiResponse());
     }
@@ -47,7 +46,7 @@ public class ServiceControllers {
     }
 
     @PutMapping(value = "/service/{id}")
-    public ResponseEntity<BaseApiResponse> updateService(@PathVariable("id") String id, @RequestBody UpdateServiceRequest updateServiceRequest) throws HotelManagerException {
+    public ResponseEntity<BaseApiResponse> updateService(@PathVariable("id") String id, @RequestBody ServiceRequest updateServiceRequest) throws HotelManagerException {
 
         if (StringUtils.isNotBlank(updateServiceRequest.getNameService()) || updateServiceRequest.getPrice() != null) {
             qlksServiceService.updateService(id, updateServiceRequest);

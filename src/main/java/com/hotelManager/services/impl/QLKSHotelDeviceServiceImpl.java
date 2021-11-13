@@ -1,7 +1,6 @@
 package com.hotelManager.services.impl;
 
-import com.hotelManager.dtos.request.AddHotelDeviceRequest;
-import com.hotelManager.dtos.request.UpdateHotelDeviceRequest;
+import com.hotelManager.dtos.request.HotelDeviceRequest;
 import com.hotelManager.entities.QLKSHotelDeviceEntity;
 import com.hotelManager.exceptions.DatabaseException;
 import com.hotelManager.exceptions.HotelManagerException;
@@ -31,27 +30,27 @@ public class QLKSHotelDeviceServiceImpl implements QLKSHotelDeviceService {
     }
 
     @Override
-    public void add(AddHotelDeviceRequest addHotelDeviceRequest) throws HotelManagerException {
+    public void add(HotelDeviceRequest hotelDeviceRequest) throws HotelManagerException {
 
-        Optional<QLKSHotelDeviceEntity> qlksHotelDeviceEntity = qlksHotelDeviceRepository.getByNameAndPrice(addHotelDeviceRequest.getNameHotelDevice()
-                , addHotelDeviceRequest.getPrice());
+        Optional<QLKSHotelDeviceEntity> qlksHotelDeviceEntity = qlksHotelDeviceRepository.getByNameAndPrice(hotelDeviceRequest.getNameHotelDevice()
+                , hotelDeviceRequest.getPrice());
 
         if (qlksHotelDeviceEntity.isPresent()) {
-            UpdateHotelDeviceRequest update = UpdateHotelDeviceRequest.builder()
-                    .nameHotelDevice(addHotelDeviceRequest.getNameHotelDevice())
-                    .price(addHotelDeviceRequest.getPrice())
-                    .quantity(addHotelDeviceRequest.getQuantity() + qlksHotelDeviceEntity.get().getQuantity())
+            HotelDeviceRequest update = HotelDeviceRequest.builder()
+                    .nameHotelDevice(hotelDeviceRequest.getNameHotelDevice())
+                    .price(hotelDeviceRequest.getPrice())
+                    .quantity(hotelDeviceRequest.getQuantity() + qlksHotelDeviceEntity.get().getQuantity())
                     .build();
             qlksHotelDeviceRepository.update(qlksHotelDeviceEntity.get().getId(), update);
-        } else if (qlksHotelDeviceRepository.getByName(addHotelDeviceRequest.getNameHotelDevice()).isPresent()) {
+        } else if (qlksHotelDeviceRepository.getByName(hotelDeviceRequest.getNameHotelDevice()).isPresent()) {
 
             log.error("Name device existed !");
             HotelManagerUtils.throwException(DatabaseException.class, ERROR_DEVICE_ALREADY_EXISTED);
         } else {
             QLKSHotelDeviceEntity entity = QLKSHotelDeviceEntity.builder()
-                    .nameHotelDevice(addHotelDeviceRequest.getNameHotelDevice())
-                    .price(addHotelDeviceRequest.getPrice())
-                    .quantity(addHotelDeviceRequest.getQuantity())
+                    .nameHotelDevice(hotelDeviceRequest.getNameHotelDevice())
+                    .price(hotelDeviceRequest.getPrice())
+                    .quantity(hotelDeviceRequest.getQuantity())
                     .isDelete(Boolean.FALSE)
                     .status(Boolean.TRUE)
                     .build();
@@ -79,7 +78,7 @@ public class QLKSHotelDeviceServiceImpl implements QLKSHotelDeviceService {
     }
 
     @Override
-    public void update(String id, UpdateHotelDeviceRequest updateHotelDeviceRequest) throws HotelManagerException {
+    public void update(String id, HotelDeviceRequest updateHotelDeviceRequest) throws HotelManagerException {
         Optional<QLKSHotelDeviceEntity> qlksHotelDeviceEntity = qlksHotelDeviceRepository.getById(id);
         if (qlksHotelDeviceEntity.isEmpty()) {
             log.error("id not existed !");

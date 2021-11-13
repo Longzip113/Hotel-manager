@@ -1,6 +1,6 @@
 package com.hotelManager.repositories.impl;
 
-import com.hotelManager.dtos.request.UpdateTypeRoomRequest;
+import com.hotelManager.dtos.request.TypeRoomRequest;
 import com.hotelManager.entities.QLKSTypeRoomEntity;
 import com.hotelManager.exceptions.DatabaseException;
 import com.hotelManager.exceptions.HotelManagerException;
@@ -9,7 +9,6 @@ import com.hotelManager.utils.GsonHelper;
 import com.hotelManager.utils.HibernateUtils;
 import com.hotelManager.utils.HotelManagerUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
@@ -98,7 +97,7 @@ public class QLKSTypeRoomRepositoryImpl implements QLKSTypeRoomRepository {
     }
 
     @Override
-    public void update(String id, UpdateTypeRoomRequest updateTypeRoomRequest) throws HotelManagerException {
+    public void update(String id, TypeRoomRequest typeRoomRequest) throws HotelManagerException {
         Session session = sessionFactory.openSession();
         HibernateUtils.beginTransaction(session);
 
@@ -115,9 +114,9 @@ public class QLKSTypeRoomRepositoryImpl implements QLKSTypeRoomRepository {
 
             Query query = session.createQuery(hql.toString())
                     .setParameter("id", id)
-                    .setParameter("nameTypeRoom", updateTypeRoomRequest.getNameTypeRoom())
-                    .setParameter("description", updateTypeRoomRequest.getDescription())
-                    .setParameter("price", updateTypeRoomRequest.getPrice());
+                    .setParameter("nameTypeRoom", typeRoomRequest.getNameTypeRoom())
+                    .setParameter("description", typeRoomRequest.getDescription())
+                    .setParameter("price", typeRoomRequest.getPrice());
 
             query.executeUpdate();
             session.getTransaction().commit();

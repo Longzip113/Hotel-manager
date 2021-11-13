@@ -1,6 +1,6 @@
 package com.hotelManager.repositories.impl;
 
-import com.hotelManager.dtos.request.UpdateServiceRequest;
+import com.hotelManager.dtos.request.ServiceRequest;
 import com.hotelManager.entities.QLKSServiceEntity;
 import com.hotelManager.exceptions.DatabaseException;
 import com.hotelManager.exceptions.HotelManagerException;
@@ -96,7 +96,7 @@ public class QLKSServiceRepositoryImpl implements QLKSServiceRepository {
     }
 
     @Override
-    public void update(String id, UpdateServiceRequest updateServiceRequest) throws HotelManagerException {
+    public void update(String id, ServiceRequest updateServiceRequest) throws HotelManagerException {
         Session session = sessionFactory.openSession();
         HibernateUtils.beginTransaction(session);
 

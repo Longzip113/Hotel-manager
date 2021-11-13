@@ -1,10 +1,8 @@
 package com.hotelManager.repositories;
 
 import com.hotelManager.dtos.request.ChangePasswordRequest;
-import com.hotelManager.dtos.request.UpdateTypeRoomRequest;
-import com.hotelManager.dtos.request.UpdateUserRequest;
-import com.hotelManager.entities.QLKSCustomerEntity;
-import com.hotelManager.entities.QLKSDetailTypeRoomEntity;
+import com.hotelManager.dtos.request.GetPasswordRequest;
+import com.hotelManager.dtos.request.UserRequest;
 import com.hotelManager.entities.QLKSEmployeeEntity;
 import com.hotelManager.exceptions.HotelManagerException;
 import com.hotelManager.model.QLKSEmployeeModel;
@@ -19,7 +17,7 @@ public interface QLKSEmployeeRepository {
 
     void delete(String id) throws HotelManagerException;
 
-    void update(String id, UpdateUserRequest userRequest) throws HotelManagerException;
+    void update(String id, UserRequest userRequest) throws HotelManagerException;
 
     String save (QLKSEmployeeEntity qlksEmployeeEntity, Session session) throws HotelManagerException;
 
@@ -35,5 +33,7 @@ public interface QLKSEmployeeRepository {
 
     void saveVerification(String email, String veri, String id) throws HotelManagerException;
 
-    void resetPasswordByVerification(ChangePasswordRequest changePasswordRequest) throws HotelManagerException;
+    void resetPasswordByVerification(GetPasswordRequest getPasswordRequest) throws HotelManagerException;
+
+    void changePasswordByEmail(ChangePasswordRequest changePasswordRequest) throws HotelManagerException;
 }

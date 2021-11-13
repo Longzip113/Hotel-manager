@@ -9,10 +9,11 @@ import javax.validation.constraints.NotBlank;
 @Setter
 @Getter
 @Data
-public class AddServiceRequest {
+public class ServiceRequest {
 
     @NotBlank(message = "nameService is not empty or null")
     private String nameService;
 
     private Integer price;
+
 }

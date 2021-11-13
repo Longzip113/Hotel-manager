@@ -1,8 +1,7 @@
 package com.hotelManager.controllers;
 
 import com.hotelManager.constants.Constants;
-import com.hotelManager.dtos.request.AddCustomerRequest;
-import com.hotelManager.dtos.request.UpdateCustomerRequest;
+import com.hotelManager.dtos.request.CustomerRequest;
 import com.hotelManager.dtos.responses.BaseApiResponse;
 import com.hotelManager.entities.QLKSCustomerEntity;
 import com.hotelManager.exceptions.HotelManagerException;
@@ -52,14 +51,14 @@ public class CustomerControllers {
     }
 
     @PostMapping(value = "/customer")
-    public ResponseEntity<BaseApiResponse> addCustomer(@RequestBody @Valid AddCustomerRequest addCustomerRequest) throws HotelManagerException {
-        qlksCustomerService.save(addCustomerRequest);
+    public ResponseEntity<BaseApiResponse> addCustomer(@RequestBody @Valid CustomerRequest customerRequest) throws HotelManagerException {
+        qlksCustomerService.save(customerRequest);
         return ResponseEntity.ok(new BaseApiResponse());
     }
 
     @PutMapping(value = "/customer/{id}")
-    public ResponseEntity<BaseApiResponse> updateCustomer(@PathVariable("id") String id, @RequestBody @Valid UpdateCustomerRequest updateCustomerRequest) throws HotelManagerException {
-        qlksCustomerService.update(updateCustomerRequest, id);
+    public ResponseEntity<BaseApiResponse> updateCustomer(@PathVariable("id") String id, @RequestBody @Valid CustomerRequest customerRequest) throws HotelManagerException {
+        qlksCustomerService.update(customerRequest, id);
         return ResponseEntity.ok(new BaseApiResponse());
     }
 }

@@ -1,12 +1,12 @@
 package com.hotelManager.services.impl;
 
 import com.hotelManager.constants.enums.StatusRoom;
-import com.hotelManager.dtos.request.AddRoomRequest;
-import com.hotelManager.dtos.request.UpdateRoomRequest;
+import com.hotelManager.dtos.request.RoomRequest;
 import com.hotelManager.entities.QLKSRoomEntity;
 import com.hotelManager.exceptions.DatabaseException;
 import com.hotelManager.exceptions.HotelManagerException;
 import com.hotelManager.model.QLKSRoomModel;
+import com.hotelManager.repositories.QLKSDetailTypeRoomRepository;
 import com.hotelManager.repositories.QLKSRoomRepository;
 import com.hotelManager.repositories.QLKSTypeRoomRepository;
 import com.hotelManager.services.QLKSRoomService;
@@ -17,6 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.hotelManager.constants.enums.HotelManagerResponseCode.*;
 
@@ -30,8 +32,11 @@ public class QLKSRoomServiceImpl implements QLKSRoomService {
     @Autowired
     QLKSTypeRoomRepository qlksTypeRoomRepository;
 
+    @Autowired
+    QLKSDetailTypeRoomRepository qlksDetailTypeRoomRepository;
+
     @Override
-    public void save(AddRoomRequest addRoomRequest) throws HotelManagerException {
+    public void save(RoomRequest addRoomRequest) throws HotelManagerException {
 
         if (qlksRoomRepository.getByNameRoom(addRoomRequest.getNameRoom()).isPresent()) {
             log.error("Name room existed !");
@@ -65,7 +70,7 @@ public class QLKSRoomServiceImpl implements QLKSRoomService {
     }
 
     @Override
-    public void update(UpdateRoomRequest roomRequest, String idRoom) throws HotelManagerException {
+    public void update(RoomRequest roomRequest, String idRoom) throws HotelManagerException {
 
         if (qlksRoomRepository.getByIdRoom(idRoom).isEmpty()) {
             log.error("idRoom not existed !");
@@ -88,17 +93,24 @@ public class QLKSRoomServiceImpl implements QLKSRoomService {
 
     @Override
     public List<QLKSRoomModel> getAll(String sortBy, String sortOrder) {
-        return qlksRoomRepository.getAll(sortBy, sortOrder);
+
+        return qlksRoomRepository.getAll(sortBy, sortOrder).stream().map(item -> {
+            item.setDetails(qlksDetailTypeRoomRepository.getByIdTypeRoom(item.getIdTypeRoom()));
+            return item;
+        }).collect(Collectors.toList());
     }
 
     @Override
     public QLKSRoomModel getDetailRoom(String idRoom) throws HotelManagerException {
 
-        if(qlksRoomRepository.getByIdRoom(idRoom).isEmpty()) {
+        Optional<QLKSRoomModel> result = qlksRoomRepository.getByIdRoom(idRoom);
+
+        if(result.isEmpty()) {
             log.error("IdRoom does not exist !");
             HotelManagerUtils.throwException(DatabaseException.class, ERROR_ROOM_NOT_EXISTED);
         }
+        result.get().setDetails(qlksDetailTypeRoomRepository.getByIdTypeRoom(result.get().getIdTypeRoom()));
 
-        return qlksRoomRepository.getByIdRoom(idRoom).get();
+        return result.get();
     }
 }

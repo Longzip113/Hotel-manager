@@ -1,7 +1,6 @@
 package com.hotelManager.services;
 
-import com.hotelManager.dtos.request.AddRoleRequest;
-import com.hotelManager.dtos.request.UpdateRoleRequest;
+import com.hotelManager.dtos.request.RoleRequest;
 import com.hotelManager.entities.QLKSRoleEntity;
 import com.hotelManager.exceptions.HotelManagerException;
 
@@ -11,11 +10,11 @@ public interface QLKSRoleService {
 
     List<QLKSRoleEntity> getAll() throws HotelManagerException;
 
-    void add(AddRoleRequest addRoleRequest) throws HotelManagerException;
+    void add(RoleRequest roleRequest) throws HotelManagerException;
 
     void delete(String id) throws HotelManagerException;
 
-    void update(String id, UpdateRoleRequest updateRoleRequest) throws HotelManagerException;
+    void update(String id, RoleRequest roleRequest) throws HotelManagerException;
 
     QLKSRoleEntity getDetail(String id) throws HotelManagerException;
 

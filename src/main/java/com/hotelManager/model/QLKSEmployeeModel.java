@@ -26,7 +26,8 @@ import javax.persistence.*;
                         @ColumnResult(name = "phone_number"),
                         @ColumnResult(name = "email", type = String.class),
                         @ColumnResult(name = "code_role", type = String.class),
-                        @ColumnResult(name = "name_role", type = String.class)
+                        @ColumnResult(name = "name_role", type = String.class),
+                        @ColumnResult(name = "id_role", type = String.class)
                 }))
 public class QLKSEmployeeModel {
 
@@ -66,4 +67,8 @@ public class QLKSEmployeeModel {
     @Column(name = "name_role", nullable = false)
     @JsonProperty("nameRole")
     private String nameRole;
+
+    @Column(name = "id_role", nullable = false)
+    @JsonProperty("idRole")
+    private String idRole;
 }

@@ -1,9 +1,7 @@
 package com.hotelManager.repositories;
 
-import com.hotelManager.dtos.request.UpdateHotelDeviceRequest;
-import com.hotelManager.dtos.request.UpdateTypeRoomRequest;
+import com.hotelManager.dtos.request.HotelDeviceRequest;
 import com.hotelManager.entities.QLKSHotelDeviceEntity;
-import com.hotelManager.entities.QLKSTypeRoomEntity;
 import com.hotelManager.exceptions.HotelManagerException;
 
 import java.util.List;
@@ -16,7 +14,7 @@ public interface QLKSHotelDeviceRepository {
 
     void delete(String id) throws HotelManagerException;
 
-    void update(String id, UpdateHotelDeviceRequest updateHotelDeviceRequest) throws HotelManagerException;
+    void update(String id, HotelDeviceRequest updateHotelDeviceRequest) throws HotelManagerException;
 
     Optional<QLKSHotelDeviceEntity> getById(String id) throws HotelManagerException;
 

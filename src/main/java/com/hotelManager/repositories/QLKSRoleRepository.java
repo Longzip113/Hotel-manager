@@ -1,6 +1,6 @@
 package com.hotelManager.repositories;
 
-import com.hotelManager.dtos.request.UpdateRoleRequest;
+import com.hotelManager.dtos.request.RoleRequest;
 import com.hotelManager.entities.QLKSRoleEntity;
 import com.hotelManager.exceptions.HotelManagerException;
 
@@ -14,7 +14,7 @@ public interface QLKSRoleRepository {
 
     void delete(String id) throws HotelManagerException;
 
-    void update(String id, UpdateRoleRequest updateRoleRequest) throws HotelManagerException;
+    void update(String id, RoleRequest roleRequest) throws HotelManagerException;
 
     Optional<QLKSRoleEntity> getById(String id) throws HotelManagerException;
 

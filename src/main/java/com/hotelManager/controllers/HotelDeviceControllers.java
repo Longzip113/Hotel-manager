@@ -1,17 +1,11 @@
 package com.hotelManager.controllers;
 
-import com.hotelManager.dtos.request.AddHotelDeviceRequest;
-import com.hotelManager.dtos.request.AddTypeRoomRequest;
-import com.hotelManager.dtos.request.UpdateHotelDeviceRequest;
-import com.hotelManager.dtos.request.UpdateTypeRoomRequest;
+import com.hotelManager.dtos.request.HotelDeviceRequest;
 import com.hotelManager.dtos.responses.BaseApiResponse;
 import com.hotelManager.entities.QLKSHotelDeviceEntity;
-import com.hotelManager.entities.QLKSTypeRoomEntity;
 import com.hotelManager.exceptions.HotelManagerException;
 import com.hotelManager.services.QLKSHotelDeviceService;
-import com.hotelManager.services.QLKSTypeRoomService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -34,8 +28,8 @@ public class HotelDeviceControllers {
     }
 
     @PostMapping(value = "/hotel-device")
-    public ResponseEntity<BaseApiResponse> add(@RequestBody @Valid AddHotelDeviceRequest addHotelDeviceRequest) throws HotelManagerException {
-        qlksHotelDeviceService.add(addHotelDeviceRequest);
+    public ResponseEntity<BaseApiResponse> add(@RequestBody @Valid HotelDeviceRequest hotelDeviceRequest) throws HotelManagerException {
+        qlksHotelDeviceService.add(hotelDeviceRequest);
         return ResponseEntity.ok(new BaseApiResponse());
     }
 
@@ -51,7 +45,7 @@ public class HotelDeviceControllers {
     }
 
     @PutMapping(value = "/hotel-device/{id}")
-    public ResponseEntity<BaseApiResponse> update(@PathVariable("id") String id, @RequestBody UpdateHotelDeviceRequest updateHotelDeviceRequest) throws HotelManagerException {
+    public ResponseEntity<BaseApiResponse> update(@PathVariable("id") String id, @RequestBody HotelDeviceRequest updateHotelDeviceRequest) throws HotelManagerException {
 
        qlksHotelDeviceService.update(id, updateHotelDeviceRequest);
         return ResponseEntity.ok(new BaseApiResponse());

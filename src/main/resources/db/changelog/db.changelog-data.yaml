@@ -13,3 +13,7 @@ databaseChangeLog:
       file: db/changelog/init_data/V006_add_data_qlks_room.sql
   - include:
       file: db/changelog/init_data/V007_add_data_qlks_detail_type_room.sql
+  - include:
+      file: db/changelog/init_data/V008_add_data_qlks_customer.sql
+  - include:
+      file: db/changelog/init_data/V009_add_data_qlks_delegation.sql

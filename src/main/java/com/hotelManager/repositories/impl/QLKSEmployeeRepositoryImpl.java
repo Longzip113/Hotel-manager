@@ -1,9 +1,8 @@
 package com.hotelManager.repositories.impl;
 
 import com.hotelManager.dtos.request.ChangePasswordRequest;
-import com.hotelManager.dtos.request.UpdateTypeRoomRequest;
-import com.hotelManager.dtos.request.UpdateUserRequest;
-import com.hotelManager.entities.QLKSCustomerEntity;
+import com.hotelManager.dtos.request.GetPasswordRequest;
+import com.hotelManager.dtos.request.UserRequest;
 import com.hotelManager.entities.QLKSEmployeeEntity;
 import com.hotelManager.exceptions.DatabaseException;
 import com.hotelManager.exceptions.HotelManagerException;
@@ -24,7 +23,6 @@ import javax.persistence.PersistenceException;
 import java.util.List;
 import java.util.Optional;
 
-import static com.hotelManager.constants.Constants.PASSWORD_DEFAULT;
 import static com.hotelManager.constants.enums.HotelManagerResponseCode.ERROR_SERVER;
 import static com.hotelManager.constants.enums.HotelManagerResponseCode.ERROR_VERIFICATION;
 
@@ -40,7 +38,7 @@ public class QLKSEmployeeRepositoryImpl implements QLKSEmployeeRepository {
         Session session = sessionFactory.openSession();
         try {
             StringBuilder hql = new StringBuilder()
-                    .append("SELECT e.id_employee, e.name_employee, e.gender, e.identity_card, e.address, e.phone_number, e.email, r.code_role, r.name_role ")
+                    .append("SELECT e.id_employee, e.name_employee, e.gender, e.identity_card, e.address, e.phone_number, e.email, r.code_role, r.name_role, r.id_role ")
                     .append("FROM qlks_employee e ")
                     .append("LEFT JOIN qlks_role r ON r.id_role = e.id_role ")
                     .append("WHERE e.is_delete = :isDeleted ");
@@ -85,13 +83,13 @@ public class QLKSEmployeeRepositoryImpl implements QLKSEmployeeRepository {
     }
 
     @Override
-    public void update(String id, UpdateUserRequest updateUserRequest) throws HotelManagerException {
+    public void update(String id, UserRequest updateUserRequest) throws HotelManagerException {
         Session session = sessionFactory.openSession();
         HibernateUtils.beginTransaction(session);
         try {
             StringBuilder hql = new StringBuilder()
                     .append("UPDATE QLKSEmployeeEntity ")
-                    .append("SET nameEmployee = :nameEmployee, gender = :gender, email = :email, identityCard = :identityCard, address = :address, phoneNumber = :phoneNumber ")
+                    .append("SET nameEmployee = :nameEmployee, gender = :gender, email = :email, identityCard = :identityCard, address = :address, phoneNumber = :phoneNumber, idRole = :idRole ")
                     .append("WHERE id = :id AND isDelete = :isDelete ");
 
             log.info("SQL [{}]", hql);
@@ -104,6 +102,7 @@ public class QLKSEmployeeRepositoryImpl implements QLKSEmployeeRepository {
                     .setParameter("address", updateUserRequest.getAddress())
                     .setParameter("phoneNumber", updateUserRequest.getPhoneNumber())
                     .setParameter("id", id)
+                    .setParameter("idRole", updateUserRequest.getIdRole())
                     .setParameter("isDelete", Boolean.FALSE);
 
             if (query.executeUpdate() < 1) {
@@ -137,7 +136,7 @@ public class QLKSEmployeeRepositoryImpl implements QLKSEmployeeRepository {
         Session session = sessionFactory.openSession();
         try {
             StringBuilder hql = new StringBuilder()
-                    .append("SELECT e.id_employee, e.name_employee, e.gender, e.identity_card, e.address, e.phone_number, e.email, r.code_role, r.name_role ")
+                    .append("SELECT e.id_employee, e.name_employee, e.gender, e.identity_card, e.address, e.phone_number, e.email, r.code_role, r.name_role, r.id_role ")
                     .append("FROM qlks_employee e ")
                     .append("LEFT JOIN qlks_role r ON r.id_role = e.id_role ")
                     .append("WHERE e.id_employee = :id AND e.is_delete = :isDeleted ");
@@ -159,7 +158,7 @@ public class QLKSEmployeeRepositoryImpl implements QLKSEmployeeRepository {
         Session session = sessionFactory.openSession();
         try {
             StringBuilder hql = new StringBuilder()
-                    .append("SELECT e.id_employee, e.name_employee, e.gender, e.identity_card, e.address, e.phone_number, e.email, r.code_role, r.name_role ")
+                    .append("SELECT e.id_employee, e.name_employee, e.gender, e.identity_card, e.address, e.phone_number, e.email, r.code_role, r.name_role, r.id_role ")
                     .append("FROM qlks_employee e ")
                     .append("LEFT JOIN qlks_role r ON r.id_role = e.id_role ")
                     .append("WHERE e.email = :email AND e.pass_word = :passWord AND e.is_delete = :isDeleted ");
@@ -284,7 +283,7 @@ public class QLKSEmployeeRepositoryImpl implements QLKSEmployeeRepository {
     }
 
     @Override
-    public void resetPasswordByVerification(ChangePasswordRequest changePasswordRequest) throws HotelManagerException {
+    public void resetPasswordByVerification(GetPasswordRequest changePasswordRequest) throws HotelManagerException {
         Session session = sessionFactory.openSession();
         HibernateUtils.beginTransaction(session);
         try {
@@ -298,6 +297,38 @@ public class QLKSEmployeeRepositoryImpl implements QLKSEmployeeRepository {
             Query query = session.createQuery(hql.toString())
                     .setParameter("verification", changePasswordRequest.getVerification())
                     .setParameter("passWord", changePasswordRequest.getPassword())
+                    .setParameter("isDelete", Boolean.FALSE);
+
+            if (query.executeUpdate() < 1) {
+
+                log.error("Update QLKSEmployeeEntity fail !");
+                HotelManagerUtils.throwException(DatabaseException.class, ERROR_VERIFICATION);
+            }
+            session.getTransaction().commit();
+        } catch (Exception e) {
+            log.error("Update QLKSEmployeeEntity fail !");
+            HotelManagerUtils.throwException(DatabaseException.class, ERROR_VERIFICATION);
+        } finally {
+            HibernateUtils.closeSession(session);
+        }
+    }
+
+    @Override
+    public void changePasswordByEmail(ChangePasswordRequest changePasswordRequest) throws HotelManagerException {
+        Session session = sessionFactory.openSession();
+        HibernateUtils.beginTransaction(session);
+        try {
+            StringBuilder hql = new StringBuilder()
+                    .append("UPDATE QLKSEmployeeEntity ")
+                    .append("SET passWord = :passwordNew ")
+                    .append("WHERE email = :email AND passWord = :passwordOld AND isDelete = :isDelete ");
+
+            log.info("SQL [{}]", hql);
+
+            Query query = session.createQuery(hql.toString())
+                    .setParameter("passwordNew", changePasswordRequest.getPasswordNew())
+                    .setParameter("passwordOld", changePasswordRequest.getPasswordOld())
+                    .setParameter("email", changePasswordRequest.getEmail())
                     .setParameter("isDelete", Boolean.FALSE);
 
             if (query.executeUpdate() < 1) {

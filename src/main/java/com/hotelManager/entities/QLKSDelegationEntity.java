@@ -31,6 +31,9 @@ public class QLKSDelegationEntity {
     @Column(name = "NUMBER_OF_PEOPLE", nullable = false)
     private Integer numberOfPeople;
 
+    @Column(name = "ID_CUSTOMER", nullable = false)
+    private Integer idCustomer;
+
     @Column(name = "IS_DELETE", nullable = false)
     private Boolean isDelete;
 }

@@ -8,9 +8,9 @@ import java.util.List;
 
 public interface QLKSEmployeeService {
 
-    void save(AddUserRequest addUserRequest) throws HotelManagerException;
+    void save(UserRequest addUserRequest) throws HotelManagerException;
 
-    QLKSEmployeeModel login(UserRequest userRequest) throws HotelManagerException;
+    QLKSEmployeeModel login(LoginRequest userRequest) throws HotelManagerException;
 
     List<QLKSEmployeeModel> getAll() throws HotelManagerException;
 
@@ -18,10 +18,12 @@ public interface QLKSEmployeeService {
 
     QLKSEmployeeModel getDetail(String id) throws HotelManagerException;
 
-    void update(UpdateUserRequest userRequest, String id) throws HotelManagerException;
+    void update(UserRequest userRequest, String id) throws HotelManagerException;
 
     void getVerification(GetVerificationRequest getPasswordRequest) throws HotelManagerException;
 
-    void changDefaultPassword(ChangePasswordRequest changePasswordRequest) throws HotelManagerException;
+    void getPassword(GetPasswordRequest getPasswordRequest) throws HotelManagerException;
+
+    void changePassword(ChangePasswordRequest changePasswordRequest) throws HotelManagerException;
 
 }

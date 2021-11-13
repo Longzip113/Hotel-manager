@@ -1,15 +1,11 @@
 package com.hotelManager.controllers;
 
 import com.hotelManager.constants.Constants;
-import com.hotelManager.dtos.request.AddRoomRequest;
-import com.hotelManager.dtos.request.AddTypeRoomRequest;
-import com.hotelManager.dtos.request.UpdateRoomRequest;
+import com.hotelManager.dtos.request.RoomRequest;
 import com.hotelManager.dtos.responses.BaseApiResponse;
-import com.hotelManager.entities.QLKSTypeRoomEntity;
 import com.hotelManager.exceptions.HotelManagerException;
 import com.hotelManager.model.QLKSRoomModel;
 import com.hotelManager.services.QLKSRoomService;
-import com.hotelManager.services.QLKSTypeRoomService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -56,7 +52,7 @@ public class RoomControllers {
     }
 
     @PostMapping(value = "/room")
-    public ResponseEntity<BaseApiResponse> addRoom(@RequestBody @Valid AddRoomRequest addRoomRequest) throws HotelManagerException {
+    public ResponseEntity<BaseApiResponse> addRoom(@RequestBody @Valid RoomRequest addRoomRequest) throws HotelManagerException {
 
 
         qlksRoomService.save(addRoomRequest);
@@ -64,7 +60,7 @@ public class RoomControllers {
     }
 
     @PutMapping(value = "/room/{idRoom}")
-    public ResponseEntity<BaseApiResponse> updateRoom(@PathVariable("idRoom") String idRoom, @RequestBody @Valid UpdateRoomRequest roomRequest) throws HotelManagerException {
+    public ResponseEntity<BaseApiResponse> updateRoom(@PathVariable("idRoom") String idRoom, @RequestBody @Valid RoomRequest roomRequest) throws HotelManagerException {
 
         qlksRoomService.update(roomRequest, idRoom);
         return ResponseEntity.ok(new BaseApiResponse());

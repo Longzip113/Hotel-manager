@@ -1,7 +1,7 @@
 package com.hotelManager.repositories.impl;
 
 import com.hotelManager.constants.Constants;
-import com.hotelManager.dtos.request.UpdateCustomerRequest;
+import com.hotelManager.dtos.request.CustomerRequest;
 import com.hotelManager.entities.QLKSCustomerEntity;
 import com.hotelManager.exceptions.DatabaseException;
 import com.hotelManager.exceptions.HotelManagerException;
@@ -10,7 +10,6 @@ import com.hotelManager.utils.GsonHelper;
 import com.hotelManager.utils.HibernateUtils;
 import com.hotelManager.utils.HotelManagerUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
@@ -74,7 +73,7 @@ public class QLKSCustomerRepositoryImpl implements QLKSCustomerRepository {
     }
 
     @Override
-    public void update(UpdateCustomerRequest customerRequest, String idCustom) throws HotelManagerException {
+    public void update(CustomerRequest customerRequest, String idCustom) throws HotelManagerException {
 
         Session session = sessionFactory.openSession();
         HibernateUtils.beginTransaction(session);
@@ -199,6 +198,26 @@ public class QLKSCustomerRepositoryImpl implements QLKSCustomerRepository {
 
             Query query = session.createQuery(hql.toString())
                     .setParameter("isDeleted", Boolean.FALSE);
+
+            return query.getResultList();
+        } finally {
+            HibernateUtils.closeSession(session);
+        }
+    }
+
+    @Override
+    public List<QLKSCustomerEntity> getByIds(List<String> ids) {
+        Session session = sessionFactory.openSession();
+        try {
+            StringBuilder hql = new StringBuilder()
+                    .append("FROM QLKSCustomerEntity ")
+                    .append("WHERE isDelete = :isDeleted AND id in :ids ");
+
+            log.info("SQL [{}]", hql);
+
+            Query query = session.createQuery(hql.toString())
+                    .setParameter("isDeleted", Boolean.FALSE)
+                    .setParameter("ids", ids);
 
             return query.getResultList();
         } finally {

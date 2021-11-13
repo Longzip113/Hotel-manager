@@ -9,17 +9,12 @@ import javax.validation.constraints.NotBlank;
 @Setter
 @Getter
 @Data
-public class UpdateUserRequest {
+public class LoginRequest {
 
+    @NotBlank(message = "Email is not empty or null")
     private String email;
 
-    private String nameEmployee;
+    @NotBlank(message = "passWord is not empty or null")
+    private String passWord;
 
-    private String gender;
-
-    private String identityCard;
-
-    private String address;
-
-    private String phoneNumber;
 }

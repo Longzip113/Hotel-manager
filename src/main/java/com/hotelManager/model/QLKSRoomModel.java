@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Getter
 @Setter
@@ -61,4 +62,20 @@ public class QLKSRoomModel {
     @Column(name = "id_type_room", nullable = false)
     @JsonProperty("idTypeRoom")
     private String idTypeRoom;
+
+    @Transient
+    @JsonProperty("details")
+    @ElementCollection(targetClass= QLKSDetailTypeRoomModel.class)
+    List<QLKSDetailTypeRoomModel> details;
+
+    public QLKSRoomModel(String id, String nameRoom, String description, Integer status, String nameTypeRoom, String nameEmployee, String housekeepingOrder, String idTypeRoom) {
+        this.id = id;
+        this.nameRoom = nameRoom;
+        this.description = description;
+        this.status = status;
+        this.nameTypeRoom = nameTypeRoom;
+        this.nameEmployee = nameEmployee;
+        this.housekeepingOrder = housekeepingOrder;
+        this.idTypeRoom = idTypeRoom;
+    }
 }

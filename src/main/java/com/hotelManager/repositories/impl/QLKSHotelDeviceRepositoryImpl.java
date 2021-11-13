@@ -1,13 +1,10 @@
 package com.hotelManager.repositories.impl;
 
-import com.hotelManager.dtos.request.UpdateHotelDeviceRequest;
-import com.hotelManager.dtos.request.UpdateTypeRoomRequest;
+import com.hotelManager.dtos.request.HotelDeviceRequest;
 import com.hotelManager.entities.QLKSHotelDeviceEntity;
-import com.hotelManager.entities.QLKSTypeRoomEntity;
 import com.hotelManager.exceptions.DatabaseException;
 import com.hotelManager.exceptions.HotelManagerException;
 import com.hotelManager.repositories.QLKSHotelDeviceRepository;
-import com.hotelManager.repositories.QLKSTypeRoomRepository;
 import com.hotelManager.utils.GsonHelper;
 import com.hotelManager.utils.HibernateUtils;
 import com.hotelManager.utils.HotelManagerUtils;
@@ -100,7 +97,7 @@ public class QLKSHotelDeviceRepositoryImpl implements QLKSHotelDeviceRepository 
     }
 
     @Override
-    public void update(String id, UpdateHotelDeviceRequest updateHotelDeviceRequest) throws HotelManagerException {
+    public void update(String id, HotelDeviceRequest updateHotelDeviceRequest) throws HotelManagerException {
         Session session = sessionFactory.openSession();
         HibernateUtils.beginTransaction(session);
 

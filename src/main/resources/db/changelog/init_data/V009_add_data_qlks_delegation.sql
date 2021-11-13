@@ -1,0 +1,4 @@
+INSERT INTO qlks_delegation (id_delegations, id_team_manager, name_delegations, name_company, number_of_people, is_delete, id_customer)
+VALUES ('bffd2442-cd42-4d09-8ff9-37ac13166f7b', '9d9b8130-7a69-4f07-97e2-e9fa6d71ae29', 'Đoàn 1', 'TNHH - No.1', 3, 0, 'bd3f7f03-98ec-48f2-864c-dada54b50962/6a629b78-ab6f-40a1-95e6-f2af67a57c15/9da795cf-c3b4-4fac-a8ef-7376b5693728'),
+        ('62ab1ef0-a042-4310-a1b5-71ada62302af', '9da795cf-c3b4-4fac-a8ef-7376b5693728', 'Đoàn 2', 'TNHH - No.2', 3, 0, '6a629b78-ab6f-40a1-95e6-f2af67a57c15/9d9b8130-7a69-4f07-97e2-e9fa6d71ae29/4bfa4c8e-e09d-4164-90a9-53e62f8d58e7'),
+        ('74fee07c-40f7-407c-acaa-b64e2276c635', '8c1bdf17-70f4-49fc-9be9-a403ac36159c', 'Đoàn 3', 'TNHH - No.3', 4, 0, '6a629b78-ab6f-40a1-95e6-f2af67a57c15/9d9b8130-7a69-4f07-97e2-e9fa6d71ae29/4bfa4c8e-e09d-4164-90a9-53e62f8d58e7/25f40eb5-d48b-46db-85af-90c199f732e2');

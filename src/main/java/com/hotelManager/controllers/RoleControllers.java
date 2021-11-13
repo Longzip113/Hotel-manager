@@ -1,7 +1,6 @@
 package com.hotelManager.controllers;
 
-import com.hotelManager.dtos.request.AddRoleRequest;
-import com.hotelManager.dtos.request.UpdateRoleRequest;
+import com.hotelManager.dtos.request.RoleRequest;
 import com.hotelManager.dtos.responses.BaseApiResponse;
 import com.hotelManager.entities.QLKSRoleEntity;
 import com.hotelManager.exceptions.HotelManagerException;
@@ -29,8 +28,8 @@ public class RoleControllers {
     }
 
     @PostMapping(value = "/role")
-    public ResponseEntity<BaseApiResponse> add(@RequestBody @Valid AddRoleRequest addRoleRequest) throws HotelManagerException {
-        qlksRoleService.add(addRoleRequest);
+    public ResponseEntity<BaseApiResponse> add(@RequestBody @Valid RoleRequest roleRequest) throws HotelManagerException {
+        qlksRoleService.add(roleRequest);
         return ResponseEntity.ok(new BaseApiResponse());
     }
 
@@ -46,9 +45,9 @@ public class RoleControllers {
     }
 
     @PutMapping(value = "/role/{id}")
-    public ResponseEntity<BaseApiResponse> update(@PathVariable("id") String id, @RequestBody UpdateRoleRequest updateRoleRequest) throws HotelManagerException {
+    public ResponseEntity<BaseApiResponse> update(@PathVariable("id") String id, @RequestBody RoleRequest roleRequest) throws HotelManagerException {
 
-        qlksRoleService.update(id, updateRoleRequest);
+        qlksRoleService.update(id, roleRequest);
         return ResponseEntity.ok(new BaseApiResponse());
     }
 }
