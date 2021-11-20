@@ -185,6 +185,29 @@ public class QLKSRoomRepositoryImpl implements QLKSRoomRepository {
         }
     }
 
+    @Override
+    public List<QLKSRoomModel> getByIds(List<String> id) {
+        Session session = sessionFactory.openSession();
+        try {
+            StringBuilder hql = new StringBuilder()
+                    .append("SELECT r.id_room, r.name_room, r.description, r.status, tr.name_type_room, e.name_employee, r.housekeeping_order, r.id_type_room ")
+                    .append("FROM qlks_room r ")
+                    .append("LEFT JOIN qlks_type_room tr ON tr.id_type_room = r.id_type_room ")
+                    .append("LEFT JOIN qlks_employee e ON e.id_employee = r.id_housekeeping_staff ")
+                    .append("WHERE r.is_delete = :isDeleted AND r.id_room in :ids ");
+
+            log.info("SQL [{}]", hql);
+
+            Query query = session.createNativeQuery(hql.toString(), "QLKSRoomModelMapping")
+                    .setParameter("isDeleted", Boolean.FALSE)
+                    .setParameter("ids", id);
+
+            return query.getResultList();
+        } finally {
+            HibernateUtils.closeSession(session);
+        }
+    }
+
     private String buildSqlSortGetAll(String sortBy) {
         switch (sortBy) {
             case "5":

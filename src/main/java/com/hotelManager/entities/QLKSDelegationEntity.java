@@ -32,7 +32,7 @@ public class QLKSDelegationEntity {
     private Integer numberOfPeople;
 
     @Column(name = "ID_CUSTOMER", nullable = false)
-    private Integer idCustomer;
+    private String idCustomer;
 
     @Column(name = "IS_DELETE", nullable = false)
     private Boolean isDelete;

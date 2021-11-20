@@ -3,6 +3,7 @@ spring:
   datasource:
     driverClassName: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/qlks_KhoaLuan?autoReconnect=true&useUnicode=true&characterEncoding=utf8
+#    url: jdbc:mysql://107.167.80.37:3306/qlks_KhoaLuan?autoReconnect=true&useUnicode=true&characterEncoding=utf8
     username: long
     password: L@ng250599
   jpa:

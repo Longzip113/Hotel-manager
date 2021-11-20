@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
+import java.util.List;
 
 @Setter
 @Getter
@@ -19,5 +20,7 @@ public class DelegationRequest {
 
     @NotBlank(message = "idTeamManager is not empty or null")
     private String idTeamManager;
+
+    private List<String> idCustomers;
 
 }

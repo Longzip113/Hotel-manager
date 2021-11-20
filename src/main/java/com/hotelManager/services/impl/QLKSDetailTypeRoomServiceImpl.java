@@ -2,6 +2,7 @@ package com.hotelManager.services.impl;
 
 import com.hotelManager.dtos.request.DetailTypeRoomRequest;
 import com.hotelManager.entities.QLKSDetailTypeRoomEntity;
+import com.hotelManager.entities.QLKSServiceEntity;
 import com.hotelManager.exceptions.DatabaseException;
 import com.hotelManager.exceptions.HotelManagerException;
 import com.hotelManager.repositories.QLKSDetailTypeRoomRepository;
@@ -33,13 +34,7 @@ public class QLKSDetailTypeRoomServiceImpl implements QLKSDetailTypeRoomService 
         Optional<QLKSDetailTypeRoomEntity> qlksDetailTypeRoom = qlksDetailTypeRoomRepository
                 .getByIdTypeRoomAndIdDetail(request.getIdTypeRoom(), request.getIdDetailType(), request.getTypeDetail());
 
-        if (qlksDetailTypeRoom.isEmpty()) {
-            log.error("idTypeRoom not existed !");
-            HotelManagerUtils.throwException(DatabaseException.class, ERROR_TYPE_ROOM_NOT_EXISTED);
-        }
-
         if (qlksDetailTypeRoom.isPresent()) {
-
             Integer quantity = request.getQuantity() + qlksDetailTypeRoom.get().getQuantity();
             request.setQuantity(quantity);
             qlksDetailTypeRoomRepository.update(qlksDetailTypeRoom.get().getId(), request);

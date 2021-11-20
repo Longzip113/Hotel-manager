@@ -20,6 +20,7 @@ import javax.persistence.*;
                         @ColumnResult(name = "ID_DELEGATIONS", type = String.class),
                         @ColumnResult(name = "NAME_DELEGATIONS", type = String.class),
                         @ColumnResult(name = "nameManager", type = String.class),
+                        @ColumnResult(name = "idManager", type = String.class),
                         @ColumnResult(name = "ID_CUSTOMER", type = String.class),
                         @ColumnResult(name = "NAME_COMPANY", type = String.class),
                         @ColumnResult(name = "NUMBER_OF_PEOPLE", type = Integer.class)
@@ -35,6 +36,9 @@ public class QLKSDelegationModel {
 
     @Column(name = "nameManager", nullable = false)
     private String nameManager;
+
+    @Column(name = "idManager", nullable = false)
+    private String idManager;
 
     @Column(name = "ID_CUSTOMER", nullable = false)
     private String idCustomer;

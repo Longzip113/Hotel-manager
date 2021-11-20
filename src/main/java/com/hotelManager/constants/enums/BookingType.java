@@ -1,11 +1,11 @@
 package com.hotelManager.constants.enums;
 
-public enum DocumentType {
-    FOLDER(0), FILE(1);
+public enum BookingType {
+    DELEGATION(0), GUEST(1);
 
     private final int value;
 
-    DocumentType(int value) {
+    BookingType(int value) {
         this.value = value;
     }
 

@@ -7,10 +7,8 @@ import com.hotelManager.entities.QLKSDelegationEntity;
 import com.hotelManager.exceptions.DatabaseException;
 import com.hotelManager.exceptions.HotelManagerException;
 import com.hotelManager.model.QLKSDelegationModel;
-import com.hotelManager.model.QLKSEmployeeModel;
 import com.hotelManager.repositories.QLKSCustomerRepository;
 import com.hotelManager.repositories.QLKSDelegationRepository;
-import com.hotelManager.repositories.QLKSEmployeeRepository;
 import com.hotelManager.services.QLKSDelegationService;
 import com.hotelManager.utils.HotelManagerUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -34,9 +32,6 @@ public class QLKSDelegationServiceImpl implements QLKSDelegationService {
     @Autowired
     QLKSCustomerRepository customerRepository;
 
-    @Autowired
-    QLKSEmployeeRepository qlksEmployeeRepository;
-
 
     @Override
     public List<QLKSDelegationResponse> getAll() throws HotelManagerException {
@@ -51,6 +46,7 @@ public class QLKSDelegationServiceImpl implements QLKSDelegationService {
                     .id(item.getId())
                     .nameManager(item.getNameManager())
                     .nameCompany(item.getNameCompany())
+                    .idManager(item.getIdManager())
                     .numberOfPeople(item.getNumberOfPeople()).build();
 
             if (StringUtils.isNotBlank(item.getIdCustomer())) {
@@ -74,16 +70,22 @@ public class QLKSDelegationServiceImpl implements QLKSDelegationService {
             HotelManagerUtils.throwException(DatabaseException.class, ERROR_DELEGATION_ALREADY_EXISTED);
         }
 
-        Optional<QLKSEmployeeModel> manager =  qlksEmployeeRepository.getById(addDelegationRequest.getIdTeamManager());
+        Optional<QLKSCustomerEntity> manager =  customerRepository.getById(addDelegationRequest.getIdTeamManager());
+
         if (manager.isEmpty()) {
             log.error("id not existed !");
             HotelManagerUtils.throwException(DatabaseException.class, ERROR_ID_NOT_EXISTED);
         }
 
+        String idCustomer = String.join("/", addDelegationRequest.getIdCustomers());
+
+
         QLKSDelegationEntity entity = QLKSDelegationEntity.builder()
                 .nameDelegations(addDelegationRequest.getNameDelegations())
                 .idTeamManager(addDelegationRequest.getIdTeamManager())
                 .nameCompany(addDelegationRequest.getNameCompany())
+                .idCustomer(idCustomer)
+                .numberOfPeople(addDelegationRequest.getIdCustomers().size())
                 .isDelete(Boolean.FALSE)
                 .build();
 
@@ -111,16 +113,27 @@ public class QLKSDelegationServiceImpl implements QLKSDelegationService {
             HotelManagerUtils.throwException(DatabaseException.class, ERROR_ID_NOT_EXISTED);
         }
 
-        Optional<QLKSDelegationEntity> qlksRoleEntity = qlksDelegationRepository.getByName(updateDelegationRequest.getNameDelegations()
+        Optional<QLKSDelegationEntity> qlksDelegationEntity = qlksDelegationRepository.getByName(updateDelegationRequest.getNameDelegations()
                 , id);
 
-        if (qlksRoleEntity.isPresent()) {
+        if (qlksDelegationEntity.isPresent()) {
 
             log.error("Name delegation existed !");
             HotelManagerUtils.throwException(DatabaseException.class, ERROR_DELEGATION_ALREADY_EXISTED);
         }
+        String idCustomer = String.join("/", updateDelegationRequest.getIdCustomers());
 
-        qlksDelegationRepository.update(id, updateDelegationRequest);
+        QLKSDelegationEntity entityUpdate = QLKSDelegationEntity.builder()
+                .id(id)
+                .nameDelegations(updateDelegationRequest.getNameDelegations())
+                .idTeamManager(updateDelegationRequest.getIdTeamManager())
+                .nameCompany(updateDelegationRequest.getNameCompany())
+                .idCustomer(idCustomer)
+                .numberOfPeople(updateDelegationRequest.getIdCustomers().size())
+                .isDelete(Boolean.FALSE)
+                .build();
+
+        qlksDelegationRepository.update(entityUpdate);
     }
 
     @Override
@@ -136,6 +149,7 @@ public class QLKSDelegationServiceImpl implements QLKSDelegationService {
                 .id(entity.get().getId())
                 .nameManager(entity.get().getNameManager())
                 .nameCompany(entity.get().getNameCompany())
+                .idManager(entity.get().getIdManager())
                 .numberOfPeople(entity.get().getNumberOfPeople()).build();
 
         if (StringUtils.isNotBlank(entity.get().getIdCustomer())) {

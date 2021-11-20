@@ -24,6 +24,8 @@ public class QLKSDelegationResponse {
 
     private Integer numberOfPeople;
 
+    private String idManager;
+
     List<QLKSCustomerEntity> customers;
 
 }

@@ -20,4 +20,6 @@ public interface QLKSRoomRepository {
     List<QLKSRoomModel> getAll(String sortBy, String sortOrder);
 
     Optional<QLKSRoomModel> getByIdRoom(String idRoom);
+
+    List<QLKSRoomModel> getByIds(List<String> id);
 }

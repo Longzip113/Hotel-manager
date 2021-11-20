@@ -20,13 +20,13 @@ public class QLKSRegistrationFormEntity {
     private String id;
 
     @Column(name = "booking_date")
-    private String bookingDate;
+    private Long bookingDate;
 
     @Column(name = "CHECK_IN_DATE", nullable = false)
-    private String checkInDate;
+    private Long checkInDate;
 
     @Column(name = "CHECK_OUT_DATE", nullable = false)
-    private String checkOutDate;
+    private Long checkOutDate;
 
     @Column(name = "NOTE", nullable = false)
     private String note;
@@ -35,18 +35,30 @@ public class QLKSRegistrationFormEntity {
     private String idRoom;
 
     @Column(name = "ID_CUSTOMER", nullable = false)
-    private boolean idCustomer;
+    private String idCustomer;
 
     @Column(name = "ID_EMPLOYEE", nullable = false)
     private String idEmployee;
 
     @Column(name = "NUMBER_OF_ADULT", nullable = false)
-    private String numberOfAdult;
+    private Integer numberOfAdult;
 
     @Column(name = "NUMBER_OF_CHILD", nullable = false)
-    private String numberOfChild;
+    private Integer numberOfChild;
+
+    @Column(name = "TYPE", nullable = false)
+    private Integer type;
+
+    @Column(name = "STATUS", nullable = false)
+    private Integer status;
+
+    @Column(name = "ID_DELEGATION", nullable = false)
+    private String idDelegation;
+
+    @Column(name = "is_delete", nullable = false)
+    private Boolean isDelete;
 
     @Column(name = "INTO_MONEY", nullable = false)
-    private String intoMoney;
+    private Integer intoMoney;
 
 }

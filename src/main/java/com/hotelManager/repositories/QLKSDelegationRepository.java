@@ -15,7 +15,7 @@ public interface QLKSDelegationRepository {
 
     void delete(String id) throws HotelManagerException;
 
-    void update(String id, DelegationRequest updateDelegationRequest) throws HotelManagerException;
+    void update(QLKSDelegationEntity qlksDelegationEntity) throws HotelManagerException;
 
     Optional<QLKSDelegationModel> getById(String id) throws HotelManagerException;
 

@@ -35,7 +35,7 @@ public class QLKSDelegationRepositoryImpl implements QLKSDelegationRepository {
         Session session = sessionFactory.openSession();
         try {
             StringBuilder hql = new StringBuilder()
-                    .append("SELECT d.id_delegations, d.name_delegations, c.name as 'nameManager', d.id_customer, d.name_company, d.number_of_people ")
+                    .append("SELECT d.id_delegations, d.name_delegations, c.name as 'nameManager', c.id_customer as 'idManager', d.id_customer, d.name_company, d.number_of_people ")
                     .append("FROM qlks_delegation d ")
                     .append("LEFT JOIN qlks_customer c ON d.id_team_manager = c.id_customer ")
                     .append("WHERE d.is_delete = :isDeleted ");
@@ -94,32 +94,17 @@ public class QLKSDelegationRepositoryImpl implements QLKSDelegationRepository {
     }
 
     @Override
-    public void update(String id, DelegationRequest updateDelegationRequest) throws HotelManagerException {
+    public void update(QLKSDelegationEntity qlksDelegationEntity) throws HotelManagerException {
         Session session = sessionFactory.openSession();
-        HibernateUtils.beginTransaction(session);
-
         try {
-            StringBuilder hql = new StringBuilder()
-                    .append("UPDATE QLKSDelegationEntity ")
-                    .append("SET ")
-                    .append("nameDelegations = :nameDelegations, ")
-                    .append("nameCompany = :nameCompany, ")
-                    .append("idTeamManager = :idTeamManager ")
-                    .append("WHERE id = :id");
 
-            log.info("SQL [{}]", hql);
-
-            Query query = session.createQuery(hql.toString())
-                    .setParameter("id", id)
-                    .setParameter("nameDelegations", updateDelegationRequest.getNameDelegations())
-                    .setParameter("idTeamManager", updateDelegationRequest.getIdTeamManager())
-                    .setParameter("nameCompany", updateDelegationRequest.getNameCompany());
-
-            query.executeUpdate();
+            HibernateUtils.beginTransaction(session);
+            session.update(qlksDelegationEntity);
             session.getTransaction().commit();
+
         } catch (PersistenceException e) {
 
-            log.error("Update QLKSRoleEntity failed Id: [{}]", id, e);
+            log.error("Update QLKSDelegationEntity failed Object: [{}]", GsonHelper.defaultInstance().toJson(qlksDelegationEntity), e);
             HotelManagerUtils.throwException(DatabaseException.class, ERROR_SERVER);
         } finally {
             HibernateUtils.closeSession(session);
@@ -131,7 +116,7 @@ public class QLKSDelegationRepositoryImpl implements QLKSDelegationRepository {
         Session session = sessionFactory.openSession();
         try {
             StringBuilder hql = new StringBuilder()
-                    .append("SELECT d.id_delegations, d.name_delegations, c.name as 'nameManager', d.id_customer, d.name_company, d.number_of_people ")
+                    .append("SELECT d.id_delegations, d.name_delegations, c.name as 'nameManager', c.id_customer as 'idManager', d.id_customer, d.name_company, d.number_of_people ")
                     .append("FROM qlks_delegation d ")
                     .append("LEFT JOIN qlks_customer c ON d.id_team_manager = c.id_customer ")
                     .append("WHERE d.is_delete = :isDeleted AND d.id_delegations = :id ");

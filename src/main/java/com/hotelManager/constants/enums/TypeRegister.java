@@ -1,11 +1,11 @@
 package com.hotelManager.constants.enums;
 
-public enum LogAction {
-    READ(0), CREATE(1), DELETE(2), MOVE(3), RENAME(4), CHANGE_OWNER(5), APPROVE(6), DOWNLOAD(7);
+public enum TypeRegister {
+    BOOK_ROOM(0), CHECK_IN(1), CHECK_OUT(2), CANCEL(3);
 
     private final int value;
 
-    LogAction(int value) {
+    TypeRegister(int value) {
         this.value = value;
     }
 
