@@ -7,4 +7,5 @@ public class Constants {
     public static final String SORT_OR_DER_ASC = "ASC";
     public static final String FORGOT_PASSWORD = "LẤY LẠI MẬT KHẨU";
     public final static String CLIENT_REGISTER = "index";
+    public static final int BATCH_SIZE = 10;
 }

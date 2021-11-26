@@ -18,6 +18,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.PersistenceException;
 
+import java.math.BigInteger;
 import java.util.List;
 import java.util.Optional;
 
@@ -81,7 +82,7 @@ public class QLKSRegistrationFormRepositoryImpl implements QLKSRegistrationFormR
         try {
             StringBuilder hql = new StringBuilder()
                     .append("UPDATE QLKSRegistrationFormEntity r ")
-                    .append("SET r.idCustomers = :idCustomers, r.numberOfAdult = :numberOfAdult ")
+                    .append("SET r.idCustomer = :idCustomers, r.numberOfAdult = :numberOfAdult ")
                     .append("WHERE r.idDelegation = :idDelegation AND r.type = :type AND r.status = :status ");
 
             log.info("SQL [{}]", hql);
@@ -90,8 +91,8 @@ public class QLKSRegistrationFormRepositoryImpl implements QLKSRegistrationFormR
                     .setParameter("idDelegation", idDelegation)
                     .setParameter("idCustomers", idCustomers)
                     .setParameter("type", TypeRegister.BOOK_ROOM.getValue())
-                    .setParameter("status", BookingType.DELEGATION)
-                    .setParameter("size", size);
+                    .setParameter("status", BookingType.DELEGATION.getValue())
+                    .setParameter("numberOfAdult", size);
             query.executeUpdate();
 
             session.getTransaction().commit();
@@ -190,5 +191,34 @@ public class QLKSRegistrationFormRepositoryImpl implements QLKSRegistrationFormR
         }  finally {
             HibernateUtils.closeSession(session);
         }
+    }
+
+    @Override
+    public long getByIdRoomAndTime(String idRoom, Long time) throws HotelManagerException {
+        Session session = sessionFactory.openSession();
+        try {
+            StringBuilder hql = new StringBuilder()
+                    .append("FROM QLKSRegistrationFormEntity ")
+                    .append("WHERE id_room like :idRoom AND ( :time BETWEEN checkInDate AND checkOutDate) AND isDelete = false ");
+            log.info("SQL [{}]", hql);
+
+            Query query = session.createQuery(hql.toString())
+                    .setParameter("time", time)
+                    .setParameter("idRoom", "%" + idRoom + "%");
+
+            BigInteger count = (BigInteger)query.uniqueResult();
+            if (count != null) {
+                return count.longValue();
+            } else {
+                return -1;
+            }
+        } catch (Exception e) {
+
+            log.error("getById QLKSRegistrationFormEntity fail !", e);
+            HotelManagerUtils.throwException(DatabaseException.class, ERROR_SERVER);
+        }  finally {
+            HibernateUtils.closeSession(session);
+        }
+        return -1;
     }
 }

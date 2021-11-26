@@ -22,7 +22,6 @@ import java.util.List;
                         @ColumnResult(name = "id_room", type = String.class),
                         @ColumnResult(name = "name_room", type = String.class),
                         @ColumnResult(name = "description", type = String.class),
-                        @ColumnResult(name = "status", type = Integer.class),
                         @ColumnResult(name = "name_type_room", type = String.class),
                         @ColumnResult(name = "name_employee", type = String.class),
                         @ColumnResult(name = "housekeeping_order", type = String.class),
@@ -43,10 +42,6 @@ public class QLKSRoomModel {
     @JsonProperty("description")
     private String description;
 
-    @Column(name = "status", nullable = false)
-    @JsonProperty("status")
-    private Integer status;
-
     @Column(name = "name_type_room", nullable = false)
     @JsonProperty("nameTypeRoom")
     private String nameTypeRoom;
@@ -63,16 +58,18 @@ public class QLKSRoomModel {
     @JsonProperty("idTypeRoom")
     private String idTypeRoom;
 
+    @JsonProperty("status")
+    private long status;
+
     @Transient
     @JsonProperty("details")
     @ElementCollection(targetClass= QLKSDetailTypeRoomModel.class)
     List<QLKSDetailTypeRoomModel> details;
 
-    public QLKSRoomModel(String id, String nameRoom, String description, Integer status, String nameTypeRoom, String nameEmployee, String housekeepingOrder, String idTypeRoom) {
+    public QLKSRoomModel(String id, String nameRoom, String description, String nameTypeRoom, String nameEmployee, String housekeepingOrder, String idTypeRoom) {
         this.id = id;
         this.nameRoom = nameRoom;
         this.description = description;
-        this.status = status;
         this.nameTypeRoom = nameTypeRoom;
         this.nameEmployee = nameEmployee;
         this.housekeepingOrder = housekeepingOrder;

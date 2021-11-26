@@ -7,9 +7,11 @@ import com.hotelManager.exceptions.DatabaseException;
 import com.hotelManager.exceptions.HotelManagerException;
 import com.hotelManager.model.QLKSRoomModel;
 import com.hotelManager.repositories.QLKSDetailTypeRoomRepository;
+import com.hotelManager.repositories.QLKSRegistrationFormRepository;
 import com.hotelManager.repositories.QLKSRoomRepository;
 import com.hotelManager.repositories.QLKSTypeRoomRepository;
 import com.hotelManager.services.QLKSRoomService;
+import com.hotelManager.utils.DateTimeUtils;
 import com.hotelManager.utils.HotelManagerUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -34,6 +36,9 @@ public class QLKSRoomServiceImpl implements QLKSRoomService {
 
     @Autowired
     QLKSDetailTypeRoomRepository qlksDetailTypeRoomRepository;
+
+    @Autowired
+    QLKSRegistrationFormRepository qlksRegistrationFormRepository;
 
     @Override
     public void save(RoomRequest addRoomRequest) throws HotelManagerException {
@@ -95,7 +100,13 @@ public class QLKSRoomServiceImpl implements QLKSRoomService {
     public List<QLKSRoomModel> getAll(String sortBy, String sortOrder) {
 
         return qlksRoomRepository.getAll(sortBy, sortOrder).stream().map(item -> {
-            item.setDetails(qlksDetailTypeRoomRepository.getByIdTypeRoom(item.getIdTypeRoom()));
+            try {
+                long status = qlksRegistrationFormRepository.getByIdRoomAndTime(item.getId(), DateTimeUtils.getCurrentTime());
+                item.setDetails(qlksDetailTypeRoomRepository.getByIdTypeRoom(item.getIdTypeRoom()));
+                item.setStatus(status);
+            } catch (HotelManagerException e) {
+                e.printStackTrace();
+            }
             return item;
         }).collect(Collectors.toList());
     }
@@ -109,7 +120,10 @@ public class QLKSRoomServiceImpl implements QLKSRoomService {
             log.error("IdRoom does not exist !");
             HotelManagerUtils.throwException(DatabaseException.class, ERROR_ROOM_NOT_EXISTED);
         }
+        long status = qlksRegistrationFormRepository.getByIdRoomAndTime(idRoom, DateTimeUtils.getCurrentTime());
+
         result.get().setDetails(qlksDetailTypeRoomRepository.getByIdTypeRoom(result.get().getIdTypeRoom()));
+        result.get().setStatus(status);
 
         return result.get();
     }

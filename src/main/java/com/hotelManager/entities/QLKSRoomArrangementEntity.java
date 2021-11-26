@@ -26,10 +26,7 @@ public class QLKSRoomArrangementEntity {
     private String idCustomer;
 
     @Column(name = "NUMBER_OF_CHILDREN", nullable = false)
-    private String numberOfChildren;
-
-    @Column(name = "PRICE_ARRANGEMENT", nullable = false)
-    private Integer priceArrangement;
+    private Integer numberOfChildren;
 
     @Column(name = "ID_REGISTRATION_FORM", nullable = false)
     private String idRegistrationForm;

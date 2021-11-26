@@ -22,4 +22,6 @@ public interface QLKSRegistrationFormRepository {
     void delete(String id) throws HotelManagerException;
 
     Optional<QLKSRegistrationFormEntity> getById(String id) throws HotelManagerException;
+
+    long getByIdRoomAndTime(String idRoom, Long time) throws HotelManagerException;
 }

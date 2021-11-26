@@ -20,16 +20,16 @@ public class QLKSLogCustomerEntity {
     private String id;
 
     @Column(name = "ID_REGISTRATION_FORM")
-    private String nameEmployee;
+    private String idRegistrationForm;
 
     @Column(name = "ID_CUSTOMER", nullable = false)
-    private String gender;
+    private String idCustomer;
 
     @Column(name = "ID_ROOM", nullable = false)
     private String idRoom;
 
-    @Column(name = "TYPE_ACTION", nullable = false)
-    private Integer typeAction;
+    @Column(name = "TYPE", nullable = false)
+    private Integer type;
 
     @Column(name = "QUANTITY", nullable = false)
     private Integer quantity;
@@ -37,8 +37,8 @@ public class QLKSLogCustomerEntity {
     @Column(name = "LOG_TIME", nullable = false)
     private Long logTime;
 
-    @Column(name = "ACTION", nullable = false)
-    private Integer action;
+    @Column(name = "id_type", nullable = false)
+    private String idType;
 
     @Column(name = "DESCRIPTION", nullable = false)
     private String description;
