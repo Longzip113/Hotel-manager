@@ -2,6 +2,7 @@ package com.hotelManager.dtos.responses;
 
 import com.hotelManager.entities.QLKSCustomerEntity;
 import com.hotelManager.entities.QLKSEmployeeEntity;
+import com.hotelManager.model.QLKSDelegationModel;
 import com.hotelManager.model.QLKSEmployeeModel;
 import com.hotelManager.model.QLKSRoomModel;
 import lombok.Builder;
@@ -33,13 +34,13 @@ public class QLKSRegistrationResponse {
 
     private QLKSEmployeeModel employee;
 
-    private String idDelegation;
+    private QLKSDelegationModel delegation;
 
     private Integer numberOfChild;
 
     private Integer numberOfAdult;
 
-    private Integer intoMoney;
+    private Long intoMoney;
 
     private Integer type;
 

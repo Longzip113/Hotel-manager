@@ -20,6 +20,8 @@ public class RegistrationRequest {
 
     private String note;
 
+    private List<String> idCustomer;
+
     private List<String> idRoom;
 
     private String idEmployee;
@@ -28,7 +30,7 @@ public class RegistrationRequest {
 
     private Integer numberOfChild;
 
-    private Integer intoMoney;
+    private Boolean isGuaranteed;
 
     private Integer type;
 }

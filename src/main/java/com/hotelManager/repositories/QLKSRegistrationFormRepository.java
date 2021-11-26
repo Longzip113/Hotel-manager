@@ -11,6 +11,10 @@ public interface QLKSRegistrationFormRepository {
 
     List<QLKSRegistrationFormEntity> getAll() throws HotelManagerException;
 
+    List<QLKSRegistrationFormEntity> getByIdDelegation(String idDelegation) throws HotelManagerException;
+
+    void updateByIdDelegation(String idDelegation, String idCustomers, Integer size) throws HotelManagerException;
+
     void save(QLKSRegistrationFormEntity entity) throws HotelManagerException;
 
     void update(QLKSRegistrationFormEntity entity) throws HotelManagerException;

@@ -20,6 +20,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.PersistenceException;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -203,6 +204,29 @@ public class QLKSRoomRepositoryImpl implements QLKSRoomRepository {
                     .setParameter("ids", id);
 
             return query.getResultList();
+        } finally {
+            HibernateUtils.closeSession(session);
+        }
+    }
+
+    @Override
+    public long priceRooms(List<String> idRooms) {
+        Session session = sessionFactory.openSession();
+        try {
+            StringBuilder hql = new StringBuilder()
+                    .append("SELECT SUM(tr.price) ")
+                    .append("FROM qlks_room r ")
+                    .append("LEFT JOIN qlks_type_room tr ON tr.id_type_room = r.id_type_room ")
+                    .append("WHERE r.id_room in :ids AND r.is_delete = :isDeleted ");
+
+            log.info("SQL [{}]", hql);
+
+            Query query = session.createNativeQuery(hql.toString())
+                    .setParameter("isDeleted", Boolean.FALSE)
+                    .setParameter("ids", idRooms);
+
+            BigDecimal count = (BigDecimal)query.uniqueResult();
+            return count.longValue();
         } finally {
             HibernateUtils.closeSession(session);
         }

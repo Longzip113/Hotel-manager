@@ -72,9 +72,20 @@ public class QLKSRegistrationFormServiceImpl implements QLKSRegistrationFormServ
                 registrationResponse.setCustomers(qlksCustomerRepository.getByIds(listIdCustomer));
             }
 
-            if (StringUtils.isNotBlank(item.getIdCustomer())) {
+            if (StringUtils.isNotBlank(item.getIdRoom())) {
                 List<String> listIdRooms = List.of(item.getIdRoom().split("/"));
                 registrationResponse.setRooms(qlksRoomRepository.getByIds(listIdRooms));
+            }
+
+            if (StringUtils.isNotBlank(item.getIdDelegation())) {
+                try {
+                    Optional<QLKSDelegationModel> delegationModel = qlksDelegationRepository.getById(item.getIdDelegation());
+                    if (delegationModel.isPresent()) {
+                        registrationResponse.setDelegation(qlksDelegationRepository.getById(item.getIdDelegation()).get());
+                    }
+                } catch (HotelManagerException e) {
+                    e.printStackTrace();
+                }
             }
 
             if (StringUtils.isNotBlank(item.getIdCustomer())) {
@@ -89,11 +100,14 @@ public class QLKSRegistrationFormServiceImpl implements QLKSRegistrationFormServ
 
     @Override
     public void add(RegistrationRequest request) throws HotelManagerException {
-
-        Optional<QLKSDelegationModel> entityDelegation = qlksDelegationRepository.getById(request.getIdDelegation());
-        if (entityDelegation.isEmpty()) {
-            log.error("id not existed !");
-            HotelManagerUtils.throwException(DatabaseException.class, ERROR_ID_NOT_EXISTED);
+        QLKSDelegationModel delegation = new QLKSDelegationModel();
+        if(request.getType() == BookingType.DELEGATION.getValue()) {
+            Optional<QLKSDelegationModel> entityDelegation = qlksDelegationRepository.getById(request.getIdDelegation());
+            if (entityDelegation.isEmpty()) {
+                log.error("id not existed !");
+                HotelManagerUtils.throwException(DatabaseException.class, ERROR_ID_NOT_EXISTED);
+            }
+            delegation = entityDelegation.get();
         }
 
         String idRooms = String.join("/", request.getIdRoom());
@@ -103,18 +117,28 @@ public class QLKSRegistrationFormServiceImpl implements QLKSRegistrationFormServ
                 .checkInDate(request.getCheckInDate())
                 .checkOutDate(request.getCheckOutDate())
                 .idEmployee(request.getIdEmployee())
-                .idCustomer(entityDelegation.get().getIdCustomer())
-                .intoMoney(request.getIntoMoney())
                 .note(request.getNote())
                 .idRoom(idRooms)
                 .type(request.getType())
                 .status(TypeRegister.BOOK_ROOM.getValue())
-                .numberOfAdult(entityDelegation.get().getNumberOfPeople())
                 .isDelete(Boolean.FALSE)
                 .numberOfChild(request.getNumberOfChild()).build();
 
         if (request.getType() == BookingType.DELEGATION.getValue()) {
             entity.setIdDelegation(request.getIdDelegation());
+            entity.setIdCustomer(delegation.getIdCustomer());
+            entity.setNumberOfAdult(delegation.getNumberOfPeople());
+        } else {
+            String idCustomer = String.join("/", request.getIdCustomer());
+            entity.setIdCustomer(idCustomer);
+            entity.setNumberOfAdult(request.getIdCustomer().size());
+        }
+
+        if (request.getIsGuaranteed()) {
+            long intoMoney = qlksRoomRepository.priceRooms(request.getIdRoom());
+            entity.setIntoMoney(intoMoney);
+        } else {
+            entity.setIntoMoney(0L);
         }
 
         qlksRegistrationFormRepository.save(entity);
@@ -139,10 +163,14 @@ public class QLKSRegistrationFormServiceImpl implements QLKSRegistrationFormServ
             HotelManagerUtils.throwException(DatabaseException.class, ERROR_ID_NOT_EXISTED);
         }
 
-        Optional<QLKSDelegationModel> entityDelegation = qlksDelegationRepository.getById(request.getIdDelegation());
-        if (entityDelegation.isEmpty()) {
-            log.error("id not existed !");
-            HotelManagerUtils.throwException(DatabaseException.class, ERROR_ID_NOT_EXISTED);
+        QLKSDelegationModel delegation = new QLKSDelegationModel();
+        if(request.getType() == BookingType.DELEGATION.getValue()) {
+            Optional<QLKSDelegationModel> entityDelegation = qlksDelegationRepository.getById(request.getIdDelegation());
+            if (entityDelegation.isEmpty()) {
+                log.error("id not existed !");
+                HotelManagerUtils.throwException(DatabaseException.class, ERROR_ID_NOT_EXISTED);
+            }
+            delegation = entityDelegation.get();
         }
 
         String idRooms = String.join("/", request.getIdRoom());
@@ -153,18 +181,28 @@ public class QLKSRegistrationFormServiceImpl implements QLKSRegistrationFormServ
                 .checkInDate(request.getCheckInDate())
                 .checkOutDate(request.getCheckOutDate())
                 .idEmployee(request.getIdEmployee())
-                .idCustomer(entityDelegation.get().getIdCustomer())
-                .intoMoney(request.getIntoMoney())
                 .note(request.getNote())
                 .idRoom(idRooms)
                 .type(request.getType())
                 .status(TypeRegister.BOOK_ROOM.getValue())
-                .numberOfAdult(entityDelegation.get().getNumberOfPeople())
                 .isDelete(Boolean.FALSE)
                 .numberOfChild(request.getNumberOfChild()).build();
 
         if (request.getType() == BookingType.DELEGATION.getValue()) {
             entityUpdate.setIdDelegation(request.getIdDelegation());
+            entityUpdate.setIdCustomer(delegation.getIdCustomer());
+            entityUpdate.setNumberOfAdult(delegation.getNumberOfPeople());
+        } else {
+            String idCustomer = String.join("/", request.getIdCustomer());
+            entityUpdate.setIdCustomer(idCustomer);
+            entityUpdate.setNumberOfAdult(request.getIdCustomer().size());
+        }
+
+        if (request.getIsGuaranteed()) {
+            long intoMoney = qlksRoomRepository.priceRooms(request.getIdRoom());
+            entityUpdate.setIntoMoney(intoMoney);
+        } else {
+            entityUpdate.setIntoMoney(0L);
         }
 
         qlksRegistrationFormRepository.update(entityUpdate);
@@ -196,9 +234,20 @@ public class QLKSRegistrationFormServiceImpl implements QLKSRegistrationFormServ
             registrationResponse.setCustomers(qlksCustomerRepository.getByIds(listIdCustomer));
         }
 
-        if (StringUtils.isNotBlank(item.getIdCustomer())) {
+        if (StringUtils.isNotBlank(item.getIdRoom())) {
             List<String> listIdRooms = List.of(item.getIdRoom().split("/"));
             registrationResponse.setRooms(qlksRoomRepository.getByIds(listIdRooms));
+        }
+
+        if (StringUtils.isNotBlank(item.getIdDelegation())) {
+            try {
+                Optional<QLKSDelegationModel> delegationModel = qlksDelegationRepository.getById(item.getIdDelegation());
+                if (delegationModel.isPresent()) {
+                    registrationResponse.setDelegation(qlksDelegationRepository.getById(item.getIdDelegation()).get());
+                }
+            } catch (HotelManagerException e) {
+                e.printStackTrace();
+            }
         }
 
         if (StringUtils.isNotBlank(item.getIdCustomer())) {

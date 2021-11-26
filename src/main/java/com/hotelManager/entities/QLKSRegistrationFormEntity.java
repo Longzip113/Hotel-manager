@@ -59,6 +59,6 @@ public class QLKSRegistrationFormEntity {
     private Boolean isDelete;
 
     @Column(name = "INTO_MONEY", nullable = false)
-    private Integer intoMoney;
+    private Long intoMoney;
 
 }

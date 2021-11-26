@@ -1,7 +1,8 @@
 package com.hotelManager.repositories.impl;
 
+import com.hotelManager.constants.enums.BookingType;
+import com.hotelManager.constants.enums.TypeRegister;
 import com.hotelManager.entities.QLKSRegistrationFormEntity;
-import com.hotelManager.entities.QLKSRoleEntity;
 import com.hotelManager.exceptions.DatabaseException;
 import com.hotelManager.exceptions.HotelManagerException;
 import com.hotelManager.repositories.QLKSRegistrationFormRepository;
@@ -45,6 +46,59 @@ public class QLKSRegistrationFormRepositoryImpl implements QLKSRegistrationFormR
             log.error("getAll QLKSRoleEntity failed!!", e);
             HotelManagerUtils.throwException(DatabaseException.class, ERROR_SERVER);
             return null;
+        } finally {
+            HibernateUtils.closeSession(session);
+        }
+    }
+
+    @Override
+    public List<QLKSRegistrationFormEntity> getByIdDelegation(String idDelegation) throws HotelManagerException {
+        Session session = sessionFactory.openSession();
+        try {
+            StringBuilder hql = new StringBuilder().append("FROM QLKSRegistrationFormEntity WHERE isDelete = :idDelete AND idDelegation = :idDelegation ");
+
+            log.info("SQL [{}]", hql);
+
+            Query<QLKSRegistrationFormEntity> query = session.createQuery(hql.toString(), QLKSRegistrationFormEntity.class)
+                    .setParameter("idDelete", Boolean.FALSE)
+                    .setParameter("idDelegation", idDelegation);
+
+            return query.getResultList();
+        } catch (PersistenceException e) {
+            log.error("getByIdDelegation QLKSRoleEntity failed!!", e);
+            HotelManagerUtils.throwException(DatabaseException.class, ERROR_SERVER);
+            return null;
+        } finally {
+            HibernateUtils.closeSession(session);
+        }
+    }
+
+    @Override
+    public void updateByIdDelegation(String idDelegation, String idCustomers, Integer size) throws HotelManagerException {
+        Session session = sessionFactory.openSession();
+        HibernateUtils.beginTransaction(session);
+
+        try {
+            StringBuilder hql = new StringBuilder()
+                    .append("UPDATE QLKSRegistrationFormEntity r ")
+                    .append("SET r.idCustomers = :idCustomers, r.numberOfAdult = :numberOfAdult ")
+                    .append("WHERE r.idDelegation = :idDelegation AND r.type = :type AND r.status = :status ");
+
+            log.info("SQL [{}]", hql);
+
+            Query query = session.createQuery(hql.toString())
+                    .setParameter("idDelegation", idDelegation)
+                    .setParameter("idCustomers", idCustomers)
+                    .setParameter("type", TypeRegister.BOOK_ROOM.getValue())
+                    .setParameter("status", BookingType.DELEGATION)
+                    .setParameter("size", size);
+            query.executeUpdate();
+
+            session.getTransaction().commit();
+        } catch (PersistenceException e) {
+
+            log.error("updateByIdDelegation QLKSRegistrationFormEntity failed Id: [{}]", idDelegation, e);
+            HotelManagerUtils.throwException(DatabaseException.class, ERROR_SERVER);
         } finally {
             HibernateUtils.closeSession(session);
         }

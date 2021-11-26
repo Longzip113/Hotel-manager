@@ -1,13 +1,10 @@
 package com.hotelManager.controllers;
 
 import com.hotelManager.dtos.request.RegistrationRequest;
-import com.hotelManager.dtos.request.RoleRequest;
 import com.hotelManager.dtos.responses.BaseApiResponse;
 import com.hotelManager.dtos.responses.QLKSRegistrationResponse;
-import com.hotelManager.entities.QLKSRoleEntity;
 import com.hotelManager.exceptions.HotelManagerException;
 import com.hotelManager.services.QLKSRegistrationFormService;
-import com.hotelManager.services.QLKSRoleService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

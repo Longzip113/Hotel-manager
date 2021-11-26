@@ -22,4 +22,6 @@ public interface QLKSRoomRepository {
     Optional<QLKSRoomModel> getByIdRoom(String idRoom);
 
     List<QLKSRoomModel> getByIds(List<String> id);
+
+    long priceRooms(List<String> idRooms);
 }

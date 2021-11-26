@@ -1,5 +1,6 @@
 package com.hotelManager.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -41,6 +42,7 @@ public class QLKSDelegationModel {
     private String idManager;
 
     @Column(name = "ID_CUSTOMER", nullable = false)
+    @JsonIgnore
     private String idCustomer;
 
     @Column(name = "NAME_COMPANY", nullable = false)

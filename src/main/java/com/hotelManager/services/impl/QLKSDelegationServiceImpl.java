@@ -9,6 +9,7 @@ import com.hotelManager.exceptions.HotelManagerException;
 import com.hotelManager.model.QLKSDelegationModel;
 import com.hotelManager.repositories.QLKSCustomerRepository;
 import com.hotelManager.repositories.QLKSDelegationRepository;
+import com.hotelManager.repositories.QLKSRegistrationFormRepository;
 import com.hotelManager.services.QLKSDelegationService;
 import com.hotelManager.utils.HotelManagerUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +32,9 @@ public class QLKSDelegationServiceImpl implements QLKSDelegationService {
 
     @Autowired
     QLKSCustomerRepository customerRepository;
+
+    @Autowired
+    QLKSRegistrationFormRepository qlksRegistrationFormRepository;
 
 
     @Override
@@ -122,6 +126,7 @@ public class QLKSDelegationServiceImpl implements QLKSDelegationService {
             HotelManagerUtils.throwException(DatabaseException.class, ERROR_DELEGATION_ALREADY_EXISTED);
         }
         String idCustomer = String.join("/", updateDelegationRequest.getIdCustomers());
+        Integer size = updateDelegationRequest.getIdCustomers().size();
 
         QLKSDelegationEntity entityUpdate = QLKSDelegationEntity.builder()
                 .id(id)
@@ -129,11 +134,12 @@ public class QLKSDelegationServiceImpl implements QLKSDelegationService {
                 .idTeamManager(updateDelegationRequest.getIdTeamManager())
                 .nameCompany(updateDelegationRequest.getNameCompany())
                 .idCustomer(idCustomer)
-                .numberOfPeople(updateDelegationRequest.getIdCustomers().size())
+                .numberOfPeople(size)
                 .isDelete(Boolean.FALSE)
                 .build();
 
         qlksDelegationRepository.update(entityUpdate);
+        qlksRegistrationFormRepository.updateByIdDelegation(id, idCustomer, size);
     }
 
     @Override
