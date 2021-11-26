@@ -40,7 +40,7 @@ public class QLKSEmployeeServiceImpl implements QLKSEmployeeService {
     ClientService clientService;
 
     @Override
-    public void save(UserRequest addUserRequest) throws HotelManagerException {
+    public QLKSEmployeeModel save(UserRequest addUserRequest) throws HotelManagerException {
         Session session = sessionFactory.openSession();
         try {
             // Create transaction
@@ -57,17 +57,16 @@ public class QLKSEmployeeServiceImpl implements QLKSEmployeeService {
                     .passWord(PASSWORD_DEFAULT)
                     .build();
 
-            qlksEmployeeRepository.save(qlksEmployeeEntity, session);
-
-
+            String id = qlksEmployeeRepository.save(qlksEmployeeEntity, session);
             session.getTransaction().commit();
+            return getDetail(id);
         } catch (Exception e) {
             log.error("Save QLKSEmployeeEntity failed", e);
             HotelManagerUtils.throwException(DatabaseException.class, ERROR_SERVER);
         } finally {
             HibernateUtils.closeSession(session);
         }
-
+        return null;
     }
 
     @Override

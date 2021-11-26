@@ -1,7 +1,9 @@
 package com.hotelManager.controllers;
 
 import com.hotelManager.dtos.request.*;
+import com.hotelManager.dtos.responses.AddApiResponse;
 import com.hotelManager.dtos.responses.BaseApiResponse;
+import com.hotelManager.dtos.responses.QLKSTypeRoomReponse;
 import com.hotelManager.exceptions.HotelManagerException;
 import com.hotelManager.model.QLKSEmployeeModel;
 import com.hotelManager.services.QLKSEmployeeService;
@@ -28,9 +30,9 @@ public class UserControllers {
     }
 
     @PostMapping(value = "/")
-    public ResponseEntity<BaseApiResponse> add(@RequestBody UserRequest request) throws HotelManagerException {
-        qlksEmployeeService.save(request);
-        return ResponseEntity.ok(new BaseApiResponse());
+    public ResponseEntity<AddApiResponse<QLKSEmployeeModel>> add(@RequestBody UserRequest request) throws HotelManagerException {
+
+        return ResponseEntity.ok(new AddApiResponse(qlksEmployeeService.save(request)));
     }
 
     @GetMapping(value = "/")

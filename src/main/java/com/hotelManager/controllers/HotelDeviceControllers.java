@@ -1,9 +1,11 @@
 package com.hotelManager.controllers;
 
 import com.hotelManager.dtos.request.HotelDeviceRequest;
+import com.hotelManager.dtos.responses.AddApiResponse;
 import com.hotelManager.dtos.responses.BaseApiResponse;
 import com.hotelManager.entities.QLKSHotelDeviceEntity;
 import com.hotelManager.exceptions.HotelManagerException;
+import com.hotelManager.model.QLKSEmployeeModel;
 import com.hotelManager.services.QLKSHotelDeviceService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,9 +30,9 @@ public class HotelDeviceControllers {
     }
 
     @PostMapping(value = "/hotel-device")
-    public ResponseEntity<BaseApiResponse> add(@RequestBody @Valid HotelDeviceRequest hotelDeviceRequest) throws HotelManagerException {
-        qlksHotelDeviceService.add(hotelDeviceRequest);
-        return ResponseEntity.ok(new BaseApiResponse());
+    public ResponseEntity<AddApiResponse<QLKSHotelDeviceEntity>> add(@RequestBody @Valid HotelDeviceRequest hotelDeviceRequest) throws HotelManagerException {
+
+        return ResponseEntity.ok(new AddApiResponse(qlksHotelDeviceService.add(hotelDeviceRequest)));
     }
 
     @GetMapping(value = "/hotel-device/{id}")

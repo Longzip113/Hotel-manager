@@ -34,18 +34,19 @@ public class QLKSRoomRepositoryImpl implements QLKSRoomRepository {
     private SessionFactory sessionFactory;
 
     @Override
-    public void save(QLKSRoomEntity qlksRoomEntity) throws HotelManagerException {
+    public String save(QLKSRoomEntity qlksRoomEntity) throws HotelManagerException {
         Session session = sessionFactory.openSession();
         try {
 
             HibernateUtils.beginTransaction(session);
-            session.save(qlksRoomEntity);
+            String id = (String)session.save(qlksRoomEntity);
             session.getTransaction().commit();
-
+            return id;
         } catch (PersistenceException e) {
 
             log.error("Save QLKSRoomEntity failed Object: [{}]", GsonHelper.defaultInstance().toJson(qlksRoomEntity), e);
             HotelManagerUtils.throwException(DatabaseException.class, ERROR_SERVER);
+            return null;
         } finally {
             HibernateUtils.closeSession(session);
         }

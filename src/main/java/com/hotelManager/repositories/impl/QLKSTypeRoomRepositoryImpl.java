@@ -51,14 +51,14 @@ public class QLKSTypeRoomRepositoryImpl implements QLKSTypeRoomRepository {
     }
 
     @Override
-    public void save(QLKSTypeRoomEntity qlksTypeRoomEntity) throws HotelManagerException {
+    public String save(QLKSTypeRoomEntity qlksTypeRoomEntity) throws HotelManagerException {
         Session session = sessionFactory.openSession();
         try {
 
             HibernateUtils.beginTransaction(session);
-            session.save(qlksTypeRoomEntity);
+            String id = (String) session.save(qlksTypeRoomEntity);
             session.getTransaction().commit();
-
+            return id;
         } catch (PersistenceException e) {
 
             log.error("Save QLKSTypeRoomEntity failed Object: [{}]", GsonHelper.defaultInstance().toJson(qlksTypeRoomEntity), e);
@@ -66,6 +66,7 @@ public class QLKSTypeRoomRepositoryImpl implements QLKSTypeRoomRepository {
         } finally {
             HibernateUtils.closeSession(session);
         }
+        return null;
     }
 
     @Override

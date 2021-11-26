@@ -30,7 +30,7 @@ public class QLKSServiceServiceImpl implements QLKSServiceService {
     }
 
     @Override
-    public void addService(ServiceRequest addServiceRequest) throws HotelManagerException {
+    public QLKSServiceEntity addService(ServiceRequest addServiceRequest) throws HotelManagerException {
         if (qlksServiceRepository.getByNameService(addServiceRequest.getNameService()).isPresent()) {
             log.error("Name existed !");
             HotelManagerUtils.throwException(DatabaseException.class, ERROR_SERVICE_ALREADY_EXISTED);
@@ -42,7 +42,9 @@ public class QLKSServiceServiceImpl implements QLKSServiceService {
                 .isDelete(Boolean.FALSE)
                 .build();
 
-        qlksServiceRepository.save(qlksServiceEntity);
+        String id = qlksServiceRepository.save(qlksServiceEntity);
+
+        return getDetailService(id);
     }
 
     @Override

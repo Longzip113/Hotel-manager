@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface QLKSRoomRepository {
-    void save(QLKSRoomEntity qlksRoomEntity) throws HotelManagerException;
+    String save(QLKSRoomEntity qlksRoomEntity) throws HotelManagerException;
 
     void delete(String idRoom);
 

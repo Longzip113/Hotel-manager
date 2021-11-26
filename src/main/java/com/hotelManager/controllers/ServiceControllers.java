@@ -1,7 +1,9 @@
 package com.hotelManager.controllers;
 
 import com.hotelManager.dtos.request.ServiceRequest;
+import com.hotelManager.dtos.responses.AddApiResponse;
 import com.hotelManager.dtos.responses.BaseApiResponse;
+import com.hotelManager.dtos.responses.QLKSTypeRoomReponse;
 import com.hotelManager.entities.QLKSServiceEntity;
 import com.hotelManager.exceptions.HotelManagerException;
 import com.hotelManager.services.QLKSServiceService;
@@ -29,9 +31,9 @@ public class ServiceControllers {
     }
 
     @PostMapping(value = "/service")
-    public ResponseEntity<BaseApiResponse> addService(@RequestBody @Valid ServiceRequest addServiceRequest) throws HotelManagerException {
-        qlksServiceService.addService(addServiceRequest);
-        return ResponseEntity.ok(new BaseApiResponse());
+    public ResponseEntity<AddApiResponse<QLKSServiceEntity>> addService(@RequestBody @Valid ServiceRequest addServiceRequest) throws HotelManagerException {
+
+        return ResponseEntity.ok(new AddApiResponse(qlksServiceService.addService(addServiceRequest)));
     }
 
     @GetMapping(value = "/service/{id}")

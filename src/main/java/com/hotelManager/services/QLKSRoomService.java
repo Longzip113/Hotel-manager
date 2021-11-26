@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface QLKSRoomService {
 
-    void save(RoomRequest addRoomRequest) throws HotelManagerException;
+    QLKSRoomModel save(RoomRequest addRoomRequest) throws HotelManagerException;
 
     void deleteRoom(String idRoom) throws HotelManagerException;
 

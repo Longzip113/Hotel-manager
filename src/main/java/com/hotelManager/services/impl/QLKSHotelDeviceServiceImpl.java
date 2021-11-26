@@ -30,11 +30,11 @@ public class QLKSHotelDeviceServiceImpl implements QLKSHotelDeviceService {
     }
 
     @Override
-    public void add(HotelDeviceRequest hotelDeviceRequest) throws HotelManagerException {
+    public QLKSHotelDeviceEntity add(HotelDeviceRequest hotelDeviceRequest) throws HotelManagerException {
 
         Optional<QLKSHotelDeviceEntity> qlksHotelDeviceEntity = qlksHotelDeviceRepository.getByNameAndPrice(hotelDeviceRequest.getNameHotelDevice()
                 , hotelDeviceRequest.getPrice());
-
+        String id = "";
         if (qlksHotelDeviceEntity.isPresent()) {
             HotelDeviceRequest update = HotelDeviceRequest.builder()
                     .nameHotelDevice(hotelDeviceRequest.getNameHotelDevice())
@@ -42,6 +42,7 @@ public class QLKSHotelDeviceServiceImpl implements QLKSHotelDeviceService {
                     .quantity(hotelDeviceRequest.getQuantity() + qlksHotelDeviceEntity.get().getQuantity())
                     .build();
             qlksHotelDeviceRepository.update(qlksHotelDeviceEntity.get().getId(), update);
+            id = qlksHotelDeviceEntity.get().getId();
         } else if (qlksHotelDeviceRepository.getByName(hotelDeviceRequest.getNameHotelDevice()).isPresent()) {
 
             log.error("Name device existed !");
@@ -55,9 +56,9 @@ public class QLKSHotelDeviceServiceImpl implements QLKSHotelDeviceService {
                     .status(Boolean.TRUE)
                     .build();
 
-            qlksHotelDeviceRepository.save(entity);
+            id = qlksHotelDeviceRepository.save(entity);
         }
-
+        return getDetail(id);
     }
 
     @Override

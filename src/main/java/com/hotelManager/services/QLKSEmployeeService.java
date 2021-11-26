@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface QLKSEmployeeService {
 
-    void save(UserRequest addUserRequest) throws HotelManagerException;
+    QLKSEmployeeModel save(UserRequest addUserRequest) throws HotelManagerException;
 
     QLKSEmployeeModel login(LoginRequest userRequest) throws HotelManagerException;
 

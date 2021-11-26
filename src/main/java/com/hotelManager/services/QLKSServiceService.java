@@ -9,7 +9,7 @@ import java.util.List;
 public interface QLKSServiceService {
     List<QLKSServiceEntity> getAll() throws HotelManagerException;
 
-    void addService(ServiceRequest addServiceRequest) throws HotelManagerException;
+    QLKSServiceEntity addService(ServiceRequest addServiceRequest) throws HotelManagerException;
 
     void deleteService(String id) throws HotelManagerException;
 

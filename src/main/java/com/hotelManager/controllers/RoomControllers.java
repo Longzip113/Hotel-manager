@@ -2,6 +2,7 @@ package com.hotelManager.controllers;
 
 import com.hotelManager.constants.Constants;
 import com.hotelManager.dtos.request.RoomRequest;
+import com.hotelManager.dtos.responses.AddApiResponse;
 import com.hotelManager.dtos.responses.BaseApiResponse;
 import com.hotelManager.exceptions.HotelManagerException;
 import com.hotelManager.model.QLKSRoomModel;
@@ -52,11 +53,9 @@ public class RoomControllers {
     }
 
     @PostMapping(value = "/room")
-    public ResponseEntity<BaseApiResponse> addRoom(@RequestBody @Valid RoomRequest addRoomRequest) throws HotelManagerException {
+    public ResponseEntity<AddApiResponse<QLKSRoomModel>> addRoom(@RequestBody @Valid RoomRequest addRoomRequest) throws HotelManagerException {
 
-
-        qlksRoomService.save(addRoomRequest);
-        return ResponseEntity.ok(new BaseApiResponse());
+        return ResponseEntity.ok(new AddApiResponse(qlksRoomService.save(addRoomRequest)));
     }
 
     @PutMapping(value = "/room/{idRoom}")

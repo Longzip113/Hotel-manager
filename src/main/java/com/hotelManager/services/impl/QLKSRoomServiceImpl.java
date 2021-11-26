@@ -41,7 +41,7 @@ public class QLKSRoomServiceImpl implements QLKSRoomService {
     QLKSRegistrationFormRepository qlksRegistrationFormRepository;
 
     @Override
-    public void save(RoomRequest addRoomRequest) throws HotelManagerException {
+    public QLKSRoomModel save(RoomRequest addRoomRequest) throws HotelManagerException {
 
         if (qlksRoomRepository.getByNameRoom(addRoomRequest.getNameRoom()).isPresent()) {
             log.error("Name room existed !");
@@ -60,7 +60,10 @@ public class QLKSRoomServiceImpl implements QLKSRoomService {
                 .status(StatusRoom.NOT_BOOKED_YET.getValue())
                 .isDelete(Boolean.FALSE).build();
 
-        qlksRoomRepository.save(qlksRoomEntity);
+        String id = qlksRoomRepository.save(qlksRoomEntity);
+        getDetailRoom(id);
+
+        return getDetailRoom(id);
     }
 
     @Override

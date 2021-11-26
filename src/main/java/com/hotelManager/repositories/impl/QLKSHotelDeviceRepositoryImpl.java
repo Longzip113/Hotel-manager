@@ -51,13 +51,15 @@ public class QLKSHotelDeviceRepositoryImpl implements QLKSHotelDeviceRepository 
     }
 
     @Override
-    public void save(QLKSHotelDeviceEntity qlksHotelDeviceEntity) throws HotelManagerException {
+    public String save(QLKSHotelDeviceEntity qlksHotelDeviceEntity) throws HotelManagerException {
         Session session = sessionFactory.openSession();
         try {
 
             HibernateUtils.beginTransaction(session);
-            session.save(qlksHotelDeviceEntity);
+            String id = (String) session.save(qlksHotelDeviceEntity);
             session.getTransaction().commit();
+
+            return id;
 
         } catch (PersistenceException e) {
 
@@ -66,6 +68,8 @@ public class QLKSHotelDeviceRepositoryImpl implements QLKSHotelDeviceRepository 
         } finally {
             HibernateUtils.closeSession(session);
         }
+
+        return null;
     }
 
     @Override

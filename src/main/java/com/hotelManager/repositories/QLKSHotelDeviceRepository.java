@@ -10,7 +10,7 @@ import java.util.Optional;
 public interface QLKSHotelDeviceRepository {
     List<QLKSHotelDeviceEntity> getAll() throws HotelManagerException;
 
-    void save(QLKSHotelDeviceEntity qlksHotelDeviceEntity) throws HotelManagerException;
+    String save(QLKSHotelDeviceEntity qlksHotelDeviceEntity) throws HotelManagerException;
 
     void delete(String id) throws HotelManagerException;
 

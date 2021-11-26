@@ -10,7 +10,7 @@ public interface QLKSHotelDeviceService {
 
     List<QLKSHotelDeviceEntity> getAll() throws HotelManagerException;
 
-    void add(HotelDeviceRequest hotelDeviceRequest) throws HotelManagerException;
+    QLKSHotelDeviceEntity add(HotelDeviceRequest hotelDeviceRequest) throws HotelManagerException;
 
     void delete(String id) throws HotelManagerException;
 
