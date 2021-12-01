@@ -1,6 +1,8 @@
 package com.hotelManager.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.hotelManager.dtos.responses.QLKSArrangenmentCustomerResponse;
+import com.hotelManager.dtos.responses.QLKSRegistrationResponse;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -65,6 +67,16 @@ public class QLKSRoomModel {
     @JsonProperty("details")
     @ElementCollection(targetClass= QLKSDetailTypeRoomModel.class)
     List<QLKSDetailTypeRoomModel> details;
+
+    @Transient
+    @JsonProperty("infoRegistration")
+    @ElementCollection(targetClass= QLKSRegistrationResponse.class)
+    QLKSRegistrationResponse infoRegistration;
+
+    @Transient
+    @JsonProperty("infoCustomerBooking")
+    @ElementCollection(targetClass= QLKSArrangenmentCustomerResponse.class)
+    QLKSArrangenmentCustomerResponse infoCustomerBooking;
 
     public QLKSRoomModel(String id, String nameRoom, String description, String nameTypeRoom, String nameEmployee, String housekeepingOrder, String idTypeRoom) {
         this.id = id;

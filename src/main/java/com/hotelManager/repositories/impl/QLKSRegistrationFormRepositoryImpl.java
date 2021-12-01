@@ -194,7 +194,7 @@ public class QLKSRegistrationFormRepositoryImpl implements QLKSRegistrationFormR
     }
 
     @Override
-    public long getByIdRoomAndTime(String idRoom, Long time) throws HotelManagerException {
+    public Optional<QLKSRegistrationFormEntity> getByIdRoomAndTime(String idRoom, Long time) throws HotelManagerException {
         Session session = sessionFactory.openSession();
         try {
             StringBuilder hql = new StringBuilder()
@@ -206,19 +206,15 @@ public class QLKSRegistrationFormRepositoryImpl implements QLKSRegistrationFormR
                     .setParameter("time", time)
                     .setParameter("idRoom", "%" + idRoom + "%");
 
-            BigInteger count = (BigInteger)query.uniqueResult();
-            if (count != null) {
-                return count.longValue();
-            } else {
-                return -1;
-            }
+
+            return query.uniqueResultOptional();
         } catch (Exception e) {
 
             log.error("getById QLKSRegistrationFormEntity fail !", e);
             HotelManagerUtils.throwException(DatabaseException.class, ERROR_SERVER);
+            return null;
         }  finally {
             HibernateUtils.closeSession(session);
         }
-        return -1;
     }
 }

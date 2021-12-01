@@ -76,7 +76,7 @@ public class QLKSRoomArrangementServiceImpl implements QLKSRoomArrangementServic
                                                              List<String> listIdRooms, List<String> listIdCustomer) {
         List<QLKSRoomArrangementEntity> entities = new ArrayList<>();
         Integer indexIdCustomer = 0;
-        Integer sizeCustomer = listIdCustomer.size();
+        Integer sizeCustomer = listIdCustomer.size() - 1;
         String id = qlksRegistrationFormEntity.getId();
 
         if(StringUtils.isNotBlank(qlksRegistrationFormEntity.getIdDelegation())) {
@@ -84,8 +84,8 @@ public class QLKSRoomArrangementServiceImpl implements QLKSRoomArrangementServic
                 String idCustomer = "";
                 if (sizeCustomer > indexIdCustomer) {
                     idCustomer = listIdCustomer.get(indexIdCustomer) + "/" + listIdCustomer.get(indexIdCustomer + 1);
-                } else if(sizeCustomer == indexIdCustomer - 1) {
-                    idCustomer = listIdCustomer.get(indexIdCustomer - 1);
+                } else if(sizeCustomer == indexIdCustomer) {
+                    idCustomer = listIdCustomer.get(indexIdCustomer);
                 }
 
                 QLKSRoomArrangementEntity roomArrangementEntity = QLKSRoomArrangementEntity.builder()

@@ -1,15 +1,20 @@
 package com.hotelManager.services.impl;
 
+import com.hotelManager.constants.enums.BookingType;
 import com.hotelManager.constants.enums.StatusRoom;
+import com.hotelManager.constants.enums.TypeRegister;
 import com.hotelManager.dtos.request.RoomRequest;
+import com.hotelManager.dtos.responses.QLKSArrangenmentCustomerResponse;
+import com.hotelManager.entities.QLKSCustomerEntity;
+import com.hotelManager.entities.QLKSRegistrationFormEntity;
+import com.hotelManager.entities.QLKSRoomArrangementEntity;
 import com.hotelManager.entities.QLKSRoomEntity;
 import com.hotelManager.exceptions.DatabaseException;
 import com.hotelManager.exceptions.HotelManagerException;
 import com.hotelManager.model.QLKSRoomModel;
-import com.hotelManager.repositories.QLKSDetailTypeRoomRepository;
-import com.hotelManager.repositories.QLKSRegistrationFormRepository;
-import com.hotelManager.repositories.QLKSRoomRepository;
-import com.hotelManager.repositories.QLKSTypeRoomRepository;
+import com.hotelManager.repositories.*;
+import com.hotelManager.services.QLKSCustomerService;
+import com.hotelManager.services.QLKSRegistrationFormService;
 import com.hotelManager.services.QLKSRoomService;
 import com.hotelManager.utils.DateTimeUtils;
 import com.hotelManager.utils.HotelManagerUtils;
@@ -18,6 +23,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -39,6 +45,15 @@ public class QLKSRoomServiceImpl implements QLKSRoomService {
 
     @Autowired
     QLKSRegistrationFormRepository qlksRegistrationFormRepository;
+
+    @Autowired
+    QLKSRegistrationFormService qlksRegistrationFormService;
+
+    @Autowired
+    QLKSRoomArrangementRepository qlksRoomArrangementRepository;
+
+    @Autowired
+    QLKSCustomerService qlksCustomerService;
 
     @Override
     public QLKSRoomModel save(RoomRequest addRoomRequest) throws HotelManagerException {
@@ -104,15 +119,50 @@ public class QLKSRoomServiceImpl implements QLKSRoomService {
 
         return qlksRoomRepository.getAll(sortBy, sortOrder).stream().map(item -> {
             try {
-                long status = qlksRegistrationFormRepository.getByIdRoomAndTime(item.getId(), DateTimeUtils.getCurrentTime());
-                item.setDetails(qlksDetailTypeRoomRepository.getByIdTypeRoom(item.getIdTypeRoom()));
-                item.setStatus(status);
+                setItemRoomModel(item, DateTimeUtils.getCurrentTime());
             } catch (HotelManagerException e) {
                 e.printStackTrace();
             }
             return item;
         }).collect(Collectors.toList());
     }
+
+    private void setItemRoomModel(QLKSRoomModel item, Long time) throws HotelManagerException {
+
+        Optional<QLKSRegistrationFormEntity> registrationFormEntity = qlksRegistrationFormRepository.getByIdRoomAndTime(item.getId(),
+                time);
+        item.setDetails(qlksDetailTypeRoomRepository.getByIdTypeRoom(item.getIdTypeRoom()));
+        if (registrationFormEntity.isPresent()) {
+            QLKSRegistrationFormEntity entity = registrationFormEntity.get();
+            item.setStatus(entity.getStatus());
+            item.setInfoRegistration(qlksRegistrationFormService.getDetail(entity.getId()));
+
+            if(entity.getStatus() == TypeRegister.CHECK_IN.getValue()) {
+                Optional<QLKSRoomArrangementEntity> arrangementEntity = qlksRoomArrangementRepository.getByIdRegisterAndRoom(
+                        entity.getId(), item.getId()
+                );
+
+                QLKSArrangenmentCustomerResponse arrangenmentCustomerResponse = QLKSArrangenmentCustomerResponse.builder()
+                        .numberOfChild(arrangementEntity.get().getNumberOfChildren()).build();
+
+                List<String> listIdCustomer = List.of(arrangementEntity.get().getIdCustomer().split("/"));
+                Integer size = listIdCustomer.size();
+                arrangenmentCustomerResponse.setNumberOfPeople(size);
+                List<QLKSCustomerEntity> customerEntityList = new ArrayList<>();
+
+                for (int i = 0; i < size; i++) {
+                    QLKSCustomerEntity customerEntity = qlksCustomerService.getDetail(listIdCustomer.get(i));
+                    customerEntityList.add(customerEntity);
+                }
+                arrangenmentCustomerResponse.setCustomers(customerEntityList);
+
+                item.setInfoCustomerBooking(arrangenmentCustomerResponse);
+            }
+        } else {
+            item.setStatus(-1);
+        }
+    }
+
 
     @Override
     public QLKSRoomModel getDetailRoom(String idRoom) throws HotelManagerException {
@@ -123,10 +173,7 @@ public class QLKSRoomServiceImpl implements QLKSRoomService {
             log.error("IdRoom does not exist !");
             HotelManagerUtils.throwException(DatabaseException.class, ERROR_ROOM_NOT_EXISTED);
         }
-        long status = qlksRegistrationFormRepository.getByIdRoomAndTime(idRoom, DateTimeUtils.getCurrentTime());
-
-        result.get().setDetails(qlksDetailTypeRoomRepository.getByIdTypeRoom(result.get().getIdTypeRoom()));
-        result.get().setStatus(status);
+        setItemRoomModel(result.get(), DateTimeUtils.getCurrentTime());
 
         return result.get();
     }

@@ -71,4 +71,26 @@ public class QLKSRoomArrangementRepositoryImpl implements QLKSRoomArrangementRep
             HibernateUtils.closeSession(session);
         }
     }
+
+    @Override
+    public Optional<QLKSRoomArrangementEntity> getByIdRegisterAndRoom(String idRegister, String idRoom) throws HotelManagerException {
+        Session session = sessionFactory.openSession();
+        try {
+            StringBuilder hql = new StringBuilder().append("FROM QLKSRoomArrangementEntity WHERE idRegistrationForm = :idRegistrationForm AND idRoom = :idRoom ");
+
+            log.info("SQL [{}]", hql);
+
+            Query<QLKSRoomArrangementEntity> query = session.createQuery(hql.toString(), QLKSRoomArrangementEntity.class)
+                    .setParameter("idRegistrationForm", idRegister)
+                    .setParameter("idRoom", idRoom);
+
+            return query.uniqueResultOptional();
+        } catch (PersistenceException e) {
+            log.error("getAll QLKSRoleEntity failed!!", e);
+            HotelManagerUtils.throwException(DatabaseException.class, ERROR_SERVER);
+            return null;
+        } finally {
+            HibernateUtils.closeSession(session);
+        }
+    }
 }
