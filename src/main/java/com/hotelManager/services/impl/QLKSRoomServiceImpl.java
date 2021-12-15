@@ -134,10 +134,10 @@ public class QLKSRoomServiceImpl implements QLKSRoomService {
         item.setDetails(qlksDetailTypeRoomRepository.getByIdTypeRoom(item.getIdTypeRoom()));
         if (registrationFormEntity.isPresent()) {
             QLKSRegistrationFormEntity entity = registrationFormEntity.get();
-            item.setStatus(entity.getStatus());
             item.setInfoRegistration(qlksRegistrationFormService.getDetail(entity.getId()));
 
             if(entity.getStatus() == TypeRegister.CHECK_IN.getValue()) {
+                item.setStatus(entity.getStatus());
                 Optional<QLKSRoomArrangementEntity> arrangementEntity = qlksRoomArrangementRepository.getByIdRegisterAndRoom(
                         entity.getId(), item.getId()
                 );
@@ -157,6 +157,8 @@ public class QLKSRoomServiceImpl implements QLKSRoomService {
                 arrangenmentCustomerResponse.setCustomers(customerEntityList);
 
                 item.setInfoCustomerBooking(arrangenmentCustomerResponse);
+            } else if (entity.getStatus() == 0) {
+                item.setStatus(0);
             }
         } else {
             item.setStatus(-1);

@@ -29,19 +29,19 @@ public class QLKSBillEntity {
     private String idRoom;
 
     @Column(name = "ROOM_RENT", nullable = false)
-    private String roomRent;
+    private Long roomRent;
 
     @Column(name = "SERVICE_FEE", nullable = false)
-    private String serviceFee;
+    private Long serviceFee;
 
     @Column(name = "COSTS_INCURRED", nullable = false)
-    private Integer costsIncurred;
+    private Long costsIncurred;
 
     @Column(name = "TOTAL_MONEY", nullable = false)
-    private String totalMoney;
+    private Long totalMoney;
 
     @Column(name = "DAY_OF_PAYMENT", nullable = false)
-    private String dayOfPayment;
+    private Long dayOfPayment;
 
     @Column(name = "ID_EMPLOYEE", nullable = false)
     private String idEmployee;

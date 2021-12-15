@@ -19,6 +19,7 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.PersistenceException;
 
 import java.math.BigInteger;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -199,11 +200,12 @@ public class QLKSRegistrationFormRepositoryImpl implements QLKSRegistrationFormR
         try {
             StringBuilder hql = new StringBuilder()
                     .append("FROM QLKSRegistrationFormEntity ")
-                    .append("WHERE id_room like :idRoom AND ( :time BETWEEN checkInDate AND checkOutDate) AND isDelete = false ");
+                    .append("WHERE id_room like :idRoom AND ( :time BETWEEN checkInDate AND checkOutDate) AND isDelete = false AND status <> :status ");
             log.info("SQL [{}]", hql);
 
             Query query = session.createQuery(hql.toString())
                     .setParameter("time", time)
+                    .setParameter("status", TypeRegister.CANCEL.getValue())
                     .setParameter("idRoom", "%" + idRoom + "%");
 
 

@@ -8,6 +8,7 @@ import com.hotelManager.repositories.QLKSCustomerRepository;
 import com.hotelManager.services.QLKSCustomerService;
 import com.hotelManager.utils.HotelManagerUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -95,8 +96,12 @@ public class QLKSCustomerServiceImpl implements QLKSCustomerService {
 
     @Override
     public QLKSCustomerEntity getDetail(String id) throws HotelManagerException {
+        if (!StringUtils.isNotBlank(id)) {
+            return null;
+        }
+
         if(qlksCustomerRepository.getById(id).isEmpty()) {
-            log.error("Id does not exist !");
+            log.error("Id does not exist ! {}", id);
             HotelManagerUtils.throwException(DatabaseException.class, ERROR_ID_NOT_EXISTED);
         }
 

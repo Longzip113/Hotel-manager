@@ -26,7 +26,9 @@ public enum HotelManagerResponseCode {
     ERROR_EMAIL_NOT_EXISTED             (-16,    "Email không tồn tại !"),
     ERROR_VERIFICATION                  (-17,    "Mã xác nhận không tồn tại !"),
     ERROR_DELEGATION_ALREADY_EXISTED    (-18,    "Tên đoàn đã tồn tại !"),
-    ERROR_ROLE_ALREADY                  (-19,    "Hiện tại role đang được sử dụng !");
+    ERROR_ROLE_ALREADY                  (-19,    "Hiện tại role đang được sử dụng !"),
+    ERROR_ROOM_CHECK_IN                 (-20,    "Phòng không đang ở trạng thái checkin !"),
+    ERROR_ROOM_CHECK_OUT                (-21,    "Phòng không đang ở trạng thái checkout !");
 
     private final int responseCode;
 
