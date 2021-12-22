@@ -27,7 +27,8 @@ import java.util.List;
                         @ColumnResult(name = "name_type_room", type = String.class),
                         @ColumnResult(name = "name_employee", type = String.class),
                         @ColumnResult(name = "housekeeping_order", type = String.class),
-                        @ColumnResult(name = "id_type_room", type = String.class)
+                        @ColumnResult(name = "id_type_room", type = String.class),
+                        @ColumnResult(name = "status", type = Integer.class)
                 }))
 public class QLKSRoomModel {
 
@@ -61,6 +62,7 @@ public class QLKSRoomModel {
     private String idTypeRoom;
 
     @JsonProperty("status")
+    @Column(name = "status", nullable = false)
     private long status;
 
     @Transient
@@ -78,7 +80,7 @@ public class QLKSRoomModel {
     @ElementCollection(targetClass= QLKSArrangenmentCustomerResponse.class)
     QLKSArrangenmentCustomerResponse infoCustomerBooking;
 
-    public QLKSRoomModel(String id, String nameRoom, String description, String nameTypeRoom, String nameEmployee, String housekeepingOrder, String idTypeRoom) {
+    public QLKSRoomModel(String id, String nameRoom, String description, String nameTypeRoom, String nameEmployee, String housekeepingOrder, String idTypeRoom, Integer status) {
         this.id = id;
         this.nameRoom = nameRoom;
         this.description = description;
@@ -86,5 +88,6 @@ public class QLKSRoomModel {
         this.nameEmployee = nameEmployee;
         this.housekeepingOrder = housekeepingOrder;
         this.idTypeRoom = idTypeRoom;
+        this.status = status;
     }
 }

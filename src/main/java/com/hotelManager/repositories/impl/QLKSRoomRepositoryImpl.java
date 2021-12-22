@@ -164,7 +164,7 @@ public class QLKSRoomRepositoryImpl implements QLKSRoomRepository {
         Session session = sessionFactory.openSession();
         try {
             StringBuilder hql = new StringBuilder()
-                    .append("SELECT r.id_room, r.name_room, r.description, tr.name_type_room, e.name_employee, r.housekeeping_order, r.id_type_room ")
+                    .append("SELECT r.id_room, r.name_room, r.description, tr.name_type_room, e.name_employee, r.housekeeping_order, r.id_type_room, r.status ")
                     .append("FROM qlks_room r ")
                     .append("LEFT JOIN qlks_type_room tr ON tr.id_type_room = r.id_type_room ")
                     .append("LEFT JOIN qlks_employee e ON e.id_employee = r.id_housekeeping_staff ")
@@ -223,6 +223,30 @@ public class QLKSRoomRepositoryImpl implements QLKSRoomRepository {
 
             return query.uniqueResultOptional();
         } finally {
+            HibernateUtils.closeSession(session);
+        }
+    }
+
+    @Override
+    public Optional<QLKSRoomEntity> getByIdRoomEntity(String idRoom) throws HotelManagerException {
+        Session session = sessionFactory.openSession();
+        try {
+            StringBuilder hql = new StringBuilder()
+                    .append("FROM QLKSRoomEntity r ")
+                    .append("WHERE r.id = :id AND r.isDelete = :isDeleted ");
+            log.info("SQL [{}]", hql);
+
+            Query query = session.createQuery(hql.toString())
+                    .setParameter("isDeleted", Boolean.FALSE)
+                    .setParameter("id", idRoom);
+
+            return query.uniqueResultOptional();
+        } catch (Exception e) {
+
+            log.error("getByNameRoom QLKSRoomEntity fail !", e);
+            HotelManagerUtils.throwException(DatabaseException.class, ERROR_SERVER);
+            return Optional.empty();
+        }  finally {
             HibernateUtils.closeSession(session);
         }
     }

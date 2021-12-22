@@ -25,6 +25,8 @@ public interface QLKSRoomRepository {
 
     Optional<QLKSRoomModel> getByIdRoom(String idRoom);
 
+    Optional<QLKSRoomEntity> getByIdRoomEntity(String idRoom) throws HotelManagerException;
+
     List<QLKSRoomModel> getByIds(List<String> id);
 
     long priceRooms(List<String> idRooms);

@@ -97,6 +97,10 @@ public class QLKSLogCustomerServiceImpl implements QLKSLogCustomerService {
         qlksLogCustomerRepository.save(entity);
     }
 
+    private void changeRoom(LogCustomerRequest request) {
+
+    }
+
     @Override
     public List<QLKSLogCustomerResponse> getAll() throws HotelManagerException {
         List<QLKSLogCustomerEntity> entityList = qlksLogCustomerRepository.getAll();

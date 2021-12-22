@@ -26,5 +26,5 @@ public class QLKSCleanScheduleEntity {
     private String idRoom;
 
     @Column(name = "day_working", nullable = false)
-    private Long dayWorking;
+    private String dayWorking;
 }

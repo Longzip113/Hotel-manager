@@ -1,9 +1,7 @@
 package com.hotelManager.repositories;
 
 import com.hotelManager.entities.QLKSBillEntity;
-import com.hotelManager.entities.QLKSLogCustomerEntity;
 import com.hotelManager.exceptions.HotelManagerException;
-import io.swagger.models.auth.In;
 
 import java.util.List;
 import java.util.Optional;

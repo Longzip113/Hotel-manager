@@ -1,6 +1,5 @@
 package com.hotelManager.services.impl;
 
-import com.hotelManager.constants.enums.BookingType;
 import com.hotelManager.constants.enums.StatusRoom;
 import com.hotelManager.constants.enums.TypeRegister;
 import com.hotelManager.dtos.request.RoomRequest;
@@ -131,6 +130,11 @@ public class QLKSRoomServiceImpl implements QLKSRoomService {
     }
 
     private void setItemRoomModel(QLKSRoomModel item, Optional<QLKSRegistrationFormEntity> registrationFormEntity) throws HotelManagerException {
+        Boolean checkClear = false;
+
+        if (item.getStatus() == StatusRoom.MAINTENANCE.getValue()) {
+            checkClear = true;
+        }
 
         item.setDetails(qlksDetailTypeRoomRepository.getByIdTypeRoom(item.getIdTypeRoom()));
         if (registrationFormEntity.isPresent()) {
@@ -160,11 +164,11 @@ public class QLKSRoomServiceImpl implements QLKSRoomService {
                 item.setInfoCustomerBooking(arrangenmentCustomerResponse);
             } else if (entity.getStatus() == TypeRegister.BOOK_ROOM.getValue()) {
                 item.setStatus(StatusRoom.ALREADY_BOOKED.getValue());
-            } else {
-                item.setStatus(StatusRoom.NOT_BOOKED_YET.getValue());
             }
-        } else {
-            item.setStatus(StatusRoom.NOT_BOOKED_YET.getValue());
+        }
+
+        if (checkClear) {
+            item.setStatus(StatusRoom.MAINTENANCE.getValue());
         }
     }
 
@@ -192,6 +196,9 @@ public class QLKSRoomServiceImpl implements QLKSRoomService {
                 Optional<QLKSRegistrationFormEntity> registrationFormEntity = qlksRegistrationFormRepository.getByIdRoomAndTime(item.getId(),
                         roomRequest.getDayCheckIn(), roomRequest.getDayCheckOut());
                 setItemRoomModel(item, registrationFormEntity);
+                if(registrationFormEntity.isPresent()) {
+                    item.setStatus(TypeRegister.BOOK_ROOM.getValue());
+                }
             } catch (HotelManagerException e) {
                 e.printStackTrace();
             }

@@ -54,12 +54,13 @@ public class QLKSRoomArrangementRepositoryImpl implements QLKSRoomArrangementRep
     public Optional<QLKSRoomArrangementEntity> getByIdRegisterAndCustomer(String idRegister, String idCustomer) throws HotelManagerException {
         Session session = sessionFactory.openSession();
         try {
-            StringBuilder hql = new StringBuilder().append("FROM QLKSRoomArrangementEntity WHERE idRegistrationForm = :idRegistrationForm AND idCustomer like :idCustomer ");
+            StringBuilder hql = new StringBuilder().append("FROM QLKSRoomArrangementEntity WHERE idRegistrationForm = :idRegistrationForm AND idCustomer like :idCustomer AND isDelete = :isDelete ");
 
             log.info("SQL [{}]", hql);
 
             Query<QLKSRoomArrangementEntity> query = session.createQuery(hql.toString(), QLKSRoomArrangementEntity.class)
                     .setParameter("idRegistrationForm", idRegister)
+                    .setParameter("isDelete", Boolean.FALSE)
                     .setParameter("idCustomer", "%" + idCustomer + "%");
 
             return query.uniqueResultOptional();

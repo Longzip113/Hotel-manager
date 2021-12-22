@@ -200,12 +200,12 @@ public class QLKSRegistrationFormRepositoryImpl implements QLKSRegistrationFormR
         try {
             StringBuilder hql = new StringBuilder()
                     .append("FROM QLKSRegistrationFormEntity ")
-                    .append("WHERE id_room like :idRoom AND ( :time BETWEEN checkInDate AND checkOutDate) AND isDelete = false AND status <> :status ");
+                    .append("WHERE id_room like :idRoom AND ( :time BETWEEN checkInDate AND checkOutDate) AND isDelete = false AND status not in :status ");
             log.info("SQL [{}]", hql);
 
             Query query = session.createQuery(hql.toString())
                     .setParameter("time", time)
-                    .setParameter("status", TypeRegister.CANCEL.getValue())
+                    .setParameter("status", Arrays.asList(TypeRegister.CANCEL.getValue(), TypeRegister.CHECK_OUT.getValue()))
                     .setParameter("idRoom", "%" + idRoom + "%");
 
 
@@ -226,10 +226,10 @@ public class QLKSRegistrationFormRepositoryImpl implements QLKSRegistrationFormR
         try {
             StringBuilder hql = new StringBuilder()
                     .append("FROM QLKSRegistrationFormEntity ")
-                    .append("WHERE id_room like :idRoom AND ( :timeStart BETWEEN checkInDate AND checkOutDate) " +
-                            "AND ( :timeEnd BETWEEN checkInDate AND checkOutDate) " +
-                            "AND ( checkInDate BETWEEN :timeStart AND :timeEnd) " +
-                            "AND ( checkOutDate BETWEEN :timeStart AND :timeEnd) " +
+                    .append("WHERE id_room like :idRoom AND (( :timeStart BETWEEN checkInDate AND checkOutDate) " +
+                            "OR ( :timeEnd BETWEEN checkInDate AND checkOutDate) " +
+                            "OR ( checkInDate BETWEEN :timeStart AND :timeEnd) " +
+                            "OR ( checkOutDate BETWEEN :timeStart AND :timeEnd)) " +
                             "AND isDelete = FALSE AND status <> :status ");
             log.info("SQL [{}]", hql);
 

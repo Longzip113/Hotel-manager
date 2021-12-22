@@ -22,18 +22,15 @@ public class QLKSLogCleanRoomEntity {
     @Column(name = "ID_ROOM")
     private String idRoom;
 
-    @Column(name = "ID_REGISTRATION_FORM", nullable = false)
-    private String idRegistrationForm;
-
     @Column(name = "ID_EMPLOYEE", nullable = false)
     private String idEmployee;
-
-    @Column(name = "ACTION", nullable = false)
-    private Integer action;
 
     @Column(name = "TIME_START", nullable = false)
     private Long timeStart;
 
     @Column(name = "TIME_END", nullable = false)
     private Long timeEnd;
+
+    @Column(name = "day_working", nullable = false)
+    private String dayWorking;
 }
