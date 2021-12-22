@@ -2,6 +2,7 @@ package com.hotelManager.repositories.impl;
 
 import com.hotelManager.constants.Constants;
 import com.hotelManager.dtos.request.RoomRequest;
+import com.hotelManager.entities.QLKSRoleEntity;
 import com.hotelManager.entities.QLKSRoomEntity;
 import com.hotelManager.exceptions.DatabaseException;
 import com.hotelManager.exceptions.HotelManagerException;
@@ -117,6 +118,24 @@ public class QLKSRoomRepositoryImpl implements QLKSRoomRepository {
     }
 
     @Override
+    public void updateBatch(List<QLKSRoomEntity> listEntity) throws HotelManagerException {
+        Session session = sessionFactory.openSession();
+
+        final int batchSize = Constants.BATCH_SIZE;
+        final int length = listEntity.size();
+
+        for (int i = 0; i < length; i++) {
+            if (i > 0 && i % batchSize == 0) {
+                //flush a batch of inserts and release memory:
+                session.flush();
+                session.clear();
+            }
+
+            session.update(listEntity.get(i));
+        }
+    }
+
+    @Override
     public Optional<QLKSRoomEntity> getByNameRoom(String nameRoom) throws HotelManagerException {
         Session session = sessionFactory.openSession();
         try {
@@ -159,6 +178,27 @@ public class QLKSRoomRepositoryImpl implements QLKSRoomRepository {
                     .setParameter("isDeleted", Boolean.FALSE);
 
             return query.getResultList();
+        } finally {
+            HibernateUtils.closeSession(session);
+        }
+    }
+
+    @Override
+    public List<QLKSRoomEntity> getAll() throws HotelManagerException {
+        Session session = sessionFactory.openSession();
+        try {
+            StringBuilder hql = new StringBuilder().append("FROM QLKSRoomEntity WHERE isDelete = :idDelete ");
+
+            log.info("SQL [{}]", hql);
+
+            Query<QLKSRoomEntity> query = session.createQuery(hql.toString(), QLKSRoomEntity.class)
+                    .setParameter("idDelete", Boolean.FALSE);
+
+            return query.getResultList();
+        } catch (PersistenceException e) {
+            log.error("getAll QLKSRoleEntity failed!!", e);
+            HotelManagerUtils.throwException(DatabaseException.class, ERROR_SERVER);
+            return null;
         } finally {
             HibernateUtils.closeSession(session);
         }
@@ -228,6 +268,38 @@ public class QLKSRoomRepositoryImpl implements QLKSRoomRepository {
 
             BigDecimal count = (BigDecimal)query.uniqueResult();
             return count.longValue();
+        } finally {
+            HibernateUtils.closeSession(session);
+        }
+    }
+
+    @Override
+    public void updateStatus(List<String> idRoom, Integer status) throws HotelManagerException {
+        Session session = sessionFactory.openSession();
+        HibernateUtils.beginTransaction(session);
+
+        try {
+            StringBuilder hql = new StringBuilder()
+                    .append("UPDATE QLKSRoomEntity r ")
+                    .append("SET r.status = :status ")
+                    .append("WHERE r.id in :idRoom AND r.isDelete = :isDeleted ");
+
+            log.info("SQL [{}]", hql);
+
+            Query query = session.createQuery(hql.toString())
+                    .setParameter("status", status)
+                    .setParameter("idRoom", idRoom)
+                    .setParameter("isDeleted", Boolean.FALSE);
+
+            if (query.executeUpdate() < 1) {
+
+                log.error("Update QLKSRoomEntity fail !");
+                HotelManagerUtils.throwException(DatabaseException.class, ERROR_SERVER);
+            }
+            session.getTransaction().commit();
+        } catch (Exception e) {
+            log.error("Update QLKSRoomEntity fail !", e);
+            HotelManagerUtils.throwException(DatabaseException.class, ERROR_SERVER);
         } finally {
             HibernateUtils.closeSession(session);
         }

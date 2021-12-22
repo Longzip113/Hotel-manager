@@ -93,12 +93,12 @@ public class QLKSBillRepositoryImpl implements QLKSBillRepository {
         Session session = sessionFactory.openSession();
         try {
             StringBuilder hql = new StringBuilder()
-                    .append("FROM QLKSBillEntity r ")
-                    .append("WHERE r.id = :id ");
+                    .append("FROM QLKSBillEntity l ")
+                    .append("WHERE l.idRegistrationForm = :idRegistrationForm ");
             log.info("SQL [{}]", hql);
 
             Query query = session.createQuery(hql.toString())
-                    .setParameter("id", id);
+                    .setParameter("idRegistrationForm", id);
 
             return query.uniqueResultOptional();
         } catch (Exception e) {

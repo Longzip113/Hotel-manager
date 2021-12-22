@@ -1,8 +1,8 @@
 package com.hotelManager.constants.enums;
 
 public enum StatusRoom {
-    NOT_BOOKED_YET(1), ALREADY_BOOKED(2), MAINTENANCE(3),
-    CLEANING_UP(4);
+    NOT_BOOKED_YET(-1), ALREADY_BOOKED(0), LIVE_IN_BOOKED(1), MAINTENANCE(3),
+    CLEANING_UP(2);
 
     private final int value;
 

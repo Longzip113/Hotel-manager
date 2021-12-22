@@ -219,4 +219,35 @@ public class QLKSRegistrationFormRepositoryImpl implements QLKSRegistrationFormR
             HibernateUtils.closeSession(session);
         }
     }
+
+    @Override
+    public Optional<QLKSRegistrationFormEntity> getByIdRoomAndTime(String idRoom, Long timeStart, Long timeEnd) throws HotelManagerException {
+        Session session = sessionFactory.openSession();
+        try {
+            StringBuilder hql = new StringBuilder()
+                    .append("FROM QLKSRegistrationFormEntity ")
+                    .append("WHERE id_room like :idRoom AND ( :timeStart BETWEEN checkInDate AND checkOutDate) " +
+                            "AND ( :timeEnd BETWEEN checkInDate AND checkOutDate) " +
+                            "AND ( checkInDate BETWEEN :timeStart AND :timeEnd) " +
+                            "AND ( checkOutDate BETWEEN :timeStart AND :timeEnd) " +
+                            "AND isDelete = FALSE AND status <> :status ");
+            log.info("SQL [{}]", hql);
+
+            Query query = session.createQuery(hql.toString())
+                    .setParameter("timeStart", timeStart)
+                    .setParameter("timeEnd", timeEnd)
+                    .setParameter("status", TypeRegister.CANCEL.getValue())
+                    .setParameter("idRoom", "%" + idRoom + "%");
+
+
+            return query.uniqueResultOptional();
+        } catch (Exception e) {
+
+            log.error("getById QLKSRegistrationFormEntity fail !", e);
+            HotelManagerUtils.throwException(DatabaseException.class, ERROR_SERVER);
+            return null;
+        }  finally {
+            HibernateUtils.closeSession(session);
+        }
+    }
 }

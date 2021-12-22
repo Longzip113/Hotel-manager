@@ -15,13 +15,19 @@ public interface QLKSRoomRepository {
 
     void update(RoomRequest roomRequest, String idRoom) throws HotelManagerException;
 
+    void updateBatch(List<QLKSRoomEntity> listEntity) throws HotelManagerException;
+
     Optional<QLKSRoomEntity> getByNameRoom(String nameRoom) throws HotelManagerException;
 
     List<QLKSRoomModel> getAll(String sortBy, String sortOrder);
+
+    List<QLKSRoomEntity> getAll() throws HotelManagerException;
 
     Optional<QLKSRoomModel> getByIdRoom(String idRoom);
 
     List<QLKSRoomModel> getByIds(List<String> id);
 
     long priceRooms(List<String> idRooms);
+
+    void updateStatus(List<String> idRoom, Integer status) throws HotelManagerException;
 }

@@ -11,6 +11,7 @@ import com.hotelManager.exceptions.HotelManagerException;
 import com.hotelManager.model.QLKSRoomModel;
 import com.hotelManager.repositories.*;
 import com.hotelManager.services.QLKSBillService;
+import com.hotelManager.services.QLKSCustomerService;
 import com.hotelManager.services.QLKSRegistrationFormService;
 import com.hotelManager.utils.HotelManagerUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -49,6 +50,12 @@ public class QLKSBillServiceImpl implements QLKSBillService {
 
     @Autowired
     QLKSHotelDeviceRepository qlksHotelDeviceRepository;
+
+    @Autowired
+    QLKSRoomArrangementRepository qlksRoomArrangementRepository;
+
+    @Autowired
+    QLKSCustomerService qlksCustomerService;
 
     Long totalPrice = 0l;
 
@@ -126,6 +133,16 @@ public class QLKSBillServiceImpl implements QLKSBillService {
         return results;
     }
 
+    @Override
+    public QLKSInfoBillResponse getDetail(String id) throws HotelManagerException {
+        Optional<QLKSBillEntity> qlksBillEntity = qlksBillRepository.getOne(id);
+        if (qlksBillEntity.isEmpty()) {
+            log.error("id not existed !");
+            HotelManagerUtils.throwException(DatabaseException.class, ERROR_ID_NOT_EXISTED);
+        }
+
+        return setInfoBill(qlksBillEntity.get());
+    }
 
 
     private QLKSInfoBillResponse setInfoBill(QLKSBillEntity itemBill) throws HotelManagerException {
@@ -162,6 +179,18 @@ public class QLKSBillServiceImpl implements QLKSBillService {
 
     private QLKSInfoRoomCheckOutResponse setInfoRoom(QLKSRoomModel itemRoom, String idRegistration) throws HotelManagerException {
         List<QLKSLogCustomerEntity> entities = qlksLogCustomerRepository.getByRegistrationAndRoom(idRegistration, itemRoom.getId());
+        Optional<QLKSRoomArrangementEntity> customerByRoom = qlksRoomArrangementRepository.getByIdRegisterAndRoom(idRegistration
+        , itemRoom.getId());
+
+        List<String> listIdCustomer = List.of(customerByRoom.get().getIdCustomer().split("/"));
+        Integer size = listIdCustomer.size();
+        List<QLKSCustomerEntity> customerEntityList = new ArrayList<>();
+
+        for (int i = 0; i < size; i++) {
+            QLKSCustomerEntity customerEntity = qlksCustomerService.getDetail(listIdCustomer.get(i));
+            customerEntityList.add(customerEntity);
+        }
+
         List<QLKSInfoLogCheckOutResponse> infoLogs = new ArrayList<>();
         entities.parallelStream().forEach(item -> {
             try {
@@ -176,6 +205,7 @@ public class QLKSBillServiceImpl implements QLKSBillService {
                 .idTypeRoom(itemRoom.getIdTypeRoom())
                 .nameRoom(itemRoom.getNameRoom())
                 .nameTypeRoom(itemRoom.getNameTypeRoom())
+                .customers(customerEntityList)
                 .logCustomers(infoLogs).build();
     }
 

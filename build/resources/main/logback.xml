@@ -10,8 +10,8 @@
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- Daily rollover -->
-            <fileNamePattern>/Users/ftwbeatn.t.long/Desktop/HUFI - KhoaLuan/log/HotelManagerBE-%d{yyyy-MM-dd}.log</fileNamePattern>
-<!--            <fileNamePattern>/etc/tomcat9/log/HotelManagerBE-%d{yyyy-MM-dd}.log</fileNamePattern>-->
+<!--            <fileNamePattern>/Users/ftwbeatn.t.long/Desktop/HUFI - KhoaLuan/log/HotelManagerBE-%d{yyyy-MM-dd}.log</fileNamePattern>-->
+            <fileNamePattern>/etc/tomcat9/log/HotelManagerBE-%d{yyyy-MM-dd}.log</fileNamePattern>
 
             <!-- Keep 7 days' worth of history -->
             <maxHistory>7</maxHistory>

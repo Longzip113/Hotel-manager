@@ -2,6 +2,7 @@ package com.hotelManager.controllers;
 
 import com.hotelManager.constants.Constants;
 import com.hotelManager.dtos.request.RoomRequest;
+import com.hotelManager.dtos.request.SearchRoomRequest;
 import com.hotelManager.dtos.responses.AddApiResponse;
 import com.hotelManager.dtos.responses.BaseApiResponse;
 import com.hotelManager.exceptions.HotelManagerException;
@@ -11,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -39,11 +39,10 @@ public class RoomControllers {
         return ResponseEntity.ok(qlksRoomService.getDetailRoom(id));
     }
 
-    @ApiIgnore
-    @GetMapping(value = "/room/search")
-    public ResponseEntity<String> getRoom() throws Exception {
+    @PostMapping(value = "/room/search")
+    public ResponseEntity<List<QLKSRoomModel>> getRoom(@RequestBody SearchRoomRequest roomRequest) {
 
-        return ResponseEntity.ok("Success !!");
+        return ResponseEntity.ok(qlksRoomService.searchRoom(roomRequest));
     }
 
     @DeleteMapping(value = "/room/{id}")

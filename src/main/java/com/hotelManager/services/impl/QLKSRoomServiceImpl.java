@@ -4,6 +4,7 @@ import com.hotelManager.constants.enums.BookingType;
 import com.hotelManager.constants.enums.StatusRoom;
 import com.hotelManager.constants.enums.TypeRegister;
 import com.hotelManager.dtos.request.RoomRequest;
+import com.hotelManager.dtos.request.SearchRoomRequest;
 import com.hotelManager.dtos.responses.QLKSArrangenmentCustomerResponse;
 import com.hotelManager.entities.QLKSCustomerEntity;
 import com.hotelManager.entities.QLKSRegistrationFormEntity;
@@ -119,7 +120,9 @@ public class QLKSRoomServiceImpl implements QLKSRoomService {
 
         return qlksRoomRepository.getAll(sortBy, sortOrder).stream().map(item -> {
             try {
-                setItemRoomModel(item, DateTimeUtils.getCurrentTime());
+                Optional<QLKSRegistrationFormEntity> registrationFormEntity = qlksRegistrationFormRepository.getByIdRoomAndTime(item.getId(),
+                        DateTimeUtils.getCurrentTime());
+                setItemRoomModel(item, registrationFormEntity);
             } catch (HotelManagerException e) {
                 e.printStackTrace();
             }
@@ -127,17 +130,15 @@ public class QLKSRoomServiceImpl implements QLKSRoomService {
         }).collect(Collectors.toList());
     }
 
-    private void setItemRoomModel(QLKSRoomModel item, Long time) throws HotelManagerException {
+    private void setItemRoomModel(QLKSRoomModel item, Optional<QLKSRegistrationFormEntity> registrationFormEntity) throws HotelManagerException {
 
-        Optional<QLKSRegistrationFormEntity> registrationFormEntity = qlksRegistrationFormRepository.getByIdRoomAndTime(item.getId(),
-                time);
         item.setDetails(qlksDetailTypeRoomRepository.getByIdTypeRoom(item.getIdTypeRoom()));
         if (registrationFormEntity.isPresent()) {
             QLKSRegistrationFormEntity entity = registrationFormEntity.get();
             item.setInfoRegistration(qlksRegistrationFormService.getDetail(entity.getId()));
 
             if(entity.getStatus() == TypeRegister.CHECK_IN.getValue()) {
-                item.setStatus(entity.getStatus());
+                item.setStatus(StatusRoom.LIVE_IN_BOOKED.getValue());
                 Optional<QLKSRoomArrangementEntity> arrangementEntity = qlksRoomArrangementRepository.getByIdRegisterAndRoom(
                         entity.getId(), item.getId()
                 );
@@ -157,11 +158,13 @@ public class QLKSRoomServiceImpl implements QLKSRoomService {
                 arrangenmentCustomerResponse.setCustomers(customerEntityList);
 
                 item.setInfoCustomerBooking(arrangenmentCustomerResponse);
-            } else if (entity.getStatus() == 0) {
-                item.setStatus(0);
+            } else if (entity.getStatus() == TypeRegister.BOOK_ROOM.getValue()) {
+                item.setStatus(StatusRoom.ALREADY_BOOKED.getValue());
+            } else {
+                item.setStatus(StatusRoom.NOT_BOOKED_YET.getValue());
             }
         } else {
-            item.setStatus(-1);
+            item.setStatus(StatusRoom.NOT_BOOKED_YET.getValue());
         }
     }
 
@@ -175,8 +178,24 @@ public class QLKSRoomServiceImpl implements QLKSRoomService {
             log.error("IdRoom does not exist !");
             HotelManagerUtils.throwException(DatabaseException.class, ERROR_ROOM_NOT_EXISTED);
         }
-        setItemRoomModel(result.get(), DateTimeUtils.getCurrentTime());
+        Optional<QLKSRegistrationFormEntity> registrationFormEntity = qlksRegistrationFormRepository.getByIdRoomAndTime(idRoom,
+                DateTimeUtils.getCurrentTime());
+        setItemRoomModel(result.get(), registrationFormEntity);
 
         return result.get();
+    }
+
+    @Override
+    public List<QLKSRoomModel> searchRoom(SearchRoomRequest roomRequest) {
+        return qlksRoomRepository.getAll(roomRequest.getSortBy(), roomRequest.getSortOrder()).stream().map(item -> {
+            try {
+                Optional<QLKSRegistrationFormEntity> registrationFormEntity = qlksRegistrationFormRepository.getByIdRoomAndTime(item.getId(),
+                        roomRequest.getDayCheckIn(), roomRequest.getDayCheckOut());
+                setItemRoomModel(item, registrationFormEntity);
+            } catch (HotelManagerException e) {
+                e.printStackTrace();
+            }
+            return item;
+        }).collect(Collectors.toList());
     }
 }

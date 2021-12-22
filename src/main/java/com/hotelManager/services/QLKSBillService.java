@@ -13,4 +13,6 @@ public interface QLKSBillService {
     List<QLKSInfoBillResponse> getAll() throws HotelManagerException;
 
     List<QLKSInfoTurnOverResponse> getTurnOver(TurnOverRequest turnOverRequest) throws HotelManagerException;
+
+    QLKSInfoBillResponse getDetail(String id) throws HotelManagerException;
 }

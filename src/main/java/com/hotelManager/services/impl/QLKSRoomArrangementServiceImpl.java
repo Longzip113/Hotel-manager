@@ -1,5 +1,6 @@
 package com.hotelManager.services.impl;
 
+import com.hotelManager.constants.enums.StatusRoom;
 import com.hotelManager.constants.enums.TypeDetailofTypeRoom;
 import com.hotelManager.constants.enums.TypeRegister;
 import com.hotelManager.dtos.responses.*;
@@ -61,6 +62,9 @@ public class QLKSRoomArrangementServiceImpl implements QLKSRoomArrangementServic
 
     @Autowired
     SessionFactory sessionFactory;
+
+    @Autowired
+    QLKSRoomRepository qlksRoomRepository;
 
     Long totalPrice = 0l;
 
@@ -185,6 +189,11 @@ public class QLKSRoomArrangementServiceImpl implements QLKSRoomArrangementServic
 
         qlksRegistrationFormEntity.setStatus(TypeRegister.CHECK_OUT.getValue());
         qlksRegistrationFormRepository.update(qlksRegistrationFormEntity);
+
+        //update status room
+        List<String> listIdRooms = List.of(qlksRegistrationFormEntity.getIdRoom().split("/"));
+        qlksRoomRepository.updateStatus(listIdRooms, StatusRoom.CLEANING_UP.getValue());
+
     }
 
     @Override
