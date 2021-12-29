@@ -1,6 +1,7 @@
 package com.hotelManager.services.impl;
 
 import com.hotelManager.constants.enums.TypeDetailofTypeRoom;
+import com.hotelManager.dtos.request.ChangeRoomRequest;
 import com.hotelManager.dtos.request.LogCustomerRequest;
 import com.hotelManager.dtos.request.RoleRequest;
 import com.hotelManager.dtos.responses.QLKSLogCustomerResponse;
@@ -49,6 +50,9 @@ public class QLKSLogCustomerServiceImpl implements QLKSLogCustomerService {
     @Autowired
     QLKSCustomerRepository customerRepository;
 
+    @Autowired
+    QLKSTypeRoomRepository qlksTypeRoomRepository;
+
 
 
     @Autowired
@@ -61,26 +65,37 @@ public class QLKSLogCustomerServiceImpl implements QLKSLogCustomerService {
                 .getByIdRegisterAndCustomer(request.getIdRegistration(), request.getIdCustomer());
 
         if (arrangementEntity.isEmpty()) {
-            log.error("id not existed !");
+            log.error("id not existed ! arrangement");
             HotelManagerUtils.throwException(DatabaseException.class, ERROR_ID_NOT_EXISTED);
         }
         Integer totalPrice = 0;
         if (request.getType() == TypeDetailofTypeRoom.SERVICE.getValue()) {
             Optional<QLKSServiceEntity> serviceEntity = qlksServiceRepository.getById(request.getIdType());
             if (serviceEntity.isEmpty()) {
-                log.error("id not existed !");
+                log.error("id not existed ! Service");
                 HotelManagerUtils.throwException(DatabaseException.class, ERROR_ID_NOT_EXISTED);
             }
-
+            request.setDescription(String.format("Sử dụng %s - %s", request.getQuantity(), serviceEntity.get().getNameService()));
             totalPrice = serviceEntity.get().getPrice() * request.getQuantity();
         } else {
             Optional<QLKSHotelDeviceEntity> hotelDeviceEntity = qlksHotelDeviceRepository.getById(request.getIdType());
             if (hotelDeviceEntity.isEmpty()) {
-                log.error("id not existed !");
+                log.error("id not existed ! device");
                 HotelManagerUtils.throwException(DatabaseException.class, ERROR_ID_NOT_EXISTED);
             }
 
+            if(hotelDeviceEntity.get().getQuantity() < request.getQuantity()) {
+                log.error("Số lượng thiết bị không đủ !");
+                HotelManagerUtils.throwException(DatabaseException.class, ERROR_USE_DEVICE);
+            }
+
             totalPrice = hotelDeviceEntity.get().getPrice() * request.getQuantity();
+
+            if (request.getType() == 3) {
+                request.setDescription("Thiết bị mất !");
+            } else {
+                request.setDescription(String.format("Thêm %s - %s", request.getQuantity(), hotelDeviceEntity.get().getNameHotelDevice()));
+            }
         }
 
         QLKSLogCustomerEntity entity = QLKSLogCustomerEntity.builder()
@@ -95,10 +110,6 @@ public class QLKSLogCustomerServiceImpl implements QLKSLogCustomerService {
                 .totalPrice(totalPrice).build();
 
         qlksLogCustomerRepository.save(entity);
-    }
-
-    private void changeRoom(LogCustomerRequest request) {
-
     }
 
     @Override
@@ -125,6 +136,59 @@ public class QLKSLogCustomerServiceImpl implements QLKSLogCustomerService {
         }
 
         return setDataLogCustomer(entity.get());
+    }
+
+    @Override
+    public void changeRoom(ChangeRoomRequest request) throws HotelManagerException {
+        Optional<QLKSRoomModel> roomEntityOld = qlksRoomRepository.getByIdRoom(request.getIdRoomOld());
+        if (roomEntityOld.isEmpty()) {
+            log.error("idRoom not existed ! id-Old");
+            HotelManagerUtils.throwException(DatabaseException.class, ERROR_ROOM_NOT_EXISTED);
+        }
+
+        Optional<QLKSRoomModel> roomEntityNew = qlksRoomRepository.getByIdRoom(request.getIdRoomNew());
+        if (roomEntityNew.isEmpty()) {
+            log.error("idRoom not existed ! id-New");
+            HotelManagerUtils.throwException(DatabaseException.class, ERROR_ROOM_NOT_EXISTED);
+        }
+
+        Optional<QLKSTypeRoomEntity> typeRoomEntityOld = qlksTypeRoomRepository.getById(roomEntityOld.get().getIdTypeRoom());
+        if (typeRoomEntityOld.isEmpty()) {
+            log.error("idTypeRoom not existed ! type-Old");
+            HotelManagerUtils.throwException(DatabaseException.class, ERROR_TYPE_ROOM_NOT_EXISTED);
+        }
+
+        Optional<QLKSTypeRoomEntity> typeRoomEntityNew = qlksTypeRoomRepository.getById(roomEntityNew.get().getIdTypeRoom());
+        if (typeRoomEntityNew.isEmpty()) {
+            log.error("idTypeRoom not existed ! type-New");
+            HotelManagerUtils.throwException(DatabaseException.class, ERROR_TYPE_ROOM_NOT_EXISTED);
+        }
+
+        Optional<QLKSRoomArrangementEntity> customerByRoom = qlksRoomArrangementRepository.getByIdRegisterAndRoom(request.getIdRegistration()
+                , request.getIdRoomOld());
+        if (customerByRoom.isEmpty()) {
+            log.error("idTypeRoom not existed ! Arrangement room");
+            HotelManagerUtils.throwException(DatabaseException.class, ERROR_TYPE_ROOM_NOT_EXISTED);
+        }
+
+        Integer totalPrice = typeRoomEntityNew.get().getPrice() - typeRoomEntityOld.get().getPrice();
+
+        QLKSLogCustomerEntity entity = QLKSLogCustomerEntity.builder()
+                .idRoom(request.getIdRoomOld())
+                .idCustomer(request.getIdCustomer())
+                .type(4)
+                .description("Đổi phòng từ " + roomEntityOld.get().getNameRoom() + " qua phòng " + roomEntityNew.get().getNameRoom())
+                .logTime(DateTimeUtils.getCurrentTime())
+                .idRegistrationForm(request.getIdRegistration())
+                .quantity(1)
+                .totalPrice(totalPrice > 0 ? totalPrice : 0).build();
+
+        qlksLogCustomerRepository.save(entity);
+        qlksRegistrationFormRepository.updateChangeRoom(request.getIdRegistration(), request.getIdRoomOld(), request.getIdRoomNew());
+
+        String roomNew = String.format("%s/%s", customerByRoom.get().getIdRoom(), request.getIdRoomNew());
+        qlksRoomArrangementRepository.updateChangeRoom(request.getIdRegistration(), request.getIdRoomOld(), roomNew);
+
     }
 
     private QLKSLogCustomerResponse setDataLogCustomer(QLKSLogCustomerEntity item) throws HotelManagerException {

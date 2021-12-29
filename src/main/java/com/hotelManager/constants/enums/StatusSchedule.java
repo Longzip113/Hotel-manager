@@ -1,18 +1,17 @@
 package com.hotelManager.constants.enums;
 
-public enum StatusRoom {
-    NOT_BOOKED_YET(-1), ALREADY_BOOKED(0), LIVE_IN_BOOKED(1),
-    NEED_TO_CLEAN(2),
-    CLEANING_UP(3);
+public enum StatusSchedule {
+    NOT_CLEANED_YET(-1), CLEANING(0),
+    CLEANING_UP(1);
 
     private final int value;
 
-    StatusRoom(int value) {
+    StatusSchedule(int value) {
         this.value = value;
     }
 
-    StatusRoom getValue(int value) {
-        for(StatusRoom e: StatusRoom.values()) {
+    StatusSchedule getValue(int value) {
+        for(StatusSchedule e: StatusSchedule.values()) {
             if(e.value == value) {
                 return e;
             }

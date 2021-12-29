@@ -1,13 +1,14 @@
 package com.hotelManager.services.impl;
 
 import com.hotelManager.constants.enums.StatusRoom;
+import com.hotelManager.constants.enums.StatusSchedule;
 import com.hotelManager.dtos.request.CleanScheduleRequest;
-import com.hotelManager.dtos.request.GetViewCleanScheduleRequest;
 import com.hotelManager.dtos.responses.QLKSCleanScheduleResponse;
 import com.hotelManager.dtos.responses.QLKSLogCleanScheduleResponse;
 import com.hotelManager.entities.QLKSCleanScheduleEntity;
 import com.hotelManager.entities.QLKSLogCleanRoomEntity;
 import com.hotelManager.entities.QLKSRoomEntity;
+import com.hotelManager.exceptions.DatabaseException;
 import com.hotelManager.exceptions.HotelManagerException;
 import com.hotelManager.model.QLKSEmployeeModel;
 import com.hotelManager.model.QLKSRoomModel;
@@ -17,6 +18,7 @@ import com.hotelManager.repositories.QLKSLogCleanScheduleRepository;
 import com.hotelManager.repositories.QLKSRoomRepository;
 import com.hotelManager.services.QLKSClearScheduleService;
 import com.hotelManager.utils.DateTimeUtils;
+import com.hotelManager.utils.HotelManagerUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -27,6 +29,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+
+import static com.hotelManager.constants.enums.HotelManagerResponseCode.ERROR_ID_NOT_EXISTED;
+import static com.hotelManager.constants.enums.HotelManagerResponseCode.ERROR_SAVE_SCHEDULE;
 
 @Service
 @Slf4j
@@ -49,20 +54,27 @@ public class QLKSClearScheduleServiceImpl implements QLKSClearScheduleService {
 
     @Override
     public void save() throws HotelManagerException {
-        List<QLKSEmployeeModel> employeeList = qlksEmployeeRepository.getAll();
+
+        if (checkDaySave()) {
+            log.error("ngày đã được sắp xếp !");
+            HotelManagerUtils.throwException(DatabaseException.class, ERROR_SAVE_SCHEDULE);
+        }
+
+        List<QLKSEmployeeModel> employeeList = qlksEmployeeRepository.getEmployeeClear();
         List<QLKSRoomEntity> roomList = qlksRoomRepository.getAll();
         List<QLKSCleanScheduleEntity> listCleanSchedule = new ArrayList<>();
         Integer lenght = employeeList.size();
 
         for (QLKSRoomEntity item: roomList) {
             lenght --;
-            item.setIdHousekeepingStaff(employeeList.get(lenght).getId());
             QLKSCleanScheduleEntity scheduleEntity = QLKSCleanScheduleEntity.builder()
                     .dayWorking(java.time.LocalDate.now().toString())
                     .idRoom(item.getId())
+                    .status(StatusSchedule.NOT_CLEANED_YET.getValue())
                     .idEmployee(employeeList.get(lenght).getId()).build();
 
             listCleanSchedule.add(scheduleEntity);
+            item.setIdEmployeeClear(employeeList.get(lenght).getId());
 
             if (lenght == 0) {
                 lenght = employeeList.size();
@@ -77,8 +89,19 @@ public class QLKSClearScheduleServiceImpl implements QLKSClearScheduleService {
         session.getTransaction().commit();
     }
 
+    private Boolean checkDaySave() throws HotelManagerException {
+        CleanScheduleRequest request = CleanScheduleRequest.builder()
+                .day(java.time.LocalDate.now().toString()).build();
+
+        List<QLKSCleanScheduleEntity> entityList = qlksCleanScheduleRepository.getAll(request);
+
+        return entityList.size() > 0;
+    }
+
     @Override
     public List<QLKSCleanScheduleResponse> getAll(CleanScheduleRequest request) throws HotelManagerException {
+
+
         List<QLKSCleanScheduleEntity> entityList = qlksCleanScheduleRepository.getAll(request);
         List<QLKSCleanScheduleResponse> results = new ArrayList<>();
 
@@ -90,6 +113,7 @@ public class QLKSClearScheduleServiceImpl implements QLKSClearScheduleService {
             QLKSCleanScheduleResponse result = QLKSCleanScheduleResponse.builder()
                     .employee(employee)
                     .room(room)
+                    .status(item.getStatus())
                     .dayWork(item.getDayWorking()).build();
 
             results.add(result);
@@ -123,37 +147,25 @@ public class QLKSClearScheduleServiceImpl implements QLKSClearScheduleService {
     }
 
     @Override
-    public List<QLKSCleanScheduleResponse> getAllViewRoom(GetViewCleanScheduleRequest request) throws HotelManagerException {
-        List<QLKSCleanScheduleEntity> entityList = qlksCleanScheduleRepository.getAllViewRoom(request);
-        List<QLKSCleanScheduleResponse> results = new ArrayList<>();
-
-        entityList.stream().forEach(item -> {
-
-            QLKSRoomModel room = qlksRoomRepository.getByIdRoom(item.getIdRoom()).get();
-            QLKSEmployeeModel employee = qlksEmployeeRepository.getById(item.getIdEmployee()).get();
-
-            QLKSCleanScheduleResponse result = QLKSCleanScheduleResponse.builder()
-                    .employee(employee)
-                    .room(room)
-                    .dayWork(item.getDayWorking()).build();
-
-            results.add(result);
-
-        });
-
-        return results;
-    }
-
-    @Override
     public void checkInClean(String idRoom, String idEmployee) throws HotelManagerException {
-        qlksRoomRepository.updateStatus(Arrays.asList(idRoom), StatusRoom.MAINTENANCE.getValue());
-        QLKSLogCleanRoomEntity qlksLogCleanRoomEntity = QLKSLogCleanRoomEntity.builder()
-                .idRoom(idRoom)
-                .idEmployee(idEmployee)
-                .timeStart(DateTimeUtils.getCurrentTime())
-                .dayWorking(java.time.LocalDate.now().toString()).build();
+        qlksRoomRepository.updateStatus(Arrays.asList(idRoom), StatusRoom.NEED_TO_CLEAN.getValue());
+        Optional<QLKSCleanScheduleEntity> cleanScheduleEntity = qlksCleanScheduleRepository.getByEmployeeAndRoom(idEmployee,
+                idRoom, java.time.LocalDate.now().toString());
 
-        qlksLogCleanScheduleRepository.save(qlksLogCleanRoomEntity);
+        if (cleanScheduleEntity.isEmpty()) {
+            log.error("Nhân viên trong lịch làm không tồn tại !");
+            HotelManagerUtils.throwException(DatabaseException.class, ERROR_ID_NOT_EXISTED);
+        } else {
+            QLKSLogCleanRoomEntity qlksLogCleanRoomEntity = QLKSLogCleanRoomEntity.builder()
+                    .idRoom(idRoom)
+                    .idEmployee(idEmployee)
+                    .timeStart(DateTimeUtils.getCurrentTime())
+                    .dayWorking(java.time.LocalDate.now().toString()).build();
+
+            qlksLogCleanScheduleRepository.save(qlksLogCleanRoomEntity);
+            cleanScheduleEntity.get().setStatus(StatusSchedule.CLEANING.getValue());
+            qlksCleanScheduleRepository.update(cleanScheduleEntity.get());
+        }
     }
 
     @Override
@@ -162,8 +174,19 @@ public class QLKSClearScheduleServiceImpl implements QLKSClearScheduleService {
         Optional<QLKSLogCleanRoomEntity> qlksLogCleanRoomEntity = qlksLogCleanScheduleRepository.getByRoomAndEmployee(idRoom
                 , idEmployee);
 
-        qlksLogCleanRoomEntity.get().setTimeEnd(DateTimeUtils.getCurrentTime());
-        qlksLogCleanScheduleRepository.update(qlksLogCleanRoomEntity.get());
+        Optional<QLKSCleanScheduleEntity> cleanScheduleEntity = qlksCleanScheduleRepository.getByEmployeeAndRoom(idEmployee,
+                idRoom, java.time.LocalDate.now().toString());
+
+        if (cleanScheduleEntity.isEmpty() || qlksLogCleanRoomEntity.isEmpty()) {
+            log.error("Nhân viên trong lịch làm không tồn tại !");
+            HotelManagerUtils.throwException(DatabaseException.class, ERROR_ID_NOT_EXISTED);
+        } else {
+
+            qlksLogCleanRoomEntity.get().setTimeEnd(DateTimeUtils.getCurrentTime());
+            qlksLogCleanScheduleRepository.update(qlksLogCleanRoomEntity.get());
+            cleanScheduleEntity.get().setStatus(StatusSchedule.CLEANING_UP.getValue());
+            qlksCleanScheduleRepository.update(cleanScheduleEntity.get());
+        }
     }
 
 }

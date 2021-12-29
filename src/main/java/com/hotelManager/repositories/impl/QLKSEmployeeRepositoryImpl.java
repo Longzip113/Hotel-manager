@@ -1,5 +1,6 @@
 package com.hotelManager.repositories.impl;
 
+import com.hotelManager.constants.enums.Role;
 import com.hotelManager.dtos.request.ChangePasswordRequest;
 import com.hotelManager.dtos.request.GetPasswordRequest;
 import com.hotelManager.dtos.request.UserRequest;
@@ -47,6 +48,28 @@ public class QLKSEmployeeRepositoryImpl implements QLKSEmployeeRepository {
 
             Query query = session.createNativeQuery(hql.toString(), "QLKSEmployeeModelMapping")
                     .setParameter("isDeleted", Boolean.FALSE);
+
+            return query.getResultList();
+        } finally {
+            HibernateUtils.closeSession(session);
+        }
+    }
+
+    @Override
+    public List<QLKSEmployeeModel> getEmployeeClear() throws HotelManagerException {
+        Session session = sessionFactory.openSession();
+        try {
+            StringBuilder hql = new StringBuilder()
+                    .append("SELECT e.id_employee, e.name_employee, e.gender, e.identity_card, e.address, e.phone_number, e.email, r.code_role, r.name_role, r.id_role ")
+                    .append("FROM qlks_employee e ")
+                    .append("LEFT JOIN qlks_role r ON r.id_role = e.id_role ")
+                    .append("WHERE e.is_delete = :isDeleted AND r.code_role = :codeRole ");
+
+            log.info("SQL [{}]", hql);
+
+            Query query = session.createNativeQuery(hql.toString(), "QLKSEmployeeModelMapping")
+                    .setParameter("isDeleted", Boolean.FALSE)
+                    .setParameter("codeRole", Role.USER_CLEANING.getName());
 
             return query.getResultList();
         } finally {

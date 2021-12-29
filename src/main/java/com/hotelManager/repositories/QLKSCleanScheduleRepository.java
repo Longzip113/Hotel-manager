@@ -1,12 +1,12 @@
 package com.hotelManager.repositories;
 
 import com.hotelManager.dtos.request.CleanScheduleRequest;
-import com.hotelManager.dtos.request.GetViewCleanScheduleRequest;
 import com.hotelManager.entities.QLKSCleanScheduleEntity;
 import com.hotelManager.exceptions.HotelManagerException;
 import org.hibernate.Session;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface QLKSCleanScheduleRepository {
 
@@ -14,5 +14,7 @@ public interface QLKSCleanScheduleRepository {
 
     List<QLKSCleanScheduleEntity> getAll (CleanScheduleRequest request) throws HotelManagerException;
 
-    List<QLKSCleanScheduleEntity> getAllViewRoom (GetViewCleanScheduleRequest request) throws HotelManagerException;
+    Optional<QLKSCleanScheduleEntity> getByEmployeeAndRoom(String idEmployee, String idRoom, String day) throws HotelManagerException;
+
+    void update(QLKSCleanScheduleEntity entity) throws HotelManagerException;
 }

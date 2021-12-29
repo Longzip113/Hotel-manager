@@ -28,7 +28,10 @@ public enum HotelManagerResponseCode {
     ERROR_DELEGATION_ALREADY_EXISTED    (-18,    "Tên đoàn đã tồn tại !"),
     ERROR_ROLE_ALREADY                  (-19,    "Hiện tại role đang được sử dụng !"),
     ERROR_ROOM_CHECK_IN                 (-20,    "Phòng không đang ở trạng thái checkin !"),
-    ERROR_ROOM_CHECK_OUT                (-21,    "Phòng không đang ở trạng thái checkout !");
+    ERROR_ROOM_CHECK_OUT                (-21,    "Phòng không đang ở trạng thái checkout !"),
+    ERROR_USE_DEVICE                    (-22,    "Số lượng thiết bị không đủ !"),
+    ERROR_SAVE_SCHEDULE                 (-23,    "Ngày đã được sắp xếp !"),
+    ERROR_CHECK_IN                      (-24,    "Chưa tới thời gian nhận phòng !");
 
     private final int responseCode;
 

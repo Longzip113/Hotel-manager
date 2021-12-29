@@ -2,7 +2,6 @@ package com.hotelManager.controllers;
 
 import com.hotelManager.dtos.request.CheckCleanScheduleRequest;
 import com.hotelManager.dtos.request.CleanScheduleRequest;
-import com.hotelManager.dtos.request.GetViewCleanScheduleRequest;
 import com.hotelManager.dtos.responses.BaseApiResponse;
 import com.hotelManager.dtos.responses.QLKSCleanScheduleResponse;
 import com.hotelManager.dtos.responses.QLKSLogCleanScheduleResponse;
@@ -51,11 +50,5 @@ public class CleanScheduleControllers {
     public ResponseEntity<List<QLKSLogCleanScheduleResponse>> getLogClean(@RequestBody CleanScheduleRequest request) throws HotelManagerException {
         return ResponseEntity.ok(qlksClearScheduleService.getAllLog(request));
     }
-
-    @PostMapping(value = "/scheduling/view/room")
-    public ResponseEntity<List<QLKSCleanScheduleResponse>> getViewRoom(@RequestBody GetViewCleanScheduleRequest request) throws HotelManagerException {
-        return ResponseEntity.ok(qlksClearScheduleService.getAllViewRoom(request));
-    }
-
 
 }

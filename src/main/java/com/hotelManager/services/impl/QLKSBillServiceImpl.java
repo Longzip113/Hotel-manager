@@ -57,6 +57,9 @@ public class QLKSBillServiceImpl implements QLKSBillService {
     @Autowired
     QLKSCustomerService qlksCustomerService;
 
+    @Autowired
+    QLKSCustomerRepository qlksCustomerRepository;
+
     Long totalPrice = 0l;
 
 
@@ -218,6 +221,8 @@ public class QLKSBillServiceImpl implements QLKSBillService {
      */
     private QLKSInfoLogCheckOutResponse setInfoLog(QLKSLogCustomerEntity itemEntity) throws HotelManagerException {
 
+        Optional<QLKSCustomerEntity> customerEntity = qlksCustomerRepository.getById(itemEntity.getIdCustomer());
+
         QLKSInfoLogCheckOutResponse result = QLKSInfoLogCheckOutResponse.builder()
                 .idType(itemEntity.getIdType())
                 .type(itemEntity.getType())
@@ -225,6 +230,7 @@ public class QLKSBillServiceImpl implements QLKSBillService {
                 .description(itemEntity.getDescription())
                 .time(itemEntity.getLogTime())
                 .totalPrice(itemEntity.getTotalPrice())
+                .customer(customerEntity.get())
                 .build();
         totalPrice += itemEntity.getTotalPrice();
 

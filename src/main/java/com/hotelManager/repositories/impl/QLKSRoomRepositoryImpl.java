@@ -124,15 +124,21 @@ public class QLKSRoomRepositoryImpl implements QLKSRoomRepository {
         final int batchSize = Constants.BATCH_SIZE;
         final int length = listEntity.size();
 
+        HibernateUtils.beginTransaction(session);
         for (int i = 0; i < length; i++) {
             if (i > 0 && i % batchSize == 0) {
                 //flush a batch of inserts and release memory:
                 session.flush();
                 session.clear();
             }
-
             session.update(listEntity.get(i));
         }
+        session.getTransaction().commit();
+    }
+
+    @Override
+    public void update(QLKSRoomEntity entity) throws HotelManagerException {
+
     }
 
     @Override
@@ -164,10 +170,10 @@ public class QLKSRoomRepositoryImpl implements QLKSRoomRepository {
         Session session = sessionFactory.openSession();
         try {
             StringBuilder hql = new StringBuilder()
-                    .append("SELECT r.id_room, r.name_room, r.description, tr.name_type_room, e.name_employee, r.housekeeping_order, r.id_type_room, r.status ")
+                    .append("SELECT r.id_room, r.name_room, r.description, tr.name_type_room, e.name_employee, r.id_type_room, r.status ")
                     .append("FROM qlks_room r ")
                     .append("LEFT JOIN qlks_type_room tr ON tr.id_type_room = r.id_type_room ")
-                    .append("LEFT JOIN qlks_employee e ON e.id_employee = r.id_housekeeping_staff ")
+                    .append("LEFT JOIN qlks_employee e ON e.id_employee = r.id_employee_clear ")
                     .append("WHERE r.is_delete = :isDeleted ")
                     .append(buildSqlSortGetAll(sortBy))
                     .append(sortOrder.equals(Constants.SORT_OR_DER_ASC) ? "ASC " : "DESC ");
@@ -209,10 +215,10 @@ public class QLKSRoomRepositoryImpl implements QLKSRoomRepository {
         Session session = sessionFactory.openSession();
         try {
             StringBuilder hql = new StringBuilder()
-                    .append("SELECT r.id_room, r.name_room, r.description, r.status, tr.name_type_room, e.name_employee, r.housekeeping_order, r.id_type_room ")
+                    .append("SELECT r.id_room, r.name_room, r.description, r.status, tr.name_type_room, e.name_employee, r.id_type_room ")
                     .append("FROM qlks_room r ")
                     .append("LEFT JOIN qlks_type_room tr ON tr.id_type_room = r.id_type_room ")
-                    .append("LEFT JOIN qlks_employee e ON e.id_employee = r.id_housekeeping_staff ")
+                    .append("LEFT JOIN qlks_employee e ON e.id_employee = r.id_employee_clear ")
                     .append("WHERE r.is_delete = :isDeleted AND r.id_room = :idRoom");
 
             log.info("SQL [{}]", hql);
@@ -256,10 +262,10 @@ public class QLKSRoomRepositoryImpl implements QLKSRoomRepository {
         Session session = sessionFactory.openSession();
         try {
             StringBuilder hql = new StringBuilder()
-                    .append("SELECT r.id_room, r.name_room, r.description, r.status, tr.name_type_room, e.name_employee, r.housekeeping_order, r.id_type_room ")
+                    .append("SELECT r.id_room, r.name_room, r.description, r.status, tr.name_type_room, e.name_employee, r.id_type_room ")
                     .append("FROM qlks_room r ")
                     .append("LEFT JOIN qlks_type_room tr ON tr.id_type_room = r.id_type_room ")
-                    .append("LEFT JOIN qlks_employee e ON e.id_employee = r.id_housekeeping_staff ")
+                    .append("LEFT JOIN qlks_employee e ON e.id_employee = r.id_employee_clear ")
                     .append("WHERE r.is_delete = :isDeleted AND r.id_room in :ids ");
 
             log.info("SQL [{}]", hql);

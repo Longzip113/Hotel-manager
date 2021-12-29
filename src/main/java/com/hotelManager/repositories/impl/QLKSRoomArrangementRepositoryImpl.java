@@ -77,19 +77,48 @@ public class QLKSRoomArrangementRepositoryImpl implements QLKSRoomArrangementRep
     public Optional<QLKSRoomArrangementEntity> getByIdRegisterAndRoom(String idRegister, String idRoom) throws HotelManagerException {
         Session session = sessionFactory.openSession();
         try {
-            StringBuilder hql = new StringBuilder().append("FROM QLKSRoomArrangementEntity WHERE idRegistrationForm = :idRegistrationForm AND idRoom = :idRoom ");
+            StringBuilder hql = new StringBuilder().append("FROM QLKSRoomArrangementEntity WHERE idRegistrationForm = :idRegistrationForm AND idRoom like :idRoom ");
 
             log.info("SQL [{}]", hql);
 
             Query<QLKSRoomArrangementEntity> query = session.createQuery(hql.toString(), QLKSRoomArrangementEntity.class)
                     .setParameter("idRegistrationForm", idRegister)
-                    .setParameter("idRoom", idRoom);
+                    .setParameter("idRoom", "%" + idRoom);
 
             return query.uniqueResultOptional();
         } catch (PersistenceException e) {
             log.error("getAll QLKSRoleEntity failed!!", e);
             HotelManagerUtils.throwException(DatabaseException.class, ERROR_SERVER);
             return null;
+        } finally {
+            HibernateUtils.closeSession(session);
+        }
+    }
+
+    @Override
+    public void updateChangeRoom(String idRegister, String idRoomOld, String idRoomNew) throws HotelManagerException {
+        Session session = sessionFactory.openSession();
+        HibernateUtils.beginTransaction(session);
+
+        try {
+            StringBuilder hql = new StringBuilder()
+                    .append("UPDATE QLKSRoomArrangementEntity r ")
+                    .append("SET r.idRoom = :idRoom ")
+                    .append("WHERE r.idRoom like :id AND r.idRegistrationForm = :idRegister");
+
+            log.info("SQL [{}]", hql);
+
+            Query query = session.createQuery(hql.toString())
+                    .setParameter("idRoom", idRoomNew)
+                    .setParameter("idRegister", idRegister)
+                    .setParameter("id","%" + idRoomOld);
+            query.executeUpdate();
+
+            session.getTransaction().commit();
+        } catch (PersistenceException e) {
+
+            log.error("Delete QLKSRegistrationFormEntity failed Id: [{}]", idRegister, e);
+            HotelManagerUtils.throwException(DatabaseException.class, ERROR_SERVER);
         } finally {
             HibernateUtils.closeSession(session);
         }

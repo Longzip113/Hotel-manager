@@ -1,7 +1,6 @@
 package com.hotelManager.services;
 
 import com.hotelManager.dtos.request.CleanScheduleRequest;
-import com.hotelManager.dtos.request.GetViewCleanScheduleRequest;
 import com.hotelManager.dtos.responses.QLKSCleanScheduleResponse;
 import com.hotelManager.dtos.responses.QLKSLogCleanScheduleResponse;
 import com.hotelManager.exceptions.HotelManagerException;
@@ -15,8 +14,6 @@ public interface QLKSClearScheduleService {
     List<QLKSCleanScheduleResponse> getAll(CleanScheduleRequest request) throws HotelManagerException;
 
     List<QLKSLogCleanScheduleResponse> getAllLog(CleanScheduleRequest request) throws HotelManagerException;
-
-    List<QLKSCleanScheduleResponse> getAllViewRoom(GetViewCleanScheduleRequest request) throws HotelManagerException;
 
     void checkInClean(String idRoom, String idEmployee) throws HotelManagerException;
 

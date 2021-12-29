@@ -26,4 +26,6 @@ public interface QLKSRegistrationFormRepository {
     Optional<QLKSRegistrationFormEntity> getByIdRoomAndTime(String idRoom, Long time) throws HotelManagerException;
 
     Optional<QLKSRegistrationFormEntity> getByIdRoomAndTime(String idRoom, Long timeStart, Long timeEnd) throws HotelManagerException;
+
+    void updateChangeRoom(String idRegistration, String idRoomOld, String idRoomNew) throws HotelManagerException;
 }

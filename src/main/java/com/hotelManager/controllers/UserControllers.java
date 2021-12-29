@@ -3,7 +3,6 @@ package com.hotelManager.controllers;
 import com.hotelManager.dtos.request.*;
 import com.hotelManager.dtos.responses.AddApiResponse;
 import com.hotelManager.dtos.responses.BaseApiResponse;
-import com.hotelManager.dtos.responses.QLKSTypeRoomReponse;
 import com.hotelManager.exceptions.HotelManagerException;
 import com.hotelManager.model.QLKSEmployeeModel;
 import com.hotelManager.services.QLKSEmployeeService;

@@ -15,6 +15,8 @@ public interface QLKSEmployeeRepository {
 
     List<QLKSEmployeeModel> getAll() throws HotelManagerException;
 
+    List<QLKSEmployeeModel> getEmployeeClear() throws HotelManagerException;
+
     void delete(String id) throws HotelManagerException;
 
     void update(String id, UserRequest userRequest) throws HotelManagerException;

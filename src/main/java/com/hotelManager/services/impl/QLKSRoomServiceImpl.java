@@ -132,7 +132,7 @@ public class QLKSRoomServiceImpl implements QLKSRoomService {
     private void setItemRoomModel(QLKSRoomModel item, Optional<QLKSRegistrationFormEntity> registrationFormEntity) throws HotelManagerException {
         Boolean checkClear = false;
 
-        if (item.getStatus() == StatusRoom.MAINTENANCE.getValue()) {
+        if (item.getStatus() == StatusRoom.NEED_TO_CLEAN.getValue()) {
             checkClear = true;
         }
 
@@ -168,7 +168,7 @@ public class QLKSRoomServiceImpl implements QLKSRoomService {
         }
 
         if (checkClear) {
-            item.setStatus(StatusRoom.MAINTENANCE.getValue());
+            item.setStatus(StatusRoom.NEED_TO_CLEAN.getValue());
         }
     }
 

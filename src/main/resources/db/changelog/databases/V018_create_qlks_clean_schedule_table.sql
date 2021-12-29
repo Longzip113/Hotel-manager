@@ -3,5 +3,6 @@ CREATE TABLE qlks_clean_schedule (
   id_employee varchar(255) NOT NULL,
   id_room varchar(255) DEFAULT NULL,
   day_working varchar(55) DEFAULT NULL,
+  status int DEFAULT NULL,
   PRIMARY KEY (id_clean_schedule)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

@@ -1,5 +1,6 @@
 package com.hotelManager.services;
 
+import com.hotelManager.dtos.request.ChangeRoomRequest;
 import com.hotelManager.dtos.request.LogCustomerRequest;
 import com.hotelManager.dtos.responses.QLKSLogCustomerResponse;
 import com.hotelManager.exceptions.HotelManagerException;
@@ -13,4 +14,6 @@ public interface QLKSLogCustomerService {
     List<QLKSLogCustomerResponse> getAll() throws HotelManagerException;
 
     QLKSLogCustomerResponse getDetail(String id) throws HotelManagerException;
+
+    void changeRoom(ChangeRoomRequest request) throws HotelManagerException;
 }

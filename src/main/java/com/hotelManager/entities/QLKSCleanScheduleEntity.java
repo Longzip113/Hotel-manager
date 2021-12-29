@@ -27,4 +27,7 @@ public class QLKSCleanScheduleEntity {
 
     @Column(name = "day_working", nullable = false)
     private String dayWorking;
+
+    @Column(name = "status", nullable = false)
+    private Integer status;
 }

@@ -1,5 +1,5 @@
 INSERT INTO qlks_room(id_room, name_room, description, id_type_room, status,
-housekeeping_order, id_housekeeping_staff, id_registration_form, is_delete)
+id_employee_clear, id_housekeeping_staff, id_registration_form, is_delete)
 VALUES('d8bafe9f-8114-43e2-b00a-53214238264c', 'Phòng 101', "vị trí phong tầng 1", "ca2417aa-1f3d-11ec-b155-2b7bc87d8134", -1, null, null, null, 0),
           ('84417c29-0f58-4cd8-bbb5-323be6728217', 'Phòng 102', "vị trí phong tầng 1", "8b516e60-1f3d-11ec-9c1f-53f0b1cd671f", -1, null, null, null, 0),
           ('0c6c5280-a5d5-415a-98fa-ee0f62a4c500', 'Phòng 103', "vị trí phong tầng 1", "ca2417aa-1f3d-11ec-b155-2b7bc87d8134", -1, null, null, null, 0),

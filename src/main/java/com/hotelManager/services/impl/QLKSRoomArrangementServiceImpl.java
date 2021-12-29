@@ -80,25 +80,33 @@ public class QLKSRoomArrangementServiceImpl implements QLKSRoomArrangementServic
             HotelManagerUtils.throwException(DatabaseException.class, ERROR_ROOM_CHECK_IN);
         }
 
-        QLKSRegistrationFormEntity qlksRegistrationFormEntity = entity.get();
-        List<String> listIdRooms = new ArrayList<>();
-        List<String> listIdCustomer = new ArrayList<>();
-        if (StringUtils.isNotBlank(qlksRegistrationFormEntity.getIdCustomer())) {
-            listIdCustomer = List.of(qlksRegistrationFormEntity.getIdCustomer().split("/"));
+        if(entity.get().getCheckInDate() < DateTimeUtils.getCurrentTime() &&
+        entity.get().getCheckOutDate() > DateTimeUtils.getCurrentTime()) {
+            QLKSRegistrationFormEntity qlksRegistrationFormEntity = entity.get();
+            List<String> listIdRooms = new ArrayList<>();
+            List<String> listIdCustomer = new ArrayList<>();
+            if (StringUtils.isNotBlank(qlksRegistrationFormEntity.getIdCustomer())) {
+                listIdCustomer = List.of(qlksRegistrationFormEntity.getIdCustomer().split("/"));
+            }
+
+            if (StringUtils.isNotBlank(qlksRegistrationFormEntity.getIdRoom())) {
+                listIdRooms = List.of(qlksRegistrationFormEntity.getIdRoom().split("/"));
+            }
+
+            List<QLKSRoomArrangementEntity> entities = arrangementRoom(qlksRegistrationFormEntity, listIdRooms, listIdCustomer);
+
+            Session session = sessionFactory.openSession();
+            session.beginTransaction();
+            qlksRoomArrangementRepository.batchSave(entities, session);
+            session.getTransaction().commit();
+            qlksRegistrationFormEntity.setStatus(TypeRegister.CHECK_IN.getValue());
+            qlksRegistrationFormRepository.update(qlksRegistrationFormEntity);
+        } else {
+            log.error("Chưa tới thời gian nhận phòng !");
+            HotelManagerUtils.throwException(DatabaseException.class, ERROR_CHECK_IN);
         }
 
-        if (StringUtils.isNotBlank(qlksRegistrationFormEntity.getIdRoom())) {
-            listIdRooms = List.of(qlksRegistrationFormEntity.getIdRoom().split("/"));
-        }
 
-        List<QLKSRoomArrangementEntity> entities = arrangementRoom(qlksRegistrationFormEntity, listIdRooms, listIdCustomer);
-
-        Session session = sessionFactory.openSession();
-        session.beginTransaction();
-        qlksRoomArrangementRepository.batchSave(entities, session);
-        session.getTransaction().commit();
-        qlksRegistrationFormEntity.setStatus(TypeRegister.CHECK_IN.getValue());
-        qlksRegistrationFormRepository.update(qlksRegistrationFormEntity);
     }
 
     /**
@@ -192,7 +200,7 @@ public class QLKSRoomArrangementServiceImpl implements QLKSRoomArrangementServic
 
         //update status room
         List<String> listIdRooms = List.of(qlksRegistrationFormEntity.getIdRoom().split("/"));
-        qlksRoomRepository.updateStatus(listIdRooms, StatusRoom.CLEANING_UP.getValue());
+        qlksRoomRepository.updateStatus(listIdRooms, StatusRoom.NEED_TO_CLEAN.getValue());
 
     }
 
@@ -217,14 +225,14 @@ public class QLKSRoomArrangementServiceImpl implements QLKSRoomArrangementServic
     @Override
     public QLKSInfoCheckOutResponse getInfoCheckOut(String id) throws HotelManagerException {
         Optional<QLKSRegistrationFormEntity> entity = qlksRegistrationFormRepository.getById(id);
-        totalPrice += entity.get().getIntoMoney();
         if (entity.isEmpty()) {
             log.error("id not existed !");
             HotelManagerUtils.throwException(DatabaseException.class, ERROR_ID_NOT_EXISTED);
-        }
-
-        if (entity.get().getStatus() != TypeRegister.CHECK_IN.getValue()) {
-            HotelManagerUtils.throwException(DatabaseException.class, ERROR_ROOM_CHECK_OUT);
+        } else {
+            if (entity.get().getStatus() != TypeRegister.CHECK_IN.getValue()) {
+                HotelManagerUtils.throwException(DatabaseException.class, ERROR_ROOM_CHECK_OUT);
+            }
+            totalPrice += entity.get().getIntoMoney();
         }
 
         QLKSRegistrationResponse infoRegistration = qlksRegistrationFormService.getDetail(id);
@@ -260,6 +268,7 @@ public class QLKSRoomArrangementServiceImpl implements QLKSRoomArrangementServic
         );
 
         List<String> listIdCustomer = List.of(arrangementEntity.get().getIdCustomer().split("/"));
+        List<String> listIdRoom = List.of(arrangementEntity.get().getIdRoom().split("/"));
         Integer size = listIdCustomer.size();
         List<QLKSCustomerEntity> customerEntityList = new ArrayList<>();
 
@@ -268,9 +277,27 @@ public class QLKSRoomArrangementServiceImpl implements QLKSRoomArrangementServic
             customerEntityList.add(customerEntity);
         }
 
-        entities.parallelStream().forEach(item -> {
+//        entities.parallelStream().forEach(item -> {
+//            try {
+//                infoLogs.add(setInfoLog(item));
+//            } catch (HotelManagerException e) {
+//                e.printStackTrace();
+//            }
+//        });
+
+//        Set log for room change
+        listIdRoom.parallelStream().forEach(item -> {
             try {
-                infoLogs.add(setInfoLog(item));
+                List<QLKSLogCustomerEntity> listLogs = qlksLogCustomerRepository
+                        .getByRegistrationAndRoom(idRegistration, item);
+
+                listLogs.parallelStream().forEach(item1 -> {
+                    try {
+                        infoLogs.add(setInfoLog(item1));
+                    } catch (HotelManagerException e) {
+                        e.printStackTrace();
+                    }
+                });
             } catch (HotelManagerException e) {
                 e.printStackTrace();
             }

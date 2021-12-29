@@ -250,4 +250,33 @@ public class QLKSRegistrationFormRepositoryImpl implements QLKSRegistrationFormR
             HibernateUtils.closeSession(session);
         }
     }
+
+    @Override
+    public void updateChangeRoom(String idRegistration, String idRoomOld, String idRoomNew) throws HotelManagerException {
+        Session session = sessionFactory.openSession();
+        HibernateUtils.beginTransaction(session);
+
+        try {
+            StringBuilder hql = new StringBuilder()
+                    .append("UPDATE QLKSRegistrationFormEntity r ")
+                    .append("SET r.idRoom = REPLACE(r.idRoom, :idRoomOld, :idRoomNew) ")
+                    .append("WHERE r.id = :id");
+
+            log.info("SQL [{}]", hql);
+
+            Query query = session.createQuery(hql.toString())
+                    .setParameter("idRoomOld", idRoomOld)
+                    .setParameter("idRoomNew", idRoomNew)
+                    .setParameter("id", idRegistration);
+            query.executeUpdate();
+
+            session.getTransaction().commit();
+        } catch (PersistenceException e) {
+
+            log.error("Delete QLKSRegistrationFormEntity failed Id: [{}]", idRegistration, e);
+            HotelManagerUtils.throwException(DatabaseException.class, ERROR_SERVER);
+        } finally {
+            HibernateUtils.closeSession(session);
+        }
+    }
 }

@@ -14,4 +14,6 @@ public class QLKSCleanScheduleResponse {
     QLKSEmployeeModel employee;
 
     String dayWork;
+
+    Integer status;
 }
