@@ -1,6 +1,7 @@
 package com.hotelManager.services.impl;
 
 import com.hotelManager.constants.enums.StatusRoom;
+import com.hotelManager.constants.enums.StatusSchedule;
 import com.hotelManager.constants.enums.TypeRegister;
 import com.hotelManager.dtos.request.RoomRequest;
 import com.hotelManager.dtos.request.SearchRoomRequest;
@@ -18,12 +19,14 @@ import com.hotelManager.services.QLKSRegistrationFormService;
 import com.hotelManager.services.QLKSRoomService;
 import com.hotelManager.utils.DateTimeUtils;
 import com.hotelManager.utils.HotelManagerUtils;
+import liquibase.pro.packaged.S;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -130,12 +133,6 @@ public class QLKSRoomServiceImpl implements QLKSRoomService {
     }
 
     private void setItemRoomModel(QLKSRoomModel item, Optional<QLKSRegistrationFormEntity> registrationFormEntity) throws HotelManagerException {
-        Boolean checkClear = false;
-
-        if (item.getStatus() == StatusRoom.NEED_TO_CLEAN.getValue()) {
-            checkClear = true;
-        }
-
         item.setDetails(qlksDetailTypeRoomRepository.getByIdTypeRoom(item.getIdTypeRoom()));
         if (registrationFormEntity.isPresent()) {
             QLKSRegistrationFormEntity entity = registrationFormEntity.get();
@@ -165,10 +162,6 @@ public class QLKSRoomServiceImpl implements QLKSRoomService {
             } else if (entity.getStatus() == TypeRegister.BOOK_ROOM.getValue()) {
                 item.setStatus(StatusRoom.ALREADY_BOOKED.getValue());
             }
-        }
-
-        if (checkClear) {
-            item.setStatus(StatusRoom.NEED_TO_CLEAN.getValue());
         }
     }
 
@@ -204,5 +197,29 @@ public class QLKSRoomServiceImpl implements QLKSRoomService {
             }
             return item;
         }).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<QLKSRoomModel> getRoomOld() throws HotelManagerException {
+        List<String> idRooms = getIdroomOld();
+        List<QLKSRoomModel> results = new ArrayList<>();
+        for (String item: idRooms) {
+            results.add(getDetailRoom(item));
+        }
+        return results;
+    }
+
+    private List<String> getIdroomOld() throws HotelManagerException {
+        List<QLKSRegistrationFormEntity> listCheckIn = qlksRegistrationFormRepository.getByCheckIn();
+        List<String> roomCheckIn = new ArrayList<>();
+        for (QLKSRegistrationFormEntity item: listCheckIn) {
+            roomCheckIn.addAll(List.of(item.getIdRoom().split("/")));
+        }
+        return roomCheckIn;
+    }
+
+    @Override
+    public List<QLKSRoomModel> getRoomNew() throws HotelManagerException {
+        return qlksRoomRepository.getByNotIds(getIdroomOld());
     }
 }

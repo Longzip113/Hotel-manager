@@ -134,6 +134,25 @@ public class QLKSHotelDeviceRepositoryImpl implements QLKSHotelDeviceRepository 
     }
 
     @Override
+    public void update(QLKSHotelDeviceEntity entity) throws HotelManagerException {
+        Session session = sessionFactory.openSession();
+        try {
+
+            HibernateUtils.beginTransaction(session);
+            session.update(entity);
+            session.getTransaction().commit();
+
+
+        } catch (PersistenceException e) {
+
+            log.error("Save QLKSHotelDeviceEntity failed Object: [{}]", GsonHelper.defaultInstance().toJson(entity), e);
+            HotelManagerUtils.throwException(DatabaseException.class, ERROR_SERVER);
+        } finally {
+            HibernateUtils.closeSession(session);
+        }
+    }
+
+    @Override
     public Optional<QLKSHotelDeviceEntity> getById(String id) throws HotelManagerException {
         Session session = sessionFactory.openSession();
         try {

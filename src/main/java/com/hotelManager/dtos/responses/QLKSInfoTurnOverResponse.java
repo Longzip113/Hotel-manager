@@ -14,6 +14,8 @@ public class QLKSInfoTurnOverResponse {
 
     private String nameRoom;
 
+    private String idTypeRoom;
+
     private Long dayCheckOut;
 
     private Long dayCheckIn;

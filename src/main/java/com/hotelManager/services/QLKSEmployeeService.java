@@ -4,13 +4,14 @@ import com.hotelManager.dtos.request.*;
 import com.hotelManager.exceptions.HotelManagerException;
 import com.hotelManager.model.QLKSEmployeeModel;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 public interface QLKSEmployeeService {
 
     QLKSEmployeeModel save(UserRequest addUserRequest) throws HotelManagerException;
 
-    QLKSEmployeeModel login(LoginRequest userRequest) throws HotelManagerException;
+    QLKSEmployeeModel login(LoginRequest userRequest) throws HotelManagerException, NoSuchAlgorithmException;
 
     List<QLKSEmployeeModel> getAll() throws HotelManagerException;
 

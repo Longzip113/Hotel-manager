@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 
@@ -24,7 +25,7 @@ public class UserControllers {
     QLKSEmployeeService qlksEmployeeService;
 
     @PostMapping(value = "/login")
-    public ResponseEntity<QLKSEmployeeModel> login(@RequestBody LoginRequest userRequest) throws HotelManagerException {
+    public ResponseEntity<QLKSEmployeeModel> login(@RequestBody LoginRequest userRequest) throws HotelManagerException, NoSuchAlgorithmException {
         return ResponseEntity.ok(qlksEmployeeService.login(userRequest));
     }
 

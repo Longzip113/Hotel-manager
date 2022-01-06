@@ -13,7 +13,7 @@ public interface QLKSRoomArrangementRepository {
 
     Optional<QLKSRoomArrangementEntity> getByIdRegisterAndCustomer(String idRegister, String idCustomer) throws HotelManagerException;
 
-    Optional<QLKSRoomArrangementEntity> getByIdRegisterAndRoom(String idRegister, String idCustomer) throws HotelManagerException;
+    Optional<QLKSRoomArrangementEntity> getByIdRegisterAndRoom(String idRegister, String idRoom) throws HotelManagerException;
 
     void updateChangeRoom(String idRegister, String idRoomOld, String idRoomNew) throws HotelManagerException;
 

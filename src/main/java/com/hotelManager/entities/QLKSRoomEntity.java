@@ -32,6 +32,9 @@ public class QLKSRoomEntity {
     @Column(name = "STATUS", nullable = false)
     private Integer status;
 
+    @Column(name = "STATUS_CLEAR", nullable = false)
+    private Integer statusClear;
+
     @Column(name = "id_employee_clear", nullable = false)
     private String idEmployeeClear;
 

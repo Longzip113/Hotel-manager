@@ -63,4 +63,14 @@ public class RoomControllers {
         qlksRoomService.update(roomRequest, idRoom);
         return ResponseEntity.ok(new BaseApiResponse());
     }
+
+    @GetMapping(value = "/room/old")
+    public ResponseEntity<List<QLKSRoomModel>> getRoomOld() throws Exception {
+        return ResponseEntity.ok(qlksRoomService.getRoomOld());
+    }
+
+    @GetMapping(value = "/room/new")
+    public ResponseEntity<List<QLKSRoomModel>> getRoomNew() throws Exception {
+        return ResponseEntity.ok(qlksRoomService.getRoomNew());
+    }
 }

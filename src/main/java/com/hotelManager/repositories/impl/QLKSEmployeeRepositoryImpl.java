@@ -9,6 +9,7 @@ import com.hotelManager.exceptions.DatabaseException;
 import com.hotelManager.exceptions.HotelManagerException;
 import com.hotelManager.model.QLKSEmployeeModel;
 import com.hotelManager.repositories.QLKSEmployeeRepository;
+import com.hotelManager.utils.ConvertPassword;
 import com.hotelManager.utils.GsonHelper;
 import com.hotelManager.utils.HibernateUtils;
 import com.hotelManager.utils.HotelManagerUtils;
@@ -319,7 +320,7 @@ public class QLKSEmployeeRepositoryImpl implements QLKSEmployeeRepository {
 
             Query query = session.createQuery(hql.toString())
                     .setParameter("verification", changePasswordRequest.getVerification())
-                    .setParameter("passWord", changePasswordRequest.getPassword())
+                    .setParameter("passWord", ConvertPassword.getMD5(changePasswordRequest.getPassword()))
                     .setParameter("isDelete", Boolean.FALSE);
 
             if (query.executeUpdate() < 1) {
@@ -349,8 +350,8 @@ public class QLKSEmployeeRepositoryImpl implements QLKSEmployeeRepository {
             log.info("SQL [{}]", hql);
 
             Query query = session.createQuery(hql.toString())
-                    .setParameter("passwordNew", changePasswordRequest.getPasswordNew())
-                    .setParameter("passwordOld", changePasswordRequest.getPasswordOld())
+                    .setParameter("passwordNew", ConvertPassword.getMD5(changePasswordRequest.getPasswordNew()))
+                    .setParameter("passwordOld", ConvertPassword.getMD5(changePasswordRequest.getPasswordOld()))
                     .setParameter("email", changePasswordRequest.getEmail())
                     .setParameter("isDelete", Boolean.FALSE);
 

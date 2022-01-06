@@ -76,6 +76,28 @@ public class QLKSRegistrationFormRepositoryImpl implements QLKSRegistrationFormR
     }
 
     @Override
+    public List<QLKSRegistrationFormEntity> getByCheckIn() throws HotelManagerException {
+        Session session = sessionFactory.openSession();
+        try {
+            StringBuilder hql = new StringBuilder().append("FROM QLKSRegistrationFormEntity WHERE isDelete = :idDelete AND status = :status ");
+
+            log.info("SQL [{}]", hql);
+
+            Query<QLKSRegistrationFormEntity> query = session.createQuery(hql.toString(), QLKSRegistrationFormEntity.class)
+                    .setParameter("idDelete", Boolean.FALSE)
+                    .setParameter("status", TypeRegister.CHECK_IN.getValue());
+
+            return query.getResultList();
+        } catch (PersistenceException e) {
+            log.error("getByIdDelegation QLKSRoleEntity failed!!", e);
+            HotelManagerUtils.throwException(DatabaseException.class, ERROR_SERVER);
+            return null;
+        } finally {
+            HibernateUtils.closeSession(session);
+        }
+    }
+
+    @Override
     public void updateByIdDelegation(String idDelegation, String idCustomers, Integer size) throws HotelManagerException {
         Session session = sessionFactory.openSession();
         HibernateUtils.beginTransaction(session);
@@ -238,6 +260,68 @@ public class QLKSRegistrationFormRepositoryImpl implements QLKSRegistrationFormR
                     .setParameter("timeEnd", timeEnd)
                     .setParameter("status", TypeRegister.CANCEL.getValue())
                     .setParameter("idRoom", "%" + idRoom + "%");
+
+
+            return query.uniqueResultOptional();
+        } catch (Exception e) {
+
+            log.error("getById QLKSRegistrationFormEntity fail !", e);
+            HotelManagerUtils.throwException(DatabaseException.class, ERROR_SERVER);
+            return null;
+        }  finally {
+            HibernateUtils.closeSession(session);
+        }
+    }
+
+    @Override
+    public Optional<QLKSRegistrationFormEntity> checkRoom(String idRoom, Long timeStart, Long timeEnd) throws HotelManagerException {
+        Session session = sessionFactory.openSession();
+        try {
+            StringBuilder hql = new StringBuilder()
+                    .append("FROM QLKSRegistrationFormEntity ")
+                    .append("WHERE id_room like :idRoom AND (( :timeStart BETWEEN checkInDate AND checkOutDate) " +
+                            "OR ( :timeEnd BETWEEN checkInDate AND checkOutDate) " +
+                            "OR ( checkInDate BETWEEN :timeStart AND :timeEnd) " +
+                            "OR ( checkOutDate BETWEEN :timeStart AND :timeEnd)) " +
+                            "AND isDelete = FALSE AND status NOT IN :status");
+            log.info("SQL [{}]", hql);
+
+            Query query = session.createQuery(hql.toString())
+                    .setParameter("timeStart", timeStart)
+                    .setParameter("timeEnd", timeEnd)
+                    .setParameter("status", Arrays.asList(TypeRegister.CANCEL.getValue(), TypeRegister.CHECK_OUT.getValue()))
+                    .setParameter("idRoom", "%" + idRoom + "%");
+
+
+            return query.uniqueResultOptional();
+        } catch (Exception e) {
+
+            log.error("getById QLKSRegistrationFormEntity fail !", e);
+            HotelManagerUtils.throwException(DatabaseException.class, ERROR_SERVER);
+            return null;
+        }  finally {
+            HibernateUtils.closeSession(session);
+        }
+    }
+
+    @Override
+    public Optional<QLKSRegistrationFormEntity> checkCustomer(String idCustomer, Long timeStart, Long timeEnd) throws HotelManagerException {
+        Session session = sessionFactory.openSession();
+        try {
+            StringBuilder hql = new StringBuilder()
+                    .append("FROM QLKSRegistrationFormEntity ")
+                    .append("WHERE idCustomer like :idCustomer AND (( :timeStart BETWEEN checkInDate AND checkOutDate) " +
+                            "OR ( :timeEnd BETWEEN checkInDate AND checkOutDate) " +
+                            "OR ( checkInDate BETWEEN :timeStart AND :timeEnd) " +
+                            "OR ( checkOutDate BETWEEN :timeStart AND :timeEnd)) " +
+                            "AND isDelete = FALSE AND status NOT IN :status");
+            log.info("SQL [{}]", hql);
+
+            Query query = session.createQuery(hql.toString())
+                    .setParameter("timeStart", timeStart)
+                    .setParameter("timeEnd", timeEnd)
+                    .setParameter("status", Arrays.asList(TypeRegister.CANCEL.getValue(), TypeRegister.CHECK_OUT.getValue()))
+                    .setParameter("idCustomer", "%" + idCustomer + "%");
 
 
             return query.uniqueResultOptional();

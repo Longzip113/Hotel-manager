@@ -9,6 +9,7 @@ import com.hotelManager.model.QLKSEmployeeModel;
 import com.hotelManager.repositories.QLKSEmployeeRepository;
 import com.hotelManager.services.ClientService;
 import com.hotelManager.services.QLKSEmployeeService;
+import com.hotelManager.utils.ConvertPassword;
 import com.hotelManager.utils.DataUtils;
 import com.hotelManager.utils.HibernateUtils;
 import com.hotelManager.utils.HotelManagerUtils;
@@ -18,6 +19,7 @@ import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -70,8 +72,8 @@ public class QLKSEmployeeServiceImpl implements QLKSEmployeeService {
     }
 
     @Override
-    public QLKSEmployeeModel login(LoginRequest userRequest) throws HotelManagerException {
-        Optional<QLKSEmployeeModel> qlksEmployeeModel = qlksEmployeeRepository.getEmployeeByEmailAndPassWord(userRequest.getPassWord(), userRequest.getEmail());
+    public QLKSEmployeeModel login(LoginRequest userRequest) throws HotelManagerException, NoSuchAlgorithmException {
+        Optional<QLKSEmployeeModel> qlksEmployeeModel = qlksEmployeeRepository.getEmployeeByEmailAndPassWord(ConvertPassword.getMD5(userRequest.getPassWord()), userRequest.getEmail());
 
         if (qlksEmployeeModel.isEmpty()) {
             log.error("Email address or password is incorrect.");

@@ -31,7 +31,11 @@ public interface QLKSRoomRepository {
 
     List<QLKSRoomModel> getByIds(List<String> id);
 
+    List<QLKSRoomModel> getByNotIds(List<String> id);
+
     long priceRooms(List<String> idRooms);
 
-    void updateStatus(List<String> idRoom, Integer status) throws HotelManagerException;
+    void updateStatus(List<String> idRoom, Integer statusRoom, Integer statusClear) throws HotelManagerException;
+
+    void updateStatusClear(List<String> idRoom, Integer statusClear) throws HotelManagerException;
 }

@@ -16,6 +16,8 @@ public interface QLKSHotelDeviceRepository {
 
     void update(String id, HotelDeviceRequest updateHotelDeviceRequest) throws HotelManagerException;
 
+    void update(QLKSHotelDeviceEntity entity) throws HotelManagerException;
+
     Optional<QLKSHotelDeviceEntity> getById(String id) throws HotelManagerException;
 
     Optional<QLKSHotelDeviceEntity> getByName(String name) throws HotelManagerException;

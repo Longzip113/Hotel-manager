@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -63,6 +64,10 @@ public class QLKSLogCustomerServiceImpl implements QLKSLogCustomerService {
 
         Optional<QLKSRoomArrangementEntity> arrangementEntity = qlksRoomArrangementRepository
                 .getByIdRegisterAndCustomer(request.getIdRegistration(), request.getIdCustomer());
+        List<String> idRooms = Arrays.asList(arrangementEntity.get().getIdRoom().split("/"));
+
+        Optional<QLKSRoomModel> roomModel = qlksRoomRepository.getByIdRoom(idRooms.get(idRooms.size() - 1));
+
 
         if (arrangementEntity.isEmpty()) {
             log.error("id not existed ! arrangement");
@@ -75,7 +80,7 @@ public class QLKSLogCustomerServiceImpl implements QLKSLogCustomerService {
                 log.error("id not existed ! Service");
                 HotelManagerUtils.throwException(DatabaseException.class, ERROR_ID_NOT_EXISTED);
             }
-            request.setDescription(String.format("Sử dụng %s - %s", request.getQuantity(), serviceEntity.get().getNameService()));
+            request.setDescription(String.format("Sử dụng %s - %s: %s", request.getQuantity(), serviceEntity.get().getNameService(), roomModel.get().getNameRoom()));
             totalPrice = serviceEntity.get().getPrice() * request.getQuantity();
         } else {
             Optional<QLKSHotelDeviceEntity> hotelDeviceEntity = qlksHotelDeviceRepository.getById(request.getIdType());
@@ -87,19 +92,22 @@ public class QLKSLogCustomerServiceImpl implements QLKSLogCustomerService {
             if(hotelDeviceEntity.get().getQuantity() < request.getQuantity()) {
                 log.error("Số lượng thiết bị không đủ !");
                 HotelManagerUtils.throwException(DatabaseException.class, ERROR_USE_DEVICE);
+            } else {
+                hotelDeviceEntity.get().setQuantity(hotelDeviceEntity.get().getQuantity() - request.getQuantity());
+                qlksHotelDeviceRepository.update(hotelDeviceEntity.get());
             }
 
             totalPrice = hotelDeviceEntity.get().getPrice() * request.getQuantity();
 
             if (request.getType() == 3) {
-                request.setDescription("Thiết bị mất !");
+                request.setDescription(String.format("Thiết bị mất ! %s", roomModel.get().getNameRoom()));
             } else {
-                request.setDescription(String.format("Thêm %s - %s", request.getQuantity(), hotelDeviceEntity.get().getNameHotelDevice()));
+                request.setDescription(String.format("Thêm %s - %s: %s", request.getQuantity(), hotelDeviceEntity.get().getNameHotelDevice(), roomModel.get().getNameRoom()));
             }
         }
 
         QLKSLogCustomerEntity entity = QLKSLogCustomerEntity.builder()
-                .idRoom(arrangementEntity.get().getIdRoom())
+                .idRoom(idRooms.get(idRooms.size() - 1))
                 .idCustomer(request.getIdCustomer())
                 .idType(request.getIdType())
                 .type(request.getType())
@@ -170,14 +178,27 @@ public class QLKSLogCustomerServiceImpl implements QLKSLogCustomerService {
             log.error("idTypeRoom not existed ! Arrangement room");
             HotelManagerUtils.throwException(DatabaseException.class, ERROR_TYPE_ROOM_NOT_EXISTED);
         }
+//Check room start
+        Optional<QLKSRegistrationFormEntity> registrationFormEntity = qlksRegistrationFormRepository.getById(request.getIdRegistration());
+        Optional<QLKSRegistrationFormEntity> checkRoom = qlksRegistrationFormRepository.checkRoom(request.getIdRoomNew(),
+                registrationFormEntity.get().getCheckInDate(), registrationFormEntity.get().getCheckOutDate());
 
+        if (checkRoom.isPresent()) {
+            log.error("Phong đã bị đặt !");
+            HotelManagerUtils.throwException(DatabaseException.class, ERROR_ADD_ROOM);
+        }
+
+//Check room end
         Integer totalPrice = typeRoomEntityNew.get().getPrice() - typeRoomEntityOld.get().getPrice();
+        Optional<QLKSRoomArrangementEntity> qlksRoomArrangementEntity = qlksRoomArrangementRepository
+                .getByIdRegisterAndRoom(request.getIdRegistration(), request.getIdRoomOld());
+        List<String> idCustomers = Arrays.asList(qlksRoomArrangementEntity.get().getIdCustomer().split("/"));
 
         QLKSLogCustomerEntity entity = QLKSLogCustomerEntity.builder()
                 .idRoom(request.getIdRoomOld())
-                .idCustomer(request.getIdCustomer())
+                .idCustomer(idCustomers.get(0))
                 .type(4)
-                .description("Đổi phòng từ " + roomEntityOld.get().getNameRoom() + " qua phòng " + roomEntityNew.get().getNameRoom())
+                .description("Đổi phòng từ " + roomEntityOld.get().getNameRoom() + " qua " + roomEntityNew.get().getNameRoom())
                 .logTime(DateTimeUtils.getCurrentTime())
                 .idRegistrationForm(request.getIdRegistration())
                 .quantity(1)

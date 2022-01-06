@@ -148,7 +148,7 @@ public class QLKSClearScheduleServiceImpl implements QLKSClearScheduleService {
 
     @Override
     public void checkInClean(String idRoom, String idEmployee) throws HotelManagerException {
-        qlksRoomRepository.updateStatus(Arrays.asList(idRoom), StatusRoom.NEED_TO_CLEAN.getValue());
+        qlksRoomRepository.updateStatusClear(Arrays.asList(idRoom), StatusSchedule.CLEANING.getValue());
         Optional<QLKSCleanScheduleEntity> cleanScheduleEntity = qlksCleanScheduleRepository.getByEmployeeAndRoom(idEmployee,
                 idRoom, java.time.LocalDate.now().toString());
 
@@ -170,7 +170,7 @@ public class QLKSClearScheduleServiceImpl implements QLKSClearScheduleService {
 
     @Override
     public void checkOutClean(String idRoom, String idEmployee) throws HotelManagerException {
-        qlksRoomRepository.updateStatus(Arrays.asList(idRoom), StatusRoom.NOT_BOOKED_YET.getValue());
+        qlksRoomRepository.updateStatusClear(Arrays.asList(idRoom), StatusSchedule.NOT_CLEANED_YET.getValue());
         Optional<QLKSLogCleanRoomEntity> qlksLogCleanRoomEntity = qlksLogCleanScheduleRepository.getByRoomAndEmployee(idRoom
                 , idEmployee);
 

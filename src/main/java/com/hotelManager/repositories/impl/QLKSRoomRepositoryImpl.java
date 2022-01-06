@@ -170,7 +170,7 @@ public class QLKSRoomRepositoryImpl implements QLKSRoomRepository {
         Session session = sessionFactory.openSession();
         try {
             StringBuilder hql = new StringBuilder()
-                    .append("SELECT r.id_room, r.name_room, r.description, tr.name_type_room, e.name_employee, r.id_type_room, r.status ")
+                    .append("SELECT r.id_room, r.name_room, r.description, tr.name_type_room, e.name_employee, r.id_type_room, r.status, r.status_clear ")
                     .append("FROM qlks_room r ")
                     .append("LEFT JOIN qlks_type_room tr ON tr.id_type_room = r.id_type_room ")
                     .append("LEFT JOIN qlks_employee e ON e.id_employee = r.id_employee_clear ")
@@ -215,7 +215,7 @@ public class QLKSRoomRepositoryImpl implements QLKSRoomRepository {
         Session session = sessionFactory.openSession();
         try {
             StringBuilder hql = new StringBuilder()
-                    .append("SELECT r.id_room, r.name_room, r.description, r.status, tr.name_type_room, e.name_employee, r.id_type_room ")
+                    .append("SELECT r.id_room, r.name_room, r.description, r.status, tr.name_type_room, e.name_employee, r.id_type_room, r.status_clear ")
                     .append("FROM qlks_room r ")
                     .append("LEFT JOIN qlks_type_room tr ON tr.id_type_room = r.id_type_room ")
                     .append("LEFT JOIN qlks_employee e ON e.id_employee = r.id_employee_clear ")
@@ -262,11 +262,34 @@ public class QLKSRoomRepositoryImpl implements QLKSRoomRepository {
         Session session = sessionFactory.openSession();
         try {
             StringBuilder hql = new StringBuilder()
-                    .append("SELECT r.id_room, r.name_room, r.description, r.status, tr.name_type_room, e.name_employee, r.id_type_room ")
+                    .append("SELECT r.id_room, r.name_room, r.description, r.status, tr.name_type_room, e.name_employee, r.id_type_room, r.status_clear ")
                     .append("FROM qlks_room r ")
                     .append("LEFT JOIN qlks_type_room tr ON tr.id_type_room = r.id_type_room ")
                     .append("LEFT JOIN qlks_employee e ON e.id_employee = r.id_employee_clear ")
                     .append("WHERE r.is_delete = :isDeleted AND r.id_room in :ids ");
+
+            log.info("SQL [{}]", hql);
+
+            Query query = session.createNativeQuery(hql.toString(), "QLKSRoomModelMapping")
+                    .setParameter("isDeleted", Boolean.FALSE)
+                    .setParameter("ids", id);
+
+            return query.getResultList();
+        } finally {
+            HibernateUtils.closeSession(session);
+        }
+    }
+
+    @Override
+    public List<QLKSRoomModel> getByNotIds(List<String> id) {
+        Session session = sessionFactory.openSession();
+        try {
+            StringBuilder hql = new StringBuilder()
+                    .append("SELECT r.id_room, r.name_room, r.description, r.status, tr.name_type_room, e.name_employee, r.id_type_room, r.status_clear ")
+                    .append("FROM qlks_room r ")
+                    .append("LEFT JOIN qlks_type_room tr ON tr.id_type_room = r.id_type_room ")
+                    .append("LEFT JOIN qlks_employee e ON e.id_employee = r.id_employee_clear ")
+                    .append("WHERE r.is_delete = :isDeleted AND r.id_room not in :ids ");
 
             log.info("SQL [{}]", hql);
 
@@ -304,20 +327,53 @@ public class QLKSRoomRepositoryImpl implements QLKSRoomRepository {
     }
 
     @Override
-    public void updateStatus(List<String> idRoom, Integer status) throws HotelManagerException {
+    public void updateStatus(List<String> idRoom, Integer statusRoom, Integer statusClear) throws HotelManagerException {
         Session session = sessionFactory.openSession();
         HibernateUtils.beginTransaction(session);
 
         try {
             StringBuilder hql = new StringBuilder()
                     .append("UPDATE QLKSRoomEntity r ")
-                    .append("SET r.status = :status ")
+                    .append("SET r.status = :statusRoom, r.statusClear = :statusClear ")
                     .append("WHERE r.id in :idRoom AND r.isDelete = :isDeleted ");
 
             log.info("SQL [{}]", hql);
 
             Query query = session.createQuery(hql.toString())
-                    .setParameter("status", status)
+                    .setParameter("statusRoom", statusRoom)
+                    .setParameter("statusClear", statusClear)
+                    .setParameter("idRoom", idRoom)
+                    .setParameter("isDeleted", Boolean.FALSE);
+
+            if (query.executeUpdate() < 1) {
+
+                log.error("Update QLKSRoomEntity fail !");
+                HotelManagerUtils.throwException(DatabaseException.class, ERROR_SERVER);
+            }
+            session.getTransaction().commit();
+        } catch (Exception e) {
+            log.error("Update QLKSRoomEntity fail !", e);
+            HotelManagerUtils.throwException(DatabaseException.class, ERROR_SERVER);
+        } finally {
+            HibernateUtils.closeSession(session);
+        }
+    }
+
+    @Override
+    public void updateStatusClear(List<String> idRoom, Integer statusClear) throws HotelManagerException {
+        Session session = sessionFactory.openSession();
+        HibernateUtils.beginTransaction(session);
+
+        try {
+            StringBuilder hql = new StringBuilder()
+                    .append("UPDATE QLKSRoomEntity r ")
+                    .append("SET r.statusClear = :statusClear ")
+                    .append("WHERE r.id in :idRoom AND r.isDelete = :isDeleted ");
+
+            log.info("SQL [{}]", hql);
+
+            Query query = session.createQuery(hql.toString())
+                    .setParameter("statusClear", statusClear)
                     .setParameter("idRoom", idRoom)
                     .setParameter("isDeleted", Boolean.FALSE);
 

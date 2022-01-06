@@ -4,6 +4,7 @@ import com.hotelManager.constants.enums.BookingType;
 import com.hotelManager.constants.enums.TypeRegister;
 import com.hotelManager.dtos.request.RegistrationRequest;
 import com.hotelManager.dtos.request.RoleRequest;
+import com.hotelManager.dtos.responses.QLKSArrangenmentCustomerResponse;
 import com.hotelManager.dtos.responses.QLKSDelegationResponse;
 import com.hotelManager.dtos.responses.QLKSRegistrationResponse;
 import com.hotelManager.entities.QLKSHotelDeviceEntity;
@@ -23,8 +24,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 import static com.hotelManager.constants.enums.HotelManagerResponseCode.*;
 
@@ -108,9 +111,12 @@ public class QLKSRegistrationFormServiceImpl implements QLKSRegistrationFormServ
                 HotelManagerUtils.throwException(DatabaseException.class, ERROR_ID_NOT_EXISTED);
             }
             delegation = entityDelegation.get();
+            request.setIdCustomer(Arrays.asList(entityDelegation.get().getIdCustomer().split("/")));
         }
 
+        request.getIdCustomer().removeAll(Arrays.asList("", null));
         String idRooms = String.join("/", request.getIdRoom());
+        checkCustomer(request.getIdCustomer(), request.getCheckInDate(), request.getCheckOutDate());
 
         QLKSRegistrationFormEntity entity = QLKSRegistrationFormEntity.builder()
                 .bookingDate(request.getBookingDate())
@@ -124,6 +130,14 @@ public class QLKSRegistrationFormServiceImpl implements QLKSRegistrationFormServ
                 .isDelete(Boolean.FALSE)
                 .numberOfChild(request.getNumberOfChild()).build();
 
+        for (String item: request.getIdRoom()) {
+            Optional<QLKSRegistrationFormEntity> checkRoom = qlksRegistrationFormRepository.checkRoom(item, request.getCheckInDate(), request.getCheckOutDate());
+            if (checkRoom.isPresent()) {
+                log.error("Phong đã bị đặt !");
+                HotelManagerUtils.throwException(DatabaseException.class, ERROR_ADD_ROOM);
+            }
+        }
+
         if (request.getType() == BookingType.DELEGATION.getValue()) {
             entity.setIdDelegation(request.getIdDelegation());
             entity.setIdCustomer(delegation.getIdCustomer());
@@ -133,15 +147,26 @@ public class QLKSRegistrationFormServiceImpl implements QLKSRegistrationFormServ
             entity.setIdCustomer(idCustomer);
             entity.setNumberOfAdult(request.getIdCustomer().size());
         }
+//        tính ngày
+        long getDiff = request.getCheckOutDate() - request.getCheckInDate();
 
-        if (request.getIsGuaranteed()) {
-            long intoMoney = qlksRoomRepository.priceRooms(request.getIdRoom());
-            entity.setIntoMoney(intoMoney);
-        } else {
-            entity.setIntoMoney(0L);
-        }
+        long getDaysDiff = TimeUnit.MILLISECONDS.toDays(getDiff);
+//        tinh ngay
+
+        long intoMoney = qlksRoomRepository.priceRooms(request.getIdRoom()) * getDaysDiff;
+        entity.setIntoMoney(intoMoney);
 
         qlksRegistrationFormRepository.save(entity);
+    }
+
+    private void checkCustomer(List<String> idCustomers, Long timeStart, Long timeEnd) throws HotelManagerException {
+        for (String item: idCustomers) {
+            Optional<QLKSRegistrationFormEntity> check = qlksRegistrationFormRepository.checkCustomer(item, timeStart, timeEnd);
+            if (check.isPresent()) {
+                log.error("Khách hàng đã booking !");
+                HotelManagerUtils.throwException(DatabaseException.class, ERROR_CHECK_CUSTOMER);
+            }
+        }
     }
 
     @Override
@@ -198,12 +223,8 @@ public class QLKSRegistrationFormServiceImpl implements QLKSRegistrationFormServ
             entityUpdate.setNumberOfAdult(request.getIdCustomer().size());
         }
 
-        if (request.getIsGuaranteed()) {
-            long intoMoney = qlksRoomRepository.priceRooms(request.getIdRoom());
-            entityUpdate.setIntoMoney(intoMoney);
-        } else {
-            entityUpdate.setIntoMoney(0L);
-        }
+        long intoMoney = qlksRoomRepository.priceRooms(request.getIdRoom());
+        entityUpdate.setIntoMoney(intoMoney);
 
         qlksRegistrationFormRepository.update(entityUpdate);
     }

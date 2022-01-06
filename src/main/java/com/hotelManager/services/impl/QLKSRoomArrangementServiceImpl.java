@@ -1,6 +1,7 @@
 package com.hotelManager.services.impl;
 
 import com.hotelManager.constants.enums.StatusRoom;
+import com.hotelManager.constants.enums.StatusSchedule;
 import com.hotelManager.constants.enums.TypeDetailofTypeRoom;
 import com.hotelManager.constants.enums.TypeRegister;
 import com.hotelManager.dtos.responses.*;
@@ -179,6 +180,13 @@ public class QLKSRoomArrangementServiceImpl implements QLKSRoomArrangementServic
         infoCheckOutResponse.getInfoRoom().forEach(item -> {
             item.getLogCustomers().forEach(itemLog -> {
                 serviceFee.updateAndGet(v -> v + itemLog.getTotalPrice());
+                if(itemLog.getType() == 0) {
+                    try {
+                        updateQuantity(itemLog.getIdType(), itemLog.getQuantity());
+                    } catch (HotelManagerException e) {
+                        e.printStackTrace();
+                    }
+                }
             });
         });
 
@@ -200,7 +208,7 @@ public class QLKSRoomArrangementServiceImpl implements QLKSRoomArrangementServic
 
         //update status room
         List<String> listIdRooms = List.of(qlksRegistrationFormEntity.getIdRoom().split("/"));
-        qlksRoomRepository.updateStatus(listIdRooms, StatusRoom.NEED_TO_CLEAN.getValue());
+        qlksRoomRepository.updateStatus(listIdRooms, StatusRoom.NOT_BOOKED_YET.getValue(), StatusSchedule.NEED_CLEAN.getValue());
 
     }
 
@@ -277,14 +285,6 @@ public class QLKSRoomArrangementServiceImpl implements QLKSRoomArrangementServic
             customerEntityList.add(customerEntity);
         }
 
-//        entities.parallelStream().forEach(item -> {
-//            try {
-//                infoLogs.add(setInfoLog(item));
-//            } catch (HotelManagerException e) {
-//                e.printStackTrace();
-//            }
-//        });
-
 //        Set log for room change
         listIdRoom.parallelStream().forEach(item -> {
             try {
@@ -310,6 +310,12 @@ public class QLKSRoomArrangementServiceImpl implements QLKSRoomArrangementServic
                 .nameTypeRoom(itemRoom.getNameTypeRoom())
                 .customers(customerEntityList)
                 .logCustomers(infoLogs).build();
+    }
+
+    private void updateQuantity(String id, Integer quantity) throws HotelManagerException {
+        Optional<QLKSHotelDeviceEntity> entity = qlksHotelDeviceRepository.getById(id);
+        entity.get().setQuantity(entity.get().getQuantity() + quantity);
+        qlksHotelDeviceRepository.update(entity.get());
     }
 
     /**

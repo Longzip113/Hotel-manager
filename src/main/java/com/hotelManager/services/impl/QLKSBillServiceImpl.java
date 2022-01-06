@@ -81,8 +81,14 @@ public class QLKSBillServiceImpl implements QLKSBillService {
 
     @Override
     public List<QLKSInfoTurnOverResponse> getTurnOver(TurnOverRequest turnOverRequest) throws HotelManagerException {
-        List<QLKSBillEntity> listBill = qlksBillRepository.getAllByDay(turnOverRequest.getDayStart(),
-                turnOverRequest.getDayEnd());
+        List<QLKSBillEntity> listBill;
+        if (turnOverRequest.getDayStart() != null) {
+            listBill = qlksBillRepository.getAllByDay(turnOverRequest.getDayStart(),
+                    turnOverRequest.getDayEnd());
+        } else {
+            listBill = qlksBillRepository.getAll();
+        }
+
         List<QLKSInfoTurnOverResponse> results = new ArrayList<>();
 
         listBill.forEach(item -> {
@@ -111,6 +117,7 @@ public class QLKSBillServiceImpl implements QLKSBillService {
                                 .dayCheckOut(infoRegistration.getCheckOutDate())
                                 .dayOfPayment(item.getDayOfPayment())
                                 .serviceFee(serviceFee.get())
+                                .idTypeRoom(itemRoom.getIdTypeRoom())
                                 .roomRent(typeRoomEntity.get().getPrice())
                                 .totalPrice(serviceFee.get() + typeRoomEntity.get().getPrice())
                                 .bookingType(infoRegistration.getType())

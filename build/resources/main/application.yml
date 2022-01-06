@@ -19,8 +19,8 @@ spring:
         hbm2ddl:
           auto: none
   liquibase:
-#    enabled: false
-    enabled: true
+    enabled: false
+#    enabled: true
     parameters:
       outputEncoding: UTF-8
 

@@ -38,6 +38,7 @@ dependencies {
     implementation 'org.liquibase:liquibase-gradle-plugin:2.0.4'
     implementation 'org.apache.commons:commons-collections4:4.4'
     implementation 'c3p0:c3p0:0.9.1.2'
+    implementation 'org.apache.commons:commons-csv:1.5'
 
     implementation 'org.springframework.boot:spring-boot-starter-mail:2.5.4'
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf:2.5.4'

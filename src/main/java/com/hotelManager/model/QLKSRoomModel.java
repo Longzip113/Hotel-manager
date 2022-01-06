@@ -27,7 +27,8 @@ import java.util.List;
                         @ColumnResult(name = "name_type_room", type = String.class),
                         @ColumnResult(name = "name_employee", type = String.class),
                         @ColumnResult(name = "id_type_room", type = String.class),
-                        @ColumnResult(name = "status", type = Integer.class)
+                        @ColumnResult(name = "status", type = Integer.class),
+                        @ColumnResult(name = "status_clear", type = Integer.class)
                 }))
 public class QLKSRoomModel {
 
@@ -60,6 +61,10 @@ public class QLKSRoomModel {
     @Column(name = "status", nullable = false)
     private long status;
 
+    @JsonProperty("statusClear")
+    @Column(name = "status_clear", nullable = false)
+    private long statusClear;
+
     @Transient
     @JsonProperty("details")
     @ElementCollection(targetClass= QLKSDetailTypeRoomModel.class)
@@ -75,7 +80,7 @@ public class QLKSRoomModel {
     @ElementCollection(targetClass= QLKSArrangenmentCustomerResponse.class)
     QLKSArrangenmentCustomerResponse infoCustomerBooking;
 
-    public QLKSRoomModel(String id, String nameRoom, String description, String nameTypeRoom, String nameEmployee, String idTypeRoom, Integer status) {
+    public QLKSRoomModel(String id, String nameRoom, String description, String nameTypeRoom, String nameEmployee, String idTypeRoom, Integer status, Integer statusClear) {
         this.id = id;
         this.nameRoom = nameRoom;
         this.description = description;
@@ -83,5 +88,6 @@ public class QLKSRoomModel {
         this.nameEmployee = nameEmployee;
         this.idTypeRoom = idTypeRoom;
         this.status = status;
+        this.statusClear = statusClear;
     }
 }

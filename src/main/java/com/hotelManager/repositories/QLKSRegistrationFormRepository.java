@@ -13,6 +13,8 @@ public interface QLKSRegistrationFormRepository {
 
     List<QLKSRegistrationFormEntity> getByIdDelegation(String idDelegation) throws HotelManagerException;
 
+    List<QLKSRegistrationFormEntity> getByCheckIn() throws HotelManagerException;
+
     void updateByIdDelegation(String idDelegation, String idCustomers, Integer size) throws HotelManagerException;
 
     void save(QLKSRegistrationFormEntity entity) throws HotelManagerException;
@@ -26,6 +28,10 @@ public interface QLKSRegistrationFormRepository {
     Optional<QLKSRegistrationFormEntity> getByIdRoomAndTime(String idRoom, Long time) throws HotelManagerException;
 
     Optional<QLKSRegistrationFormEntity> getByIdRoomAndTime(String idRoom, Long timeStart, Long timeEnd) throws HotelManagerException;
+
+    Optional<QLKSRegistrationFormEntity> checkRoom(String idRoom, Long timeStart, Long timeEnd) throws HotelManagerException;
+
+    Optional<QLKSRegistrationFormEntity> checkCustomer(String idCustomer, Long timeStart, Long timeEnd) throws HotelManagerException;
 
     void updateChangeRoom(String idRegistration, String idRoomOld, String idRoomNew) throws HotelManagerException;
 }

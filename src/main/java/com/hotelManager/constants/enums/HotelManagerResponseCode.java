@@ -31,7 +31,9 @@ public enum HotelManagerResponseCode {
     ERROR_ROOM_CHECK_OUT                (-21,    "Phòng không đang ở trạng thái checkout !"),
     ERROR_USE_DEVICE                    (-22,    "Số lượng thiết bị không đủ !"),
     ERROR_SAVE_SCHEDULE                 (-23,    "Ngày đã được sắp xếp !"),
-    ERROR_CHECK_IN                      (-24,    "Chưa tới thời gian nhận phòng !");
+    ERROR_CHECK_IN                      (-24,    "Chưa tới thời gian nhận phòng !"),
+    ERROR_ADD_ROOM                      (-25,    "Phòng đã được đặt !"),
+    ERROR_CHECK_CUSTOMER                (-26,    "Khách hàng đã booking !");
 
     private final int responseCode;
 
